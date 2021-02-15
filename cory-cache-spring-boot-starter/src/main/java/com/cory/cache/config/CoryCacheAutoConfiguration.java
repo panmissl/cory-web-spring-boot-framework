@@ -2,7 +2,6 @@ package com.cory.cache.config;
 
 import com.cory.cache.etcd.EtcdCacheManager;
 import com.cory.cache.manager.CoryCacheManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,12 +22,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 @EnableConfigurationProperties(CoryCacheProperties.class)
 public class CoryCacheAutoConfiguration {
 
-    @Autowired
-    private CoryCacheProperties coryCacheProperties;
-
-    @Autowired
-    private RedisCacheWriter redisCacheWriter;
-
     @Bean
     @ConditionalOnMissingBean
     public LettuceConnectionFactory connectionFactory() {
@@ -37,7 +30,7 @@ public class CoryCacheAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = Constant.PREFIX, name = "type", havingValue = Constant.CACHE_TYPE_SIMPLE)
-    public ConcurrentMapCacheManager simpleCacheManager() {
+    public ConcurrentMapCacheManager simpleCacheManager(CoryCacheProperties coryCacheProperties) {
         if (!Constant.CACHE_TYPE_SIMPLE.equalsIgnoreCase(coryCacheProperties.getType())) {
             return null;
         }
@@ -46,7 +39,7 @@ public class CoryCacheAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = Constant.PREFIX, name = "type", havingValue = Constant.CACHE_TYPE_ETCD)
-    public EtcdCacheManager etcdCacheManager() {
+    public EtcdCacheManager etcdCacheManager(CoryCacheProperties coryCacheProperties) {
         if (!Constant.CACHE_TYPE_ETCD.equalsIgnoreCase(coryCacheProperties.getType())) {
             return null;
         }
@@ -55,7 +48,7 @@ public class CoryCacheAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = Constant.PREFIX, name = "type", havingValue = Constant.CACHE_TYPE_REDIS)
-    public RedisCacheManager redisCacheManager() {
+    public RedisCacheManager redisCacheManager(CoryCacheProperties coryCacheProperties, RedisCacheWriter redisCacheWriter) {
         if (!Constant.CACHE_TYPE_REDIS.equalsIgnoreCase(coryCacheProperties.getType())) {
             return null;
         }
@@ -65,7 +58,8 @@ public class CoryCacheAutoConfiguration {
     @Bean
     public CoryCacheManager coryCacheManager(ConcurrentMapCacheManager simpleCacheManager,
                                              EtcdCacheManager etcdCacheManager,
-                                             RedisCacheManager redisCacheManager) {
+                                             RedisCacheManager redisCacheManager,
+                                             CoryCacheProperties coryCacheProperties) {
         CoryCacheManager manager = new CoryCacheManager();
         manager.setRedisCacheManager(redisCacheManager);
         manager.setSimpleCacheManager(simpleCacheManager);

@@ -1,21 +1,15 @@
 package com.cory.db.processor;
 
-import com.cory.db.annotations.Model;
 import com.cory.db.config.CoryDbProperties;
 import com.cory.db.jdbc.CoryDb;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.util.AnnotatedTypeScanner;
-
-import javax.annotation.PostConstruct;
-import java.util.Set;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Created by Cory on 2021/2/9.
  */
 @Slf4j
-public class CoryDbInitializer {
+public class CoryDbInitializer  implements InitializingBean {
 
     private CoryDbProperties coryDbProperties;
     private CoryDb coryDb;
@@ -25,8 +19,9 @@ public class CoryDbInitializer {
         this.coryDbProperties = coryDbProperties;
     }
 
-    @PostConstruct
-    public void initialize() {
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         /* 不在这里初始化，初始化数据手动进行
         AnnotatedTypeScanner scanner = new AnnotatedTypeScanner(true, Model.class);
         Set<Class<?>> set = scanner.findTypes(coryDbProperties.getModelPackages());
@@ -60,5 +55,4 @@ public class CoryDbInitializer {
         log.info("cory db initialize finish.");
         */
     }
-
 }

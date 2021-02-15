@@ -13,16 +13,16 @@ import com.cory.exception.CoryException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.util.AnnotatedTypeScanner;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
  * Created by Cory on 2021/2/9.
  */
 @Slf4j
-public class CoryDbChecker {
+public class CoryDbChecker implements InitializingBean {
 
     private static final String COLUMN_SQL = "select * from information_schema.columns where table_schema = ?";
 
@@ -50,8 +50,8 @@ public class CoryDbChecker {
         this.database = database;
     }
 
-    @PostConstruct
-    public void check() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         //开发环境直接同步，线上环境报错提醒
 
         checkDb();
@@ -260,8 +260,4 @@ public class CoryDbChecker {
         }
         return tableMap;
     }
-
-
-
-
 }

@@ -5,7 +5,6 @@ import com.cory.db.jdbc.CoryDb;
 import com.cory.db.processor.CoryDbChecker;
 import com.cory.db.processor.CoryDbDaoProcessor;
 import com.cory.db.processor.CoryDbInitializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -32,41 +31,37 @@ import javax.sql.DataSource;
 @ConditionalOnClass(DruidDataSourceAutoConfigure.class)
 public class CoryDbAutoConfiguration {
 
-    @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private CoryDbProperties coryDbProperties;
-    @Autowired
-    private CoryDb coryDb;
-
-    @Value("${spring.datasource.name")
-    private String database;
-
     @Bean
-    public JdbcTemplate jdbcTemplate() {
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
     @Bean
-    public DataSourceTransactionManager transactionManager() {
+    @ConditionalOnBean(DataSource.class)
+    public CoryDb coryDb(JdbcTemplate jdbcTemplate) {
+        return new CoryDb(jdbcTemplate);
+    }
+
+    @Bean
+    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
         DataSourceTransactionManager manager = new DataSourceTransactionManager();
         manager.setDataSource(dataSource);
         return manager;
     }
 
     @Bean
-    public CoryDbDaoProcessor coryDbDaoProcessor() {
+    public CoryDbDaoProcessor coryDbDaoProcessor(CoryDbProperties coryDbProperties, CoryDb coryDb) {
         return new CoryDbDaoProcessor(coryDb, coryDbProperties);
     }
 
     @Bean
-    public CoryDbChecker coryDbChecker() {
+    public CoryDbChecker coryDbChecker(CoryDbProperties coryDbProperties, CoryDb coryDb, @Value("${spring.datasource.name") String database) {
         return new CoryDbChecker(coryDb, coryDbProperties, database);
     }
 
     @Bean
     @DependsOn("coryDbChecker")
-    public CoryDbInitializer coryDbInitializer() {
+    public CoryDbInitializer coryDbInitializer(CoryDbProperties coryDbProperties, CoryDb coryDb) {
         return new CoryDbInitializer(coryDb, coryDbProperties);
     }
 }

@@ -4,7 +4,6 @@ import com.cory.scheduler.job.Job;
 import com.cory.util.AssertUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.quartz.CronTrigger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,16 +25,11 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CorySchedulerProperties.class)
 public class CorySchedulerAutoConfiguration {
 
-    @Autowired
-    private CorySchedulerProperties corySchedulerProperties;
-    @Autowired
-    private List<Job> jobList;
-
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean() {
+    public SchedulerFactoryBean schedulerFactoryBean(List<Job> jobList, CorySchedulerProperties corySchedulerProperties) {
         SchedulerFactoryBean bean = new SchedulerFactoryBean();
         if (CollectionUtils.isNotEmpty(jobList)) {
-            Map<String, String> jobConfig = jobConfig();
+            Map<String, String> jobConfig = jobConfig(corySchedulerProperties);
             List<CronTrigger> triggerList = jobList.stream().map(job -> buildTrigger(job, jobConfig)).collect(Collectors.toList());
             bean.setTriggers(triggerList.toArray(new CronTrigger[triggerList.size()]));
         }
@@ -61,7 +55,7 @@ public class CorySchedulerAutoConfiguration {
     /**
      * @return key: Job, value: cronExpression
      */
-    private Map<String, String> jobConfig() {
+    private Map<String, String> jobConfig(CorySchedulerProperties corySchedulerProperties) {
         if (CollectionUtils.isEmpty(corySchedulerProperties.getJobConfigs())) {
             return new HashMap<>();
         }

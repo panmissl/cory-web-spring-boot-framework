@@ -34,8 +34,6 @@ import java.util.List;
 public class CoryWebAutoConfiguration implements WebMvcConfigurer {
 
     @Autowired
-    private CoryWebProperties coryWebProperties;
-    @Autowired
     private List<HandlerInterceptor> interceptorList;
     @Autowired
     private AccessTokenInterceptor accessTokenInterceptor;

@@ -19,11 +19,13 @@ import java.util.Map;
 /**
  * Created by Cory on 2021/2/9.
  */
-@Component
 public class CoryDb {
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public CoryDb(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public int insert(CorySqlInfo sqlInfo) {
         PreparedStatementCreator creator = conn -> {
