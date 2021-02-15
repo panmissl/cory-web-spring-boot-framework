@@ -19,7 +19,6 @@ public class CoryDbInitializer  implements InitializingBean {
         this.coryDbProperties = coryDbProperties;
     }
 
-
     @Override
     public void afterPropertiesSet() throws Exception {
         /* 不在这里初始化，初始化数据手动进行
