@@ -1,6 +1,6 @@
 package com.cory.web.security;
 
-import com.cory.util.web.URLHelper;
+import com.cory.web.util.URLHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;

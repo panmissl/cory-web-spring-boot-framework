@@ -1,4 +1,4 @@
-package com.cory.util.web;
+package com.cory.web.util;
 
 import com.cory.constant.Constants;
 import org.apache.commons.lang3.StringUtils;

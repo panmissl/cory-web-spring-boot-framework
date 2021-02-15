@@ -14,7 +14,7 @@ import com.cory.model.base.UserRoleRel;
 import com.cory.service.BaseService;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
-import com.cory.util.web.PasswordEncoder;
+import com.cory.web.util.PasswordEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

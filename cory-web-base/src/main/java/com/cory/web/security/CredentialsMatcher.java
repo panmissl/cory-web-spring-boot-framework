@@ -1,6 +1,6 @@
 package com.cory.web.security;
 
-import com.cory.util.web.PasswordEncoder;
+import com.cory.web.util.PasswordEncoder;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;

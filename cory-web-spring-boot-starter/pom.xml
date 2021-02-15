@@ -14,19 +14,28 @@
     <dependencies>
         <dependency>
             <groupId>com.cory</groupId>
+            <artifactId>cory-context-spring-boot-starter</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.cory</groupId>
             <artifactId>cory-db-spring-boot-starter</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.cory</groupId>
             <artifactId>cory-cache-spring-boot-starter</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.cory</groupId>
             <artifactId>cory-scheduler-spring-boot-starter</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.cory</groupId>
             <artifactId>cory-swagger-spring-boot-starter</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

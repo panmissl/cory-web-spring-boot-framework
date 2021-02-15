@@ -1,4 +1,4 @@
-package com.cory.util.web;
+package com.cory.web.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;

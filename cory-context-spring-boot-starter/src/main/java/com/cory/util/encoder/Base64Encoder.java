@@ -1,14 +1,12 @@
 package com.cory.util.encoder;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.UnsupportedEncodingException;
 
-import com.sun.xml.internal.messaging.saaj.util.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+@Slf4j
 public class Base64Encoder {
-	
-	private static final Logger log = LoggerFactory.getLogger(Base64Encoder.class);
 	
 	private static final String ENCODING = "utf-8";
 
@@ -33,7 +31,7 @@ public class Base64Encoder {
 		}
 		
 		try {
-			return new String(Base64.encode(str.getBytes(ENCODING)), ENCODING);
+			return new String(Base64.encodeBase64(str.getBytes(ENCODING)), ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			log.error("加密失败。原因：不支持的字符集: " + encoding);
 			return str;
@@ -61,7 +59,7 @@ public class Base64Encoder {
 		}
 		
 		try {
-			return new String(Base64.base64Decode(str).getBytes(), encoding);
+			return new String(Base64.decodeBase64(str.getBytes(encoding)), encoding);
 		} catch (UnsupportedEncodingException e) {
 			log.error("解密失败。原因：不支持的字符集: " + encoding);
 			return str;
