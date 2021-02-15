@@ -1,0 +1,18 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.cory.swagger.config.CorySwaggerProperties",
+      "name": "cory.swagger",
+      "type": "com.cory.swagger.config.CorySwaggerProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.cory.swagger.config.CorySwaggerProperties",
+      "name": "cory.swagger.enable",
+      "description": "是否启用",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

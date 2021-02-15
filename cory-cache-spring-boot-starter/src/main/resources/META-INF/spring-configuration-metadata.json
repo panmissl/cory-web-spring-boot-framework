@@ -1,0 +1,36 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.cory.cache.config.CoryCacheProperties",
+      "name": "cory.cache",
+      "type": "com.cory.cache.config.CoryCacheProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.cory.cache.config.CoryCacheProperties",
+      "name": "cory.cache.enable",
+      "description": "是否启用",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.cory.cache.config.CoryCacheProperties",
+      "name": "cory.cache.logEnable",
+      "description": "是否打印log，测试时建议打开，方便调试，生产环境看情况，如需要可以开启",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.cory.cache.config.CoryCacheProperties",
+      "name": "cory.cache.type",
+      "description": "缓存类型：simple/redis/etcd",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.cory.cache.config.CoryCacheProperties",
+      "name": "cory.cache.etcdServers",
+      "description": "etcd 服务器地址",
+      "type": "java.util.List"
+    }
+  ]
+}

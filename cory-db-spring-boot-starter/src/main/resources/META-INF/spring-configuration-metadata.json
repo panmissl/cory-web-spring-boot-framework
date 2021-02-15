@@ -1,0 +1,36 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.cory.db.config.CoryDbProperties",
+      "name": "cory.db",
+      "type": "com.cory.db.config.CoryDbProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.cory.cache.config.CoryCacheProperties",
+      "name": "cory.cache.enable",
+      "description": "是否启用",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.cory.db.config.CoryDbProperties",
+      "name": "cory.db.daoPackages",
+      "description": "DAO包，可以指定多个",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.cory.db.config.CoryDbProperties",
+      "name": "cory.db.modelPackages",
+      "description": "Model包，可以指定多个",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.cory.db.config.CoryDbProperties",
+      "name": "cory.db.logEnable",
+      "description": "是否打印log，测试时建议打开，方便调试，生产环境看情况，如需要可以开启",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

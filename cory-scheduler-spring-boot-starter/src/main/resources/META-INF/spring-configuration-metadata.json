@@ -1,0 +1,24 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.cory.scheduler.config.CorySchedulerProperties",
+      "name": "cory.scheduler",
+      "type": "com.cory.scheduler.config.CorySchedulerProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.cory.scheduler.config.CorySchedulerProperties",
+      "name": "cory.scheduler.enable",
+      "description": "是否启用",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.cory.scheduler.config.CorySchedulerProperties",
+      "name": "cory.scheduler.jobConfigs",
+      "description": "job配置：Job(Job类名):cronExpress。如：SampleJob:0 0 2 * * ?",
+      "type": "java.lang.String"
+    }
+  ]
+}
