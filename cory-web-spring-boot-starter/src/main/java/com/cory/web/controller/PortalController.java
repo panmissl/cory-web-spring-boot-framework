@@ -11,6 +11,6 @@ public class PortalController {
 
     @GetMapping("/")
     public String index() {
-        return "index.vm";
+        return "index";
     }
 }

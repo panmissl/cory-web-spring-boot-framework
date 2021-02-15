@@ -6,6 +6,7 @@ import com.cory.web.util.PasswordEncoder;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -26,6 +28,13 @@ public class ShiroConfig {
 
     @Autowired
     private RedisConnectionFactory connectionFactory;
+    @Autowired
+    private ShiroFilterFactoryBean shiroFilterFactoryBean;
+
+    @PostConstruct
+    public void setup() {
+        shiroFilterFactoryBean.setUnauthorizedUrl("error?type=403");
+    }
 
     @Bean
     public AntPermissionResolver antPermissionResolver() {
@@ -83,6 +92,8 @@ public class ShiroConfig {
         filter.setLoginHandleUrl("/doLogin");
         filter.setUsernameParam("logonId");
         filter.setRememberMeParam("rememberMe");
+        filter.setLoginUrl("login");
+        filter.setSuccessUrl("/");
         return filter;
     }
 

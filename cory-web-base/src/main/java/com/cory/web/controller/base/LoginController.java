@@ -1,6 +1,7 @@
 package com.cory.web.controller.base;
 
 import com.cory.constant.ErrorCode;
+import com.cory.context.CurrentUser;
 import com.cory.sevice.base.UserService;
 import com.cory.util.AssertUtils;
 import com.cory.web.captcha.CaptchaValidation;
@@ -8,6 +9,7 @@ import com.cory.web.controller.BaseController;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,13 +28,15 @@ public class LoginController extends BaseController {
     private UserService userService;
 
     @GetMapping("/login")
-    public String login() {
-        return "login.vm";
+    public String login(Model model) {
+        model.addAttribute("loginPage", true);
+        return "index";
     }
 
     @GetMapping("/register")
-    public String register() {
-        return "register.vm";
+    public String register(Model model) {
+        model.addAttribute("registerPage", true);
+        return "index";
     }
 
     @PostMapping("/doRegister")
@@ -44,5 +48,11 @@ public class LoginController extends BaseController {
 
         userService.register(phone, password);
         return true;
+    }
+
+    @PostMapping("/currentUser")
+    @ResponseBody
+    public CurrentUser currentUser() {
+        return CurrentUser.get();
     }
 }

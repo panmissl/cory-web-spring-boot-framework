@@ -3,7 +3,6 @@ package com.cory.web.controller.base;
 import com.cory.context.CurrentUser;
 import com.cory.model.base.User;
 import com.cory.model.base.UserRoleRel;
-import com.cory.sevice.base.RoleService;
 import com.cory.sevice.base.UserRoleRelService;
 import com.cory.sevice.base.UserService;
 import com.cory.web.controller.BaseAjaxController;
@@ -25,8 +24,6 @@ public class UserController extends BaseAjaxController<User> {
     private UserService userService;
     @Autowired
     private UserRoleRelService userRoleRelService;
-    @Autowired
-    private RoleService roleService;
 
     @Override
     public int save(User entity) {
