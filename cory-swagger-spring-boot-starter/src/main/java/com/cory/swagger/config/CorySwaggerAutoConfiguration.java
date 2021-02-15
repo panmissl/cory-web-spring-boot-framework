@@ -1,6 +1,7 @@
 package com.cory.swagger.config;
 
 import com.cory.swagger.annotations.SwaggerApiController;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,6 +21,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * Created by Cory on 2021/1/17.
  */
 @Configuration
+@ConditionalOnProperty(prefix = Constant.PREFIX, name = "enable", havingValue = "true")
 @EnableConfigurationProperties(CorySwaggerProperties.class)
 @EnableSwagger2
 @ComponentScan(basePackages= {"com.cory.web"})

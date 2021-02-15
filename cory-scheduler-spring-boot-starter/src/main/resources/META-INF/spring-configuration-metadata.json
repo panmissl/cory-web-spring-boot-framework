@@ -17,7 +17,7 @@
     {
       "sourceType": "com.cory.scheduler.config.CorySchedulerProperties",
       "name": "cory.scheduler.jobConfigs",
-      "description": "job配置：Job(Job类名):cronExpress。如：SampleJob:0 0 2 * * ?",
+      "description": "job配置：Job(Job类名[不加包名]):cronExpress。如：SampleJob:0 0 2 * * ?",
       "type": "java.lang.String"
     }
   ]

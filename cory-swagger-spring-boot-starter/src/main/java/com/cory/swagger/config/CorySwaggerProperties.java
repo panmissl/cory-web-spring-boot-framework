@@ -11,6 +11,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class CorySwaggerProperties {
 
     /** 是否启用 */
-    private boolean enable = true;
+    private boolean enable = false;
 
 }

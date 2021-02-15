@@ -8,11 +8,5 @@
     }
   ],
   "properties": [
-    {
-      "sourceType": "com.cory.web.config.CoryWebProperties",
-      "name": "cory.web.openApiUrlPattern",
-      "description": "OpenApiUrl匹配模式，AntMatcher",
-      "type": "java.util.String"
-    }
   ]
 }

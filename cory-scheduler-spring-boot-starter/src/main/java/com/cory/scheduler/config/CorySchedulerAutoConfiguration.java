@@ -19,11 +19,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 使用前，在application.properties文件里配置数据库信息：spring.datasource.username、spring.datasource.password、spring.datasource.name
- * <br />
  * Created by Cory on 2021/2/9.
  */
 @Configuration
+@ConditionalOnProperty(prefix = Constant.PREFIX, name = "enable", havingValue = "true")
 @EnableConfigurationProperties(CorySchedulerProperties.class)
 public class CorySchedulerAutoConfiguration {
 
@@ -33,7 +32,6 @@ public class CorySchedulerAutoConfiguration {
     private List<Job> jobList;
 
     @Bean
-    @ConditionalOnProperty(prefix = Constant.PREFIX, name = "enable", havingValue = "true")
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean bean = new SchedulerFactoryBean();
         if (CollectionUtils.isNotEmpty(jobList)) {

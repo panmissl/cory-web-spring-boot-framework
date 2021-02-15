@@ -12,11 +12,8 @@ import java.util.List;
 @Data
 public class CoryCacheProperties {
 
-    /** 是否启用 */
-    private boolean enable = true;
-
     /** 是否打印log */
-    private boolean logEnable = false;
+    private boolean logEnable = true;
 
     /** 类型：simple/redis/etcd */
     private String type;

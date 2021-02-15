@@ -13,7 +13,7 @@ import java.util.List;
 public class CorySchedulerProperties {
 
     /** 是否启用 */
-    private boolean enable = true;
+    private boolean enable = false;
 
     /**
      * job配置：Job(Job类名):cronExpress。如：SampleJob:0 0 2 * * ?
