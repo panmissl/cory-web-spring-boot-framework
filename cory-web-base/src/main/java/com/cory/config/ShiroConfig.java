@@ -12,11 +12,9 @@ import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 
 import java.io.UnsupportedEncodingException;
 
@@ -24,10 +22,15 @@ import java.io.UnsupportedEncodingException;
  * Created by Cory on 2021/2/15.
  */
 @Configuration
-public class ShiroConfig  implements InitializingBean {
+public class ShiroConfig {
 
-    @Autowired
-    private ShiroFilterFactoryBean shiroFilterFactoryBean;
+    /*
+    @Bean
+    public Object _test_shiroFilterFactoryBeanPostProcessor(ShiroFilterFactoryBean shiroFilterFactoryBean) {
+        shiroFilterFactoryBean.setUnauthorizedUrl("error?type=403");
+        return new Object();
+    }
+    */
 
     @Bean
     public AntPermissionResolver antPermissionResolver() {
@@ -58,7 +61,7 @@ public class ShiroConfig  implements InitializingBean {
     }
 
     @Bean
-    protected CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+    protected CacheManager shiroCacheManager(JedisConnectionFactory connectionFactory) {
         return new ShiroRedisCacheManager(connectionFactory);
     }
 
@@ -142,10 +145,5 @@ public class ShiroConfig  implements InitializingBean {
         } catch (UnsupportedEncodingException e) {}
         manager.setCookie(rememberMeCookie);
         return manager;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        shiroFilterFactoryBean.setUnauthorizedUrl("error?type=403");
     }
 }

@@ -112,11 +112,13 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
         if (select.whereByModel()) {
             Object model = paramMap.get("model");
-            AssertUtils.isTrue(null != model && (model instanceof BaseModel), "whereByModel为true时，必须有名为model、类型为T extends BaseModel的参数", ErrorCode.DB_ERROR);
-
-            Map<String, Object> columns = ClassUtil.fetchProperties(model, modelClass, Field.class);
-            if (MapUtils.isNotEmpty(columns)) {
-                columns.entrySet().forEach(entry -> builder.column(entry.getKey(), entry.getValue()));
+            //model可能为空
+            //AssertUtils.isTrue(null != model && (model instanceof BaseModel), "whereByModel为true时，必须有名为model、类型为T extends BaseModel的参数", ErrorCode.DB_ERROR);
+            if (null != model) {
+                Map<String, Object> columns = ClassUtil.fetchProperties(model, modelClass, Field.class);
+                if (MapUtils.isNotEmpty(columns)) {
+                    columns.entrySet().forEach(entry -> builder.column(entry.getKey(), entry.getValue()));
+                }
             }
         }
 
@@ -138,12 +140,17 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
             int count = coryDb.selectCount(countSqlInfo);
             Pagination p = new Pagination<>();
-            p.setList((List) ResultMapperFactory.parseMapper(List.class).getLeft().map(listData, ClassUtil.parseGenericType(returnType)));
+            //pagination直接用modelClass，因为解析不到泛型
+            Class<?> cls = ClassUtil.parseGenericType(returnType);
+            if (null == cls || cls.equals(Object.class)) {
+                cls = modelClass;
+            }
+            p.setList((List) ResultMapperFactory.parseMapper(List.class, modelClass).getLeft().map(listData, cls));
             p.setTotalCount(count);
 
             return p;
         } else {
-            Pair<ResultMapper, Class<?>> pair = ResultMapperFactory.parseMapper(returnType);
+            Pair<ResultMapper, Class<?>> pair = ResultMapperFactory.parseMapper(returnType, modelClass);
             return pair.getLeft().map(listData, pair.getRight());
         }
     }

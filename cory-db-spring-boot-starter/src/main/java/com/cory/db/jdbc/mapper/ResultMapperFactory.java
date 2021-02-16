@@ -17,12 +17,17 @@ public class ResultMapperFactory {
      * @param returnType
      * @return key: mapper, value: 返回类型，如果是list，返回list的泛型(有可能为空)
      */
-    public static Pair<ResultMapper, Class<?>> parseMapper(Class<?> returnType) {
+    public static Pair<ResultMapper, Class<?>> parseMapper(Class<?> returnType, Class<?> modelClass) {
         if (isMapListType(returnType)) {
             return Pair.of(new MapListMapper(), returnType);
         }
         if (returnType.equals(List.class)) {
-            return Pair.of(new ListMapper(), ClassUtil.parseGenericType(returnType));
+            //解析不到用modelClass
+            Class<?> cls = ClassUtil.parseGenericType(returnType);
+            if (null == cls || cls.equals(Object.class)) {
+                cls = modelClass;
+            }
+            return Pair.of(new ListMapper(), cls);
         }
         if (isSimpleType(returnType)) {
             return Pair.of(new SimpleMapper(), returnType);

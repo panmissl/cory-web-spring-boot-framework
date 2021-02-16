@@ -13,6 +13,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.util.AnnotatedTypeScanner;
 
 import java.util.Set;
@@ -21,14 +23,11 @@ import java.util.Set;
  * Created by Cory on 2021/2/9.
  */
 @Slf4j
-public class CoryDbDaoProcessor implements BeanDefinitionRegistryPostProcessor {
+public class CoryDbDaoProcessor implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
 
-    private CoryDbProperties coryDbProperties;
-    private CoryDb coryDb;
+    private ApplicationContext applicationContext;
 
-    public CoryDbDaoProcessor(CoryDb coryDb, CoryDbProperties coryDbProperties) {
-        this.coryDb = coryDb;
-        this.coryDbProperties = coryDbProperties;
+    public CoryDbDaoProcessor() {
     }
 
     @Override
@@ -36,9 +35,9 @@ public class CoryDbDaoProcessor implements BeanDefinitionRegistryPostProcessor {
         log.info("cory db register bean definition start");
 
         AnnotatedTypeScanner scanner = new AnnotatedTypeScanner(true, Dao.class);
-        Set<Class<?>> set = scanner.findTypes(coryDbProperties.getDaoPackages());
+        Set<Class<?>> set = scanner.findTypes("com.cory.dao");
         if (CollectionUtils.isEmpty(set)) {
-            log.info("no dao found in packages: {}", coryDbProperties.getDaoPackages());
+            log.info("no dao found in packages: com.cory.dao");
             return;
         }
 
@@ -52,8 +51,7 @@ public class CoryDbDaoProcessor implements BeanDefinitionRegistryPostProcessor {
             //设置bean class后，需要设置属性
             bd.setBeanClass(CoryDaoFactoryBean.class);
             bd.getPropertyValues().add("cls", cls);
-            bd.getPropertyValues().add("coryDb", coryDb);
-            bd.getPropertyValues().add("logEnable", coryDbProperties.isLogEnable());
+            bd.getPropertyValues().add("ctx", applicationContext);
 
             beanDefinitionRegistry.registerBeanDefinition(StringUtils.capitalize(cls.getSimpleName()), bd);
         }
@@ -64,5 +62,10 @@ public class CoryDbDaoProcessor implements BeanDefinitionRegistryPostProcessor {
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
         //do nothing
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

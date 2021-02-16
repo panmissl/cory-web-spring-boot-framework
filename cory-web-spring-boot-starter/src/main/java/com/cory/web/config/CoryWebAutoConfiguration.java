@@ -5,16 +5,16 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.cory.constant.Constants;
 import com.cory.web.interceptor.AccessTokenInterceptor;
+import com.cory.web.util.PostRequestMatcher;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -24,8 +24,6 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
- * 使用前，在application.properties文件里配置数据库信息：spring.datasource.username、spring.datasource.password、spring.datasource.name
- * <br />
  * Created by Cory on 2021/2/9.
  */
 @Configuration
@@ -37,6 +35,16 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
     private List<HandlerInterceptor> interceptorList;
     @Autowired
     private AccessTokenInterceptor accessTokenInterceptor;
+
+    @Bean
+    public HttpSessionCsrfTokenRepository httpSessionCsrfTokenRepository() {
+        return new HttpSessionCsrfTokenRepository();
+    }
+
+    @Bean
+    public RequestMatcher requestMatcher() {
+        return new PostRequestMatcher();
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -62,19 +70,6 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
         converter.setFastJsonConfig(config);
 
         converters.add(converter);
-    }
-
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(90097152);
-        return resolver;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public LettuceConnectionFactory connectionFactory() {
-        return new LettuceConnectionFactory();
     }
 
 }

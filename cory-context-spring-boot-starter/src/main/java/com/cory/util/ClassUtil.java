@@ -50,7 +50,7 @@ public class ClassUtil {
 				}
 				if (null != filterAnnotationType) {
 					//只取Field注解过的
-					java.lang.reflect.Field javaField = object.getClass().getField(descriptor.getName());
+					java.lang.reflect.Field javaField = getJavaFieldWithParent(object.getClass(), descriptor.getName());
 					if (null == javaField || !javaField.isAnnotationPresent(filterAnnotationType)) {
 						continue;
 					}
@@ -64,6 +64,22 @@ public class ClassUtil {
 		} catch (Throwable e) {
 			log.error("fetch properties fail", e);
 			throw new CoryException(ErrorCode.GENERIC_ERROR, "解析对象属性失败");
+		}
+	}
+
+	private static java.lang.reflect.Field getJavaFieldWithParent(Class cls, String fieldName) {
+		try {
+			return cls.getDeclaredField(fieldName);
+		} catch (NoSuchFieldException e) {
+			//已经到了Object，看还是没有则返回null
+			if (cls.equals(Object.class)) {
+				try {
+					return cls.getDeclaredField(fieldName);
+				} catch (NoSuchFieldException e1) {
+					return null;
+				}
+			}
+			return getJavaFieldWithParent(cls.getSuperclass(), fieldName);
 		}
 	}
 
@@ -85,6 +101,9 @@ public class ClassUtil {
 	public static Class parseGenericType(Class cls, int index) {
 		Type type = cls.getGenericSuperclass();
 		if (null == type) {
+			return null;
+		}
+		if (!(type instanceof ParameterizedType)) {
 			return null;
 		}
 		ParameterizedType parameterizedType = (ParameterizedType) type;

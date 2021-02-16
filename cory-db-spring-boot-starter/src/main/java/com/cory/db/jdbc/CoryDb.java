@@ -4,13 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.cory.constant.ErrorCode;
 import com.cory.db.jdbc.CorySqlBuilder.CorySqlInfo;
 import com.cory.exception.CoryException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -41,7 +40,7 @@ public class CoryDb {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int row = jdbcTemplate.update(creator, keyHolder);
         if (row > 0) {
-            return keyHolder.getKeyAs(Integer.class);
+            return keyHolder.getKeyAs(BigInteger.class).intValue();
         }
         throw new CoryException(ErrorCode.DB_ERROR, "插入失败(影响行数：" + row + ")，sqlInfo: " + JSON.toJSONString(sqlInfo));
     }

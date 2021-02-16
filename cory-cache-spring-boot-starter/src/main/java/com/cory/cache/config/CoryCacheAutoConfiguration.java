@@ -2,31 +2,25 @@ package com.cory.cache.config;
 
 import com.cory.cache.etcd.EtcdCacheManager;
 import com.cory.cache.manager.CoryCacheManager;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.lang.Nullable;
 
 /**
- * 使用前，在application.properties文件里配置数据库信息：spring.datasource.username、spring.datasource.password、spring.datasource.name
- * <br />
  * Created by Cory on 2021/2/9.
  */
 @Configuration
 @EnableConfigurationProperties(CoryCacheProperties.class)
+@EnableCaching(proxyTargetClass = true)
 public class CoryCacheAutoConfiguration {
-
-    @Bean
-    @ConditionalOnMissingBean
-    public LettuceConnectionFactory connectionFactory() {
-        return new LettuceConnectionFactory();
-    }
 
     @Bean
     @ConditionalOnProperty(prefix = Constant.PREFIX, name = "type", havingValue = Constant.CACHE_TYPE_SIMPLE)
@@ -56,10 +50,10 @@ public class CoryCacheAutoConfiguration {
     }
 
     @Bean
-    public CoryCacheManager coryCacheManager(ConcurrentMapCacheManager simpleCacheManager,
-                                             EtcdCacheManager etcdCacheManager,
-                                             RedisCacheManager redisCacheManager,
-                                             CoryCacheProperties coryCacheProperties) {
+    public CacheManager cacheManager(@Nullable ConcurrentMapCacheManager simpleCacheManager,
+                                     @Nullable EtcdCacheManager etcdCacheManager,
+                                     @Nullable RedisCacheManager redisCacheManager,
+                                         CoryCacheProperties coryCacheProperties) {
         CoryCacheManager manager = new CoryCacheManager();
         manager.setRedisCacheManager(redisCacheManager);
         manager.setSimpleCacheManager(simpleCacheManager);

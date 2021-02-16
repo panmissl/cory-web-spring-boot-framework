@@ -7,7 +7,7 @@ import com.cory.exception.CoryException;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
@@ -17,9 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ShiroRedisCacheManager implements CacheManager {
 
-	private RedisConnectionFactory connectionFactory;
+	private JedisConnectionFactory connectionFactory;
 
-	public ShiroRedisCacheManager(RedisConnectionFactory connectionFactory) {
+	public ShiroRedisCacheManager(JedisConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
 	}
 
@@ -27,6 +27,9 @@ public class ShiroRedisCacheManager implements CacheManager {
 	public <K, V> Cache<K, V> getCache(String s) throws CacheException {
 		try {
 			byte[] bytes = connectionFactory.getConnection().get(s.getBytes(Constants.UTF8));
+			if (null == bytes || bytes.length == 0) {
+				return new ShiroCache<>();
+			}
 			return JSON.parseObject(new String(bytes, Constants.UTF8), ShiroCache.class);
 		} catch (UnsupportedEncodingException e) {
 			throw new CoryException(ErrorCode.GENERIC_ERROR, "un supported encoding");

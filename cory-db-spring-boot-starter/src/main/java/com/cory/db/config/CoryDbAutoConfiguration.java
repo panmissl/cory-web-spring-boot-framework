@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
@@ -29,6 +29,7 @@ import javax.sql.DataSource;
 @AutoConfigureAfter({DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
 @ConditionalOnBean(DataSource.class)
 @ConditionalOnClass(DruidDataSourceAutoConfigure.class)
+@EnableTransactionManagement(proxyTargetClass = true)
 public class CoryDbAutoConfiguration {
 
     @Bean
@@ -43,15 +44,8 @@ public class CoryDbAutoConfiguration {
     }
 
     @Bean
-    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
-        DataSourceTransactionManager manager = new DataSourceTransactionManager();
-        manager.setDataSource(dataSource);
-        return manager;
-    }
-
-    @Bean
-    public CoryDbDaoProcessor coryDbDaoProcessor(CoryDbProperties coryDbProperties, CoryDb coryDb) {
-        return new CoryDbDaoProcessor(coryDb, coryDbProperties);
+    public CoryDbDaoProcessor coryDbDaoProcessor() {
+        return new CoryDbDaoProcessor();
     }
 
     @Bean
@@ -61,7 +55,7 @@ public class CoryDbAutoConfiguration {
 
     @Bean
     @DependsOn("coryDbChecker")
-    public CoryDbInitializer coryDbInitializer(CoryDbProperties coryDbProperties, CoryDb coryDb) {
+    public CoryDbInitializer coryDbInitializer(CoryDb coryDb, CoryDbProperties coryDbProperties) {
         return new CoryDbInitializer(coryDb, coryDbProperties);
     }
 }

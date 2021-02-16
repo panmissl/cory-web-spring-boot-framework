@@ -575,7 +575,7 @@ public class CorySqlBuilder {
 
             CorySqlInfo wherePart = buildSelectWherePart();
 
-            String sql = String.format("SELECT * FROM %s WHERE IS_DELETED = 0 %s", table, whereSql.toString());
+            String sql = String.format("SELECT * FROM %s WHERE IS_DELETED = 0 %s", table, wherePart.getSql());
             if (orderBy) {
                 String sort = (String) ognlParamMap.get(PARAM_SORT);
                 if (StringUtils.isBlank(sort)) {

@@ -1,8 +1,10 @@
 package com.cory.db.processor;
 
+import com.cory.db.config.CoryDbProperties;
 import com.cory.db.jdbc.CoryDb;
 import com.cory.db.jdbc.CoryDbProxy;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 
 /**
@@ -10,19 +12,28 @@ import org.springframework.lang.Nullable;
  */
 public class CoryDaoFactoryBean<T> implements FactoryBean<T> {
 
+    private ApplicationContext ctx;
     private Class<T> cls;
-    private CoryDb coryDb;
-    private boolean logEnable;
 
     @Nullable
     @Override
     public T getObject() throws Exception {
-        return CoryDbProxy.newMapperProxy(cls, coryDb, logEnable);
+        CoryDb coryDb = ctx.getBean(CoryDb.class);
+        CoryDbProperties coryDbProperties = ctx.getBean(CoryDbProperties.class);
+        return CoryDbProxy.newMapperProxy(cls, coryDb, coryDbProperties.isLogEnable());
     }
 
     @Nullable
     @Override
     public Class<?> getObjectType() {
         return cls;
+    }
+
+    public void setCtx(ApplicationContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public void setCls(Class<T> cls) {
+        this.cls = cls;
     }
 }
