@@ -88,7 +88,7 @@ public class ShiroConfig {
         filter.setLoginHandleUrl("/doLogin");
         filter.setUsernameParam("logonId");
         filter.setRememberMeParam("rememberMe");
-        filter.setLoginUrl("login");
+        filter.setLoginUrl("/login");
         filter.setSuccessUrl("/");
         return filter;
     }
