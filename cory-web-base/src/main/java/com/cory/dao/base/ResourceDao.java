@@ -14,7 +14,7 @@ import java.util.List;
 @Dao(model = Resource.class)
 public interface ResourceDao extends BaseDao<Resource> {
 
-    @Select(whereSql = "role_id = #{roleId}")
+    @Select(customSql = "SELECT r.* FROM BASE_RESOURCE r WHERE r.IS_DELETED = 0 AND EXISTS(SELECT 1 FROM BASE_ROLE_RESOURCE_REL rel WHERE rel.IS_DELETED = 0 AND r.ID = rel.RESOURCE_ID AND rel.ROLE_ID = #{roleId})")
     List<Resource> getByRole(@Param("roleId") Integer roleId);
 
     @Select(whereSql = "value = #{value}")

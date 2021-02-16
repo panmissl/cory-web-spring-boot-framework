@@ -155,7 +155,13 @@ public class CorySqlBuilder {
         return CorySqlInfo.builder().sql(StringUtils.join(sqlList, COMMA)).params(paramList).build();
     }
 
-    private static CorySqlInfo parseWherePart(String whereSql, Map<String, Object> ognlParamMap) {
+    /**
+     * @param whereSql
+     * @param ognlParamMap
+     * @param wrapAnd 自定义sql的地方，不要包裹AND ()
+     * @return
+     */
+    private static CorySqlInfo parseWherePart(String whereSql, Map<String, Object> ognlParamMap, boolean wrapAnd) {
         if (StringUtils.isBlank(whereSql)) {
             return CorySqlInfo.builder().sql("").build();
         }
@@ -181,7 +187,9 @@ public class CorySqlBuilder {
 
         // AND (col_a = ? and col_b = ?)
         String sql = StringUtils.join(whereList, " AND ");
-        sql = " AND (" + sql + ")";
+        if (wrapAnd) {
+            sql = " AND (" + sql + ")";
+        }
         return CorySqlInfo.builder().sql(sql).params(paramList).build();
     }
 
@@ -453,7 +461,7 @@ public class CorySqlBuilder {
         @Override
         public CorySqlInfo build() {
             //update xxx set is_deleted = 1, MODIFY_TIME = now() where IS_DELETED = 0 and col_a = #{colA} and col_b in #{colB}
-            CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap);
+            CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap, true);
 
             String sql = String.format("UPDATE %s SET IS_DELETED = 1, MODIFY_TIME = now() WHERE IS_DELETED = 0 %s", table, wherePart.getSql());
             return CorySqlInfo.builder().sql(formatSql(sql)).params(wherePart.getParams()).build();
@@ -484,7 +492,7 @@ public class CorySqlBuilder {
             //update xxx set is_deleted = 1, MODIFY_TIME = now() where IS_DELETED = 0 and col_a = #{colA} and col_b in #{colB}
 
             CorySqlInfo columnPart = parseColumnPart(columnSql, ognlParamMap);
-            CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap);
+            CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap, true);
 
             List<Object> params = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(columnPart.getParams())) {
@@ -543,7 +551,7 @@ public class CorySqlBuilder {
         }
 
         private CorySqlInfo buildSelectWherePart() {
-            CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap);
+            CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap, true);
             List<Object> params = wherePart.getParams();
             StringBuilder whereSql = new StringBuilder(wherePart.getSql());
 
@@ -569,8 +577,8 @@ public class CorySqlBuilder {
             //select * from xxx where is_deleted = 0 and col_a = #{colA} order by id desc limit 30, 10
 
             if (StringUtils.isNotBlank(customSql)) {
-                CorySqlInfo wherePart = parseWherePart(customSql, ognlParamMap);
-                return CorySqlInfo.builder().sql(formatSql(customSql)).params(wherePart.getParams()).build();
+                CorySqlInfo wherePart = parseWherePart(customSql, ognlParamMap, false);
+                return CorySqlInfo.builder().sql(formatSql(wherePart.getSql())).params(wherePart.getParams()).build();
             }
 
             CorySqlInfo wherePart = buildSelectWherePart();

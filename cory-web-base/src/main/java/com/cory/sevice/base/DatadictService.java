@@ -87,14 +87,14 @@ public class DatadictService extends BaseService<Datadict> {
 
     @Cacheable(value = CacheConstants.Datadict, key = "'all-types'")
     public List<Datadict> getAllTypes() {
-        List<Datadict> list = this.getDao().getAllTypes();
+        List<Datadict> list = this.getDao().getAllTypes("SN DESC");
         fillOtherFields(list);
         return list;
     }
 
     @Cacheable(value = CacheConstants.Datadict, key = "'type-'.concat(#type)")
     public List<Datadict> getByType(Integer type) {
-        List<Datadict> list = this.getDao().getByType(type);
+        List<Datadict> list = this.getDao().getByType(type, "SN DESC");
         fillOtherFields(list);
         return list;
     }

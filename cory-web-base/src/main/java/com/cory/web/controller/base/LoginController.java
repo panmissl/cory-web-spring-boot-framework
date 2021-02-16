@@ -29,13 +29,13 @@ public class LoginController extends BaseController {
 
     @GetMapping("/login")
     public String login(Model model) {
-        model.addAttribute("loginPage", true);
+        model.addAttribute("loginPage", "true");
         return "index";
     }
 
     @GetMapping("/register")
     public String register(Model model) {
-        model.addAttribute("registerPage", true);
+        model.addAttribute("registerPage", "true");
         return "index";
     }
 

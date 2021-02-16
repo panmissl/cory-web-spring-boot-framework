@@ -16,10 +16,19 @@
             const jsDir = "${jsDir}";
             const cssDir = "${cssDir}";
             const imageDir = "${imageDir}";
-            const isAdmin = ${currentUser.isAdmin};
-            const isRoot = ${currentUser.isRoot};
-            const loginPage = ${loginPage!false};
-            const registerPage = ${registerPage!false};
+
+            <#if currentUser??>
+            window.isAdmin = ${currentUser.isAdmin()};
+            window.isRoot = ${currentUser.isRoot()};
+            <#else>
+            window.isAdmin = false;
+            window.isRoot = false;
+            </#if>
+
+            window.loginPage = ${loginPage!"false"};
+            window.registerPage = ${registerPage!"false"};
+            window.errorPage = ${errorPage!"false"};
+            window.errorType = "${errorType!""}";
         </script>
 
         <title>${siteName}</title>

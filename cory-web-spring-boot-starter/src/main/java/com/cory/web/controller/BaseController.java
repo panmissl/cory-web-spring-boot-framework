@@ -5,15 +5,15 @@ import com.cory.constant.ErrorCode;
 import com.cory.context.GenericResult;
 import com.cory.exception.CoryException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Cory on 2017/5/14.
  */
-@RestController
+@Controller
 @Slf4j
 public abstract class BaseController {
 

@@ -31,6 +31,7 @@
 		<java.version>1.8</java.version>
 		<cory.version>0.0.1-SNAPSHOT</cory.version>
 		<encoding>UTF-8</encoding>
+		<spring.security.version>3.2.3.RELEASE</spring.security.version>
 	</properties>
 
 	<repositories>
@@ -187,6 +188,16 @@
 				<groupId>redis.clients</groupId>
 				<artifactId>jedis</artifactId>
 				<version>3.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-taglibs</artifactId>
+				<version>${spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${spring.security.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -17,6 +17,6 @@ public interface RoleDao extends BaseDao<Role> {
     @Select(whereSql = "name = #{name}")
     Role getByName(@Param("name") String name);
 
-    @Select(whereSql = "user_id = #{userId}")
+    @Select(customSql = "SELECT r.* FROM BASE_ROLE r WHERE r.IS_DELETED = 0 AND EXISTS(SELECT 1 FROM BASE_USER_ROLE_REL rel WHERE rel.IS_DELETED = 0 AND r.ID = rel.ROLE_ID AND rel.USER_ID = #{userId})")
     List<Role> getByUser(@Param("userId") Integer userId);
 }

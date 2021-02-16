@@ -50,7 +50,7 @@ public class ResourceScanner {
         }
         int count = 0;
         if (CollectionUtils.isNotEmpty(set)) {
-            count = set.stream().filter(cls -> !cls.isAssignableFrom(BaseOpenApiController.class)).map(cls -> doScan(cls)).reduce(0, (i1, i2) -> i1 + i2);
+            count = set.stream().filter(cls -> !BaseOpenApiController.class.isAssignableFrom(cls)).map(cls -> doScan(cls)).reduce(0, (i1, i2) -> i1 + i2);
         }
 
         log.info("scan Controllers finish, url count: {} ...", count);
@@ -60,7 +60,7 @@ public class ResourceScanner {
         if (cls.equals(BaseAjaxController.class)) {
             return 0;
         }
-        boolean isAjax = cls.isAssignableFrom(BaseAjaxController.class);
+        boolean isAjax = BaseAjaxController.class.isAssignableFrom(cls);
         String clsRequestMapping = getClassLevelRequestMapping(cls);
         return resourceToDbLoader.loadToDb(scanClass(isAjax, cls, clsRequestMapping));
     }

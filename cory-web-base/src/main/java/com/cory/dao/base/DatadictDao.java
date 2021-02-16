@@ -15,14 +15,14 @@ import java.util.List;
 @Dao(model = Datadict.class)
 public interface DatadictDao extends BaseDao<Datadict> {
 
-    @Select
-    List<Datadict> getAllTypes();
+    @Select(orderBy = true)
+    List<Datadict> getAllTypes(@Param("sort") String sort);
 
     @Select(whereSql = "value = #{value}")
     Datadict getByValue(@Param("value") String value);
 
-    @Select(whereSql = "type = #{type}")
-    List<Datadict> getByType(@Param("type") Integer type);
+    @Select(whereSql = "type = #{type}", orderBy = true)
+    List<Datadict> getByType(@Param("type") Integer type, @Param("sort") String sort);
 
     @Update(columnSql = "MODIFIER = #{modifier}, MODIFY_TIME = now(), SHOWABLE = #{showable}", whereSql = "id = #{id}")
     int updateShowable(@Param("id") Integer id, @Param("showable") boolean showable, @Param("modifier") Integer modifier);

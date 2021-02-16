@@ -13,6 +13,7 @@ public enum ErrorCode {
     REGISTER_ERROR(1004, "注册失败"),
     AUTH_ERROR(1005, "鉴权失败"),
     DB_ERROR(1006, "DB处理失败"),
+    HTTP_STATUS_ERROR(1007, "Http状态错误"),
 
     ;
 

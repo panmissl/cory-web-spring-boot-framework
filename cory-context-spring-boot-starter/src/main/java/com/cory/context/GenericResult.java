@@ -37,6 +37,17 @@ public class GenericResult implements Serializable {
     /**
      * success = false;
      * @param errorCode
+     * @param errorMsg
+     */
+    public GenericResult(int errorCode, String errorMsg) {
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+        this.success = false;
+    }
+
+    /**
+     * success = false;
+     * @param errorCode
      */
     public GenericResult(ErrorCode errorCode) {
         this.errorCode = errorCode.getCode();
@@ -56,6 +67,10 @@ public class GenericResult implements Serializable {
 
     public static GenericResult fail(ErrorCode errorCode) {
         return new GenericResult(errorCode);
+    }
+
+    public static GenericResult fail(int errorCode, String errorMsg) {
+        return new GenericResult(errorCode, errorMsg);
     }
 
     public static GenericResult fail(CoryException ex) {
