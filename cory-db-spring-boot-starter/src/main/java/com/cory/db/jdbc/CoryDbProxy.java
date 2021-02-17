@@ -127,6 +127,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
             log.info(dataSqlInfo.toString());
         }
 
+        Class selectReturnType = select.returnType();
         List<Map<String, Object>> listData = coryDb.select(dataSqlInfo);
 
         Class<?> returnType = method.getReturnType();
@@ -142,14 +143,15 @@ public class CoryDbProxy<T> implements InvocationHandler {
             //pagination直接用modelClass，因为解析不到泛型
             Class<?> cls = ClassUtil.parseGenericType(returnType);
             if (null == cls || cls.equals(Object.class)) {
-                cls = modelClass;
+                //支持自定义返回类型
+                cls = null != selectReturnType && !Void.class.equals(selectReturnType) ? selectReturnType : modelClass;
             }
-            p.setList((List) ResultMapperFactory.parseMapper(List.class, modelClass).getLeft().map(listData, cls));
+            p.setList((List) ResultMapperFactory.parseMapper(List.class, modelClass, selectReturnType).getLeft().map(listData, cls));
             p.setTotalCount(count);
 
             return p;
         } else {
-            Pair<ResultMapper, Class<?>> pair = ResultMapperFactory.parseMapper(returnType, modelClass);
+            Pair<ResultMapper, Class<?>> pair = ResultMapperFactory.parseMapper(returnType, modelClass, selectReturnType);
             return pair.getLeft().map(listData, pair.getRight());
         }
     }

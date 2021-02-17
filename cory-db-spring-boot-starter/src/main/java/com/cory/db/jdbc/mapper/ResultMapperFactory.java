@@ -14,10 +14,12 @@ import java.util.Map;
 public class ResultMapperFactory {
 
     /**
-     * @param returnType
+     * @param returnType 返回值类型
+     * @param modelClass 对list类型，因为取不到泛型，所以默认用Dao对应的Model类
+     * @param selectReturnType 对list类型，支持自定义返回类型，如果指定了自定义类型优先使用，否则使用Model类
      * @return key: mapper, value: 返回类型，如果是list，返回list的泛型(有可能为空)
      */
-    public static Pair<ResultMapper, Class<?>> parseMapper(Class<?> returnType, Class<?> modelClass) {
+    public static Pair<ResultMapper, Class<?>> parseMapper(Class<?> returnType, Class<?> modelClass, Class selectReturnType) {
         if (isMapListType(returnType)) {
             return Pair.of(new MapListMapper(), returnType);
         }
@@ -25,7 +27,7 @@ public class ResultMapperFactory {
             //解析不到用modelClass
             Class<?> cls = ClassUtil.parseGenericType(returnType);
             if (null == cls || cls.equals(Object.class)) {
-                cls = modelClass;
+                cls = null != selectReturnType && !Void.class.equals(selectReturnType) ? selectReturnType : modelClass;
             }
             return Pair.of(new ListMapper(), cls);
         }

@@ -53,4 +53,15 @@ public @interface Select {
      * @return
      */
     String customSql() default "";
+
+    /**
+     * 返回类型，如果返回类型是List或其他带泛型的，因为取不到泛型类型，所以默认用Dao关联的Model类，如果是其他类型，请使用此属性指定。
+     * <br />
+     * 比如：UserDao里，返回方法定义是这样：List<User> listAllUsers()，因为取不到泛型类型User，所以默认List里装的是User，如果是装其他对象，则需要指定。比如需要返回一个自定义的UserVO：List<UserVO> listUserVo，则使用此属性指定。
+     * <br />
+     * 注意：对于非泛型的，不用指定此属性，会自动解析返回值类型
+     *
+     * @return
+     */
+    Class returnType() default Void.class;
 }
