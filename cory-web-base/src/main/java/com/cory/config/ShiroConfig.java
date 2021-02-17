@@ -89,7 +89,6 @@ public class ShiroConfig {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
 
         chainDefinition.addPathDefinition("/ajax/**", "user");
-        chainDefinition.addPathDefinition("/", "user");
 
         chainDefinition.addPathDefinition("/doLogin*", "authc");
         chainDefinition.addPathDefinition("/logout*", "logout");
@@ -98,7 +97,7 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/login*", "anon");
         chainDefinition.addPathDefinition("/error*", "anon");
 
-        chainDefinition.addPathDefinition("/**", "anon");
+        chainDefinition.addPathDefinition("/**", "user");
         return chainDefinition;
     }
 

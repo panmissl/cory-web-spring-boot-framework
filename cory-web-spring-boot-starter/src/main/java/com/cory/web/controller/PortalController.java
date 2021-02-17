@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PortalController extends BaseController {
 
-    @GetMapping("/")
+    @GetMapping("/**")
     public String index() {
         return "index";
     }
