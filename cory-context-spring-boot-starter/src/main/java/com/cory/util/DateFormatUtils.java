@@ -23,27 +23,4 @@ public class DateFormatUtils extends org.apache.commons.lang3.time.DateFormatUti
 		return DateFormat.getDateTimeInstance().format(date);
 	}
 	
-	public static Date parseTime(Date time){
-		DateFormat format = new SimpleDateFormat("HH:mm:ss"); 
-		Date result=time;
-		try {
-			result = format.parse(formatTime(time));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
-		return result;
-	}
-	
-	public static Date parseDate(Date time){
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd"); 
-		Date result=time;
-		try {
-			result = format.parse(formatDate(time));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
-		return result;
-	}
 }

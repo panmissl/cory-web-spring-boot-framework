@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by Cory on 2017/5/10.
  */
 @Controller
-@RequestMapping("/base/systemconfig/")
+@RequestMapping("/ajax/base/systemconfig/")
 public class SystemConfigController extends BaseAjaxController<SystemConfig> {
 
     @Autowired

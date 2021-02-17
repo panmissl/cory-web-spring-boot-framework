@@ -6,7 +6,6 @@ package com.cory.constant;
 public class Constants {
 
     public static final String PROFILE_PROD = "prod";
-    public static final String PROFILE_DEV = "dev";
 
     public static final int CONTEXT_INITIALIZER_ORDER_CONTEXT = 1000;
     public static final int CONTEXT_INITIALIZER_ORDER_DB = 990;
@@ -80,11 +79,17 @@ public class Constants {
     public static final String DATE_FORMAT_SHORT_WITH_DASH = "yyyy-MM-dd";
     public static final String DATE_FORMAT_SHORT_WITHOUT_DASH = "yyyyMMdd";
     public static final String DATE_FORMAT_FULL_WITH_DASH = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_FORMAT_FULL_EXTRA_WITH_DASH = "yyyy-MM-dd HH:mm:ss.S";
+    public static final String DATE_FORMAT_FULL_EXTRA_LONG_WITH_DASH = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DATE_FORMAT_FULL_WITHOUT_DASH = "yyyyMMddHHmmss";
     public static final String[] ALL_DATE_FORMAT = new String[] {
             DATE_FORMAT_SHORT_WITH_DASH,
             DATE_FORMAT_SHORT_WITHOUT_DASH,
             DATE_FORMAT_FULL_WITH_DASH,
             DATE_FORMAT_FULL_WITHOUT_DASH,
+            DATE_FORMAT_FULL_EXTRA_WITH_DASH,
+            DATE_FORMAT_FULL_EXTRA_LONG_WITH_DASH,
     };
+
+    public static final String[] BASE_MODEL_COLUMNS = new String[] {"id", "creator", "modifier", "createTime", "modifyTime", "isDeleted"};
 }

@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
 /**
  * 加在Model上
  * <br />
+ * 数据库字段名自动生成，规则：java属性名转为下划线风格
+ * <br />
  * 数据库定义，相当于DDL。同时兼具页面配置功能
  * Created by Cory on 2021/2/9.
  */
@@ -18,22 +20,16 @@ import java.lang.annotation.Target;
 public @interface Field {
 
     /**
-     * 数据库字段名
+     * 页面显示label
      * @return
      */
-    String name();
+    String label();
 
     /**
      * 数据库类型
      * @return
      */
     CoryDbType type();
-
-    /**
-     * 页面显示label
-     * @return
-     */
-    String label();
 
     /**
      * 页面显示说明。比如一些字段的备注。默认为空

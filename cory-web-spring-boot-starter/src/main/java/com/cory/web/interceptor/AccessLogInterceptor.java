@@ -32,8 +32,9 @@ public class AccessLogInterceptor implements HandlerInterceptor {
 		long start = TIME.get();
 		Object exAttr = request.getAttribute(Constants.EXCEPTION_ATTR);
 		boolean hasException = null != exAttr && (Boolean) exAttr;
+		String method = request.getMethod();
 
-		log.info("remoteAddr={}, uri={}, queryString={}, hasException={}, duration={}ms",
-				request.getRemoteAddr(), request.getRequestURI(), request.getQueryString(), hasException, System.currentTimeMillis() - start);
+		log.info("remoteAddr={}, uri={}, method={}, queryString={}, hasException={}, duration={}ms",
+				request.getRemoteAddr(), request.getRequestURI(), method, request.getQueryString(), hasException, System.currentTimeMillis() - start);
 	}
 }

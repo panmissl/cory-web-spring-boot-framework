@@ -49,7 +49,7 @@ public class CoryDbAutoConfiguration {
     }
 
     @Bean
-    public CoryDbChecker coryDbChecker(CoryDbProperties coryDbProperties, CoryDb coryDb, @Value("${spring.datasource.name") String database) {
+    public CoryDbChecker coryDbChecker(CoryDbProperties coryDbProperties, CoryDb coryDb, @Value("${spring.datasource.name}") String database) {
         return new CoryDbChecker(coryDb, coryDbProperties, database);
     }
 

@@ -22,8 +22,9 @@ public class CoryContextApplicationContextInitializer implements ApplicationCont
 
         if (haveProfile(profiles, Constants.PROFILE_PROD)) {
             CoryEnv.IS_PROD = true;
-        }
-        if (haveProfile(profiles, Constants.PROFILE_DEV)) {
+            CoryEnv.IS_DEV = false;
+        } else {
+            CoryEnv.IS_PROD = false;
             CoryEnv.IS_DEV = true;
         }
     }

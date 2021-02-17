@@ -1,5 +1,7 @@
 package com.cory.util;
 
+import com.cory.constant.Constants;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +16,16 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	public static SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 	public static SimpleDateFormat format1 = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 	public static SimpleDateFormat fullFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	/**
+	 * 使用 {@link Constants#ALL_DATE_FORMAT} 里的所有格式，尝试解析日期。解析失败抛错
+	 * @param date
+	 * @return
+	 * @throws ParseException
+	 */
+	public static Date parseDate(String date) throws ParseException {
+		return parseDate(date, Constants.ALL_DATE_FORMAT);
+	}
 
 	public static int getDateField(Date date, int field) {
 		Calendar c = getCalendar();

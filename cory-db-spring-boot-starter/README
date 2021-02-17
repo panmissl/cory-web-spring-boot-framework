@@ -4,3 +4,6 @@ sql兼容mybatis，但是参数必须带Param注解。
 # 对IN的支持：直接写：IN #{list}，会自动展开成：IN (?, ?, ?)的形式
 # 对空条件的支持：用#!{xxx}的形式表示，会自动判断如果为空则不加此条件。比如：create_time >= #!{createTimeStart} and create_time <= #!{createTimeEnd}
 # 不支持mybatis的${}，后续有需要再支持
+
+
+mvn -DskipTests=true -Dmaven.skip.test=true source:jar install

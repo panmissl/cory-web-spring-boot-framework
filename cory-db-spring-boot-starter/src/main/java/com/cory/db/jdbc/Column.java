@@ -24,11 +24,11 @@ public class Column {
             return false;
         }
         Column c = (Column) o;
-        return StringUtils.equals(name, c.name) &&
-                StringUtils.equals(tableName, c.tableName) &&
+        return StringUtils.equals(name.toUpperCase(), c.name.toUpperCase()) &&
+                StringUtils.equals(tableName.toUpperCase(), c.tableName.toUpperCase()) &&
                 StringUtils.equals(defaultValue, c.defaultValue) &&
                 nullable == c.nullable &&
-                StringUtils.equals(columnType, c.columnType);
+                StringUtils.equals(columnType.toUpperCase(), c.columnType.toUpperCase());
     }
 
     @Override
@@ -40,6 +40,7 @@ public class Column {
         //`modify_time` datetime NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '修改时间',
         String na = nullable ? "NULL" : "NOT NULL";
         String dv = StringUtils.isBlank(defaultValue) ? "" : ("DEFAULT '" + defaultValue + "'");
-        return String.format("`%s` %s %s %s COMMENT '%s'", name, columnType, na, dv, columnComment);
+        String cc = StringUtils.isBlank(columnComment) ? "" : "COMMENT '" + columnComment + "'";
+        return String.format("`%s` %s %s %s %s", name, columnType, na, dv, cc);
     }
 }

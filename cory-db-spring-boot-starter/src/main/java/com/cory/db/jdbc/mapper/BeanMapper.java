@@ -1,11 +1,16 @@
 package com.cory.db.jdbc.mapper;
 
-import com.cory.constant.Constants;
 import com.cory.constant.ErrorCode;
 import com.cory.exception.CoryException;
 import com.cory.util.DateUtils;
+import com.cory.util.MapBuilder;
+import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.*;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.ConvertUtilsBean;
+import org.apache.commons.beanutils.Converter;
+import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.collections4.MapUtils;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -18,31 +23,37 @@ import java.util.Map;
 @Slf4j
 public class BeanMapper extends SingleResultMapper {
 
-    static {
-        DateTimeConverter converter = new DateTimeConverter();
-
-        ConvertUtilsBean2 convertUtilsBean2 = new ConvertUtilsBean2();
-        convertUtilsBean2.deregister(Date.class);
-        convertUtilsBean2.deregister(Timestamp.class);
-
-        convertUtilsBean2.register(converter, Date.class);
-        convertUtilsBean2.register(converter, Timestamp.class);
-
-        BeanUtilsBean beanUtilsBean = new BeanUtilsBean(convertUtilsBean2, new PropertyUtilsBean());
-
-        BeanUtilsBean2.setInstance(beanUtilsBean);
-    }
-
     @Override
     protected Object doMap(Map<String, Object> map, Class<?> returnType) {
         try {
+            MapBuilder builder = MapBuilder.create(String.class, Object.class);
+            //下划线转驼峰
+            if (MapUtils.isNotEmpty(map)) {
+                map.entrySet().forEach(entry -> builder.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, entry.getKey()), entry.getValue()));
+            }
+
+            BeanUtilsBean util = newBeanUtilsBean();
+
             Object obj = returnType.newInstance();
-            BeanUtilsBean2.getInstance().populate(obj, map);
+            util.populate(obj, builder.build());
             return obj;
         } catch (Exception e) {
             log.error("map to bean error", e);
             throw new CoryException(ErrorCode.DB_ERROR, "map to bean error" + e.getMessage());
         }
+    }
+
+    private BeanUtilsBean newBeanUtilsBean() {
+        DateTimeConverter converter = new DateTimeConverter();
+
+        ConvertUtilsBean convertUtilsBean = new ConvertUtilsBean();
+        convertUtilsBean.deregister(Date.class);
+        convertUtilsBean.deregister(Timestamp.class);
+
+        convertUtilsBean.register(converter, Date.class);
+        convertUtilsBean.register(converter, Timestamp.class);
+
+        return new BeanUtilsBean(convertUtilsBean, new PropertyUtilsBean());
     }
 
     private static class DateTimeConverter implements Converter {
@@ -55,9 +66,9 @@ public class BeanMapper extends SingleResultMapper {
             String str = (String) value;
             try {
                 if (type.equals(Date.class)) {
-                    return (T) DateUtils.parseDate(str, Constants.ALL_DATE_FORMAT);
+                    return (T) DateUtils.parseDate(str);
                 } else if (type.equals(Timestamp.class)) {
-                    return (T) new Timestamp(DateUtils.parseDate(str, Constants.ALL_DATE_FORMAT).getTime());
+                    return (T) new Timestamp(DateUtils.parseDate(str).getTime());
                 }
             } catch (ParseException e) {
             }

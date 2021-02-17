@@ -6,6 +6,7 @@ import com.cory.exception.CoryException;
 import com.cory.util.AssertUtils;
 import com.cory.util.MapBuilder;
 import com.cory.util.OgnlUtil;
+import com.google.common.base.CaseFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -106,17 +107,7 @@ public class CorySqlBuilder {
 
     private static String formatColumn(String column) {
         //驼峰转下划线分割，然后全部大写
-        StringBuilder builder = new StringBuilder();
-        char[] arr = column.toCharArray();
-        for (int i=0; i<arr.length; i++) {
-            char ch = arr[i];
-            //第一个或最后一个字母，不用判断大小写，直接添加，否则如果是大写字母，则先加一个下划线。数字不用加
-            if (!(i == 0 || i == arr.length - 1) && ch >= 'A' && ch <= 'Z') {
-                builder.append('_');
-            }
-            builder.append(ch);
-        }
-        return builder.toString().toUpperCase();
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, column).toUpperCase();
     }
 
     private static CorySqlInfo parseColumnPart(String columnSql, Map<String, Object> ognlParamMap) {

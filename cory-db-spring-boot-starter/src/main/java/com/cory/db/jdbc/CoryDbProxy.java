@@ -50,8 +50,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
         Dao dao = daoClass.getAnnotation(Dao.class);
         this.modelClass = dao.model();
 
-        Model model = modelClass.getAnnotation(Model.class);
-        this.table = model.table();
+        this.table = CoryModelUtil.buildTableName(modelClass);
     }
 
     @Override
@@ -87,7 +86,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
         AssertUtils.isTrue(null != args && args.length == 1 && args[0].getClass().equals(modelClass), "UpdateModel时有且只能有一个类型是：" + modelClass + "的参数", ErrorCode.DB_ERROR);
 
         Object model = args[0];
-        Map<String, Object> columns = parseModelColumnsWithBaseModel(model);
+        Map<String, Object> columns = CoryModelUtil.parseModelFieldsValueWithBaseModel(model, modelClass);
 
         CorySqlBuilder.CoryUpdateModelSqlBuilder builder = CorySqlBuilder.createUpdateModelBuilder(table);
         if (MapUtils.isNotEmpty(columns)) {
@@ -196,7 +195,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
         AssertUtils.isTrue(null != args && args.length == 1 && args[0].getClass().equals(modelClass), "插入时有且只能有一个类型是：" + modelClass + "的参数", ErrorCode.DB_ERROR);
 
         Object model = args[0];
-        Map<String, Object> columns = parseModelColumnsWithBaseModel(model);
+        Map<String, Object> columns = CoryModelUtil.parseModelFieldsValueWithBaseModel(model, modelClass);
 
         CoryInsertSqlBuilder builder = CorySqlBuilder.createInsertBuilder(table);
         if (MapUtils.isNotEmpty(columns)) {
@@ -241,19 +240,6 @@ public class CoryDbProxy<T> implements InvocationHandler {
             paramMap.put(param.value(), args[i]);
         }
         return paramMap;
-    }
-
-    private Map<String, Object> parseModelColumnsWithBaseModel(Object object) {
-        Map<String, Object> columns = ClassUtil.fetchProperties(object, modelClass, Field.class);
-        Map<String, Object> baseColumns = ClassUtil.fetchProperties(object, modelClass, null);
-
-        for (String c : new String[] {"id", "creator", "modifier", "createTime", "modifyTime", "isDeleted"}) {
-            Object value = baseColumns.get(c);
-            if (null != value) {
-                columns.put(c, value);
-            }
-        }
-        return columns;
     }
 
 }

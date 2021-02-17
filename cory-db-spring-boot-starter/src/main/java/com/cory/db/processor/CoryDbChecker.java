@@ -7,16 +7,22 @@ import com.cory.db.annotations.Model;
 import com.cory.db.config.CoryDbProperties;
 import com.cory.db.jdbc.Column;
 import com.cory.db.jdbc.CoryDb;
+import com.cory.db.jdbc.CoryModelUtil;
 import com.cory.db.jdbc.CorySqlBuilder.CorySqlInfo;
 import com.cory.db.jdbc.Table;
 import com.cory.exception.CoryException;
+import com.cory.model.BaseModel;
+import com.google.common.base.CaseFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.util.AnnotatedTypeScanner;
 
 import java.util.*;
+
+import static com.cory.constant.Constants.BASE_MODEL_COLUMNS;
 
 /**
  * Created by Cory on 2021/2/9.
@@ -39,6 +45,10 @@ public class CoryDbChecker implements InitializingBean {
     private static final String CREATE_TABLE_FOOTER =
             "PRIMARY KEY (`id`)" +
             ") ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8 COMMENT='%s';";
+
+    private static final String DROP_COLUMN_SQL = "alter table %s drop column %s";
+    private static final String ADD_COLUMN_SQL = "alter table %s add column %s";
+    private static final String MODIFY_COLUMN_SQL = "alter table %s modify column %s";
 
     private CoryDbProperties coryDbProperties;
     private CoryDb coryDb;
@@ -86,17 +96,12 @@ public class CoryDbChecker implements InitializingBean {
             if (!table.equals(dbTable)) {
                 same = false;
                 msgBuilder.append("table " + tableName + " does not match in db:\n");
-                List<Column> columnList = table.differentColumns(dbTable);
-                if (CollectionUtils.isNotEmpty(columnList)) {
-                    for (Column column : columnList) {
-                        if (CoryEnv.IS_DEV) {
-                            syncColumn(column);
-                        }
-                        if (CoryEnv.IS_PROD) {
-                            msgBuilder.append("\t" + column.buildDDL() + ",\n");
-                        }
-                    }
-                }
+
+                List<Column> addColumnList = table.differentColumns(dbTable, Table.COLUMN_TYPE.ADD);
+                List<Column> deleteColumnList = table.differentColumns(dbTable, Table.COLUMN_TYPE.DELETE);
+                List<Column> modifyColumnList = table.differentColumns(dbTable, Table.COLUMN_TYPE.MODIFY);
+
+                syncColumn(addColumnList, deleteColumnList, modifyColumnList, msgBuilder);
             }
         }
 
@@ -119,14 +124,43 @@ public class CoryDbChecker implements InitializingBean {
         }
     }
 
-    private void syncColumn(Column column) {
-        //alter table 表名 drop column 列名;
-        //alter table 表名 add column 列名 列的数据类型;
-        String sql = String.format("alter table %s drop column %s;", column.getTableName(), column.getName()) +
-                String.format("alter table %s add column %s;", column.getTableName(), column.buildDDL());
-        coryDb.executeSql(sql);
-
-        log.info("sync column " + column.getTableName() + "." + column.getName());
+    private void syncColumn(List<Column> addColumnList, List<Column> deleteColumnList, List<Column> modifyColumnList, StringBuilder msgBuilder) {
+        if (CollectionUtils.isNotEmpty(addColumnList)) {
+            for (Column column : addColumnList) {
+                if (CoryEnv.IS_DEV) {
+                    String sql = String.format(ADD_COLUMN_SQL, column.getTableName(), column.buildDDL());
+                    coryDb.executeSql(sql);
+                    log.info("add column " + column.getTableName() + "." + column.getName() + ": " + sql);
+                }
+                if (CoryEnv.IS_PROD) {
+                    msgBuilder.append("\tplease add column: " + column.buildDDL() + ",\n");
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(deleteColumnList)) {
+            for (Column column : deleteColumnList) {
+                if (CoryEnv.IS_DEV) {
+                    String sql = String.format(DROP_COLUMN_SQL, column.getTableName(), column.getName());
+                    coryDb.executeSql(sql);
+                    log.info("drop column " + column.getTableName() + "." + column.getName() + ": " + sql);
+                }
+                if (CoryEnv.IS_PROD) {
+                    msgBuilder.append("\tplease drop column: " + column.buildDDL() + ",\n");
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(modifyColumnList)) {
+            for (Column column : modifyColumnList) {
+                if (CoryEnv.IS_DEV) {
+                    String sql = String.format(MODIFY_COLUMN_SQL, column.getTableName(), column.buildDDL());
+                    coryDb.executeSql(sql);
+                    log.info("modify column " + column.getTableName() + "." + column.getName() + ": " + sql);
+                }
+                if (CoryEnv.IS_PROD) {
+                    msgBuilder.append("\tplease modify column: " + column.buildDDL() + ",\n");
+                }
+            }
+        }
     }
 
     private void createTable(Table table) {
@@ -157,9 +191,10 @@ public class CoryDbChecker implements InitializingBean {
 
         builder.append(String.format(CREATE_TABLE_FOOTER, table.getComment()));
 
-        coryDb.executeSql(builder.toString());
+        String sql = builder.toString();
+        coryDb.executeSql(sql);
 
-        log.info("create table " + table.getName());
+        log.info("create table " + table.getName() + ": " + sql);
     }
 
     private Map<String,Table> queryNowTables() {
@@ -179,7 +214,7 @@ public class CoryDbChecker implements InitializingBean {
                 continue;
             }
 
-            String tableName = model.table();
+            String tableName = CoryModelUtil.buildTableName((Class<? extends BaseModel>) cls);
 
             //for duplicate check
             Integer ct = tableDuplicateMap.get(tableName);
@@ -188,7 +223,7 @@ public class CoryDbChecker implements InitializingBean {
             }
             tableDuplicateMap.put(tableName, ct + 1);
 
-            java.lang.reflect.Field[] fields = cls.getFields();
+            java.lang.reflect.Field[] fields = cls.getDeclaredFields();
             if (null != fields || fields.length > 0) {
                 for (java.lang.reflect.Field javaField : fields) {
                     Field field = javaField.getAnnotation(Field.class);
@@ -196,11 +231,15 @@ public class CoryDbChecker implements InitializingBean {
                         continue;
                     }
 
-                    String columnName = field.name();
+                    String columnName = CoryModelUtil.buildColumnName(javaField.getName());
                     String columnDefault = field.defaultValue();
                     boolean nullable = field.nullable();
                     String columnType = field.type().buildDbType(field.len());
                     String columnComment = field.comment();
+
+                    if (StringUtils.isBlank(columnDefault)) {
+                        columnDefault = null;
+                    }
 
                     Table table = tableMap.get(tableName);
                     if (null == table) {
@@ -249,6 +288,11 @@ public class CoryDbChecker implements InitializingBean {
             String columnType = (String) map.get("COLUMN_TYPE");
             String columnComment = (String) map.get("COLUMN_COMMENT");
 
+            //跳过BaseModel的几个字段
+            if (isBaseModelColumn(columnName)) {
+                continue;
+            }
+
             Table table = tableMap.get(tableName);
             if (null == table) {
                 table = Table.builder().name(tableName).columnList(new ArrayList<>()).columnMap(new HashMap<>()).build();
@@ -260,4 +304,18 @@ public class CoryDbChecker implements InitializingBean {
         }
         return tableMap;
     }
+
+    private boolean isBaseModelColumn(String columnName) {
+        for (String baseModelColumn : BASE_MODEL_COLUMNS) {
+            baseModelColumn = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, baseModelColumn).toUpperCase();
+            //DB里的不要转换
+            columnName = columnName.toUpperCase();
+
+            if (baseModelColumn.equals(columnName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

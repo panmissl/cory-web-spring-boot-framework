@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
@@ -42,6 +43,13 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    public CsrfFilter csrfFilter(HttpSessionCsrfTokenRepository httpSessionCsrfTokenRepository, RequestMatcher requestMatcher) {
+        CsrfFilter filter = new CsrfFilter(httpSessionCsrfTokenRepository);
+        filter.setRequireCsrfProtectionMatcher(requestMatcher);
+        return filter;
+    }
+
+    @Bean
     public RequestMatcher requestMatcher() {
         return new PostRequestMatcher();
     }
@@ -69,7 +77,7 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
         converter.setFastJsonConfig(config);
 
-        converters.add(converter);
+        converters.add(0, converter);
     }
 
 }

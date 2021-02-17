@@ -3,7 +3,6 @@ package com.cory.web.interceptor;
 import com.cory.constant.Constants;
 import com.cory.constant.ErrorCode;
 import com.cory.context.GenericResult;
-import com.cory.exception.CoryException;
 import com.cory.util.DateUtils;
 import com.cory.util.encoder.Md5Encoder;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
@@ -13,12 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 
 @Slf4j
 @Component

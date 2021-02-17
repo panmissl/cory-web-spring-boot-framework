@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.cory.context.GenericResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -29,7 +30,10 @@ public class CsrfTokenGeneratorInterceptor implements HandlerInterceptor {
 			throws ServletException {
 		try {
 			if (isGenerateCsrfTokenUrl(request)) {
-				String token = httpSessionCsrfTokenRepository.generateToken(request).getToken();
+				CsrfToken csrfToken = httpSessionCsrfTokenRepository.generateToken(request);
+				httpSessionCsrfTokenRepository.saveToken(csrfToken, request, response);
+
+				String token = csrfToken.getToken();
 				response.getWriter().write(JSON.toJSONString(GenericResult.success(token)));
 				return false;
 			} else {

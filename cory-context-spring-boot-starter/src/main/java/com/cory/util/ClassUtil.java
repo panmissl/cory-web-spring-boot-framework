@@ -28,6 +28,19 @@ import java.util.jar.JarFile;
 @Slf4j
 public class ClassUtil {
 
+	public static boolean classHasAnnotationWithParent(Class cls, Class<? extends Annotation> annotation) {
+		if (cls.isAnnotationPresent(annotation)) {
+			return true;
+		}
+		Class parent = cls.getSuperclass();
+		while (null != parent && !parent.equals(Object.class)) {
+			if (parent.isAnnotationPresent(annotation)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * 解析对象属性
 	 * @param object 需要解析的对象

@@ -10,15 +10,15 @@ import lombok.Data;
  * Created by Cory on 2017/5/10.
  */
 @Data
-@Model(table = "base_system_config", name = "系统配置", module = "base")
+@Model(name = "系统配置", module = "base")
 public class SystemConfig extends BaseModel {
 
-    @Field(name = "code", type = CoryDbType.VARCHAR, label = "编码")
+    @Field(label = "编码", type = CoryDbType.VARCHAR, len = 50)
     private String code;
 
-    @Field(name = "val", type = CoryDbType.VARCHAR, label = "值")
+    @Field(label = "值", type = CoryDbType.VARCHAR, len = 1024)
     private String val;
 
-    @Field(name = "description", type = CoryDbType.VARCHAR, label = "描述")
+    @Field(label = "描述", type = CoryDbType.VARCHAR, len = 1024)
     private String description;
 }
