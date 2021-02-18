@@ -25,8 +25,6 @@
             window.isRoot = false;
             </#if>
 
-            window.loginPage = ${loginPage!"false"};
-            window.registerPage = ${registerPage!"false"};
             window.errorPage = ${errorPage!"false"};
             window.errorType = "${errorType!""}";
         </script>

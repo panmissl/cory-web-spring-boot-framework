@@ -27,6 +27,7 @@ public class LoginController extends BaseController {
     @Autowired
     private UserService userService;
 
+    /* 会访问到PortalController里的/**，不用单独定义
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("loginPage", "true");
@@ -38,6 +39,7 @@ public class LoginController extends BaseController {
         model.addAttribute("registerPage", "true");
         return "index";
     }
+    */
 
     @PostMapping("/doRegister")
     @ResponseBody
