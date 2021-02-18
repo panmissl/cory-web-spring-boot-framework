@@ -64,8 +64,6 @@ public class CoryDbChecker implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         //开发环境直接同步，线上环境报错提醒
 
-        checkDb();
-
         Map<String, Table> newTableMap = queryNowTables();
         if (MapUtils.isEmpty(newTableMap)) {
             log.info("no Model found, skip db check.");
@@ -84,12 +82,7 @@ public class CoryDbChecker implements InitializingBean {
             Table dbTable = dbTableMap.get(tableName);
             if (null == dbTable) {
                 same = false;
-                if (CoryEnv.IS_DEV) {
-                    createTable(table);
-                }
-                if (CoryEnv.IS_PROD) {
-                    msgBuilder.append("table " + tableName + " does not exist;\n");
-                }
+                createTableForDev(table, msgBuilder);
                 continue;
             }
 
@@ -110,17 +103,44 @@ public class CoryDbChecker implements InitializingBean {
         }
     }
 
-    private void checkDb() {
-        int count = coryDb.selectCount(CorySqlInfo.builder().sql("select count(*) from information_schema.SCHEMATA where schema_name = ?").params(Arrays.asList(database)).build());
-        if (count > 0) {
-            return;
+    private void createTableForDev(Table table, StringBuilder msgBuilder) {
+        /*
+        CREATE TABLE `base_resource` (
+            `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+            `creator` bigint(20) NOT NULL COMMENT '创建人',
+            `modifier` bigint(20) NOT NULL COMMENT '修改人',
+            `create_time` datetime NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '创建时间',
+            `modify_time` datetime NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '修改时间',
+            `is_deleted` SMALLINT(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
+
+            `value` varchar(200) NOT NULL COMMENT '资源值',
+            `type` varchar(50) NOT NULL COMMENT '资源类型',
+            `description` varchar(200) NOT NULL COMMENT '描述',
+            PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8 COMMENT='资源表';
+        */
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format(CREATE_TABLE_HEADER, table.getName()));
+        builder.append(BASE_COLUMNS_DDL);
+
+        for (Column column : table.getColumnList()) {
+            builder.append(column.buildDDL());
+            builder.append(",");
         }
+
+        builder.append(String.format(CREATE_TABLE_FOOTER, table.getComment()));
+
+        String sql = builder.toString();
+
         if (CoryEnv.IS_DEV) {
-            coryDb.executeSql("create database " + database);
-            log.info("create database " + database);
+            coryDb.executeSql(sql);
+            log.info("create table " + table.getName() + ": " + sql);
         }
         if (CoryEnv.IS_PROD) {
-            throw new CoryException(ErrorCode.DB_ERROR, "database " + database + " does not exist, please create it then restart");
+            msgBuilder.append("table " + table.getName() + " does not exist, please create using follow sql;\n");
+            msgBuilder.append(sql);
+            msgBuilder.append("\n");
         }
     }
 
@@ -161,40 +181,6 @@ public class CoryDbChecker implements InitializingBean {
                 }
             }
         }
-    }
-
-    private void createTable(Table table) {
-        /*
-        CREATE TABLE `base_resource` (
-            `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-            `creator` bigint(20) NOT NULL COMMENT '创建人',
-            `modifier` bigint(20) NOT NULL COMMENT '修改人',
-            `create_time` datetime NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '创建时间',
-            `modify_time` datetime NOT NULL DEFAULT '1970-01-01 00:00:00' COMMENT '修改时间',
-            `is_deleted` SMALLINT(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
-
-            `value` varchar(200) NOT NULL COMMENT '资源值',
-            `type` varchar(50) NOT NULL COMMENT '资源类型',
-            `description` varchar(200) NOT NULL COMMENT '描述',
-            PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8 COMMENT='资源表';
-        */
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format(CREATE_TABLE_HEADER, table.getName()));
-        builder.append(BASE_COLUMNS_DDL);
-
-        for (Column column : table.getColumnList()) {
-            builder.append(column.buildDDL());
-            builder.append(",");
-        }
-
-        builder.append(String.format(CREATE_TABLE_FOOTER, table.getComment()));
-
-        String sql = builder.toString();
-        coryDb.executeSql(sql);
-
-        log.info("create table " + table.getName() + ": " + sql);
     }
 
     private Map<String,Table> queryNowTables() {
