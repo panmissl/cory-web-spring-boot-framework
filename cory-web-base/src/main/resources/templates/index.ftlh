@@ -3,40 +3,43 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
         <script type="text/javascript" language="javascript">
             <#-- 一些从后台初始化的js数据可以放这里 -->
-            const domainName = "${domainName}";
-            const ctx = "${ctx}";
-            const ctxWithoutSlash = "${ctxWithoutSlash}";
-            const jsDir = "${jsDir}";
-            const cssDir = "${cssDir}";
-            const imageDir = "${imageDir}";
-
-            <#if currentUser??>
-            window.isAdmin = ${currentUser.isAdmin()};
-            window.isRoot = ${currentUser.isRoot()};
-            <#else>
-            window.isAdmin = false;
-            window.isRoot = false;
-            </#if>
+            window.domainName = '${domainName!""}';
+            window.ctx = '${ctx!""}';
+            window.ctxWithoutSlash = '${ctxWithoutSlash!""}';
+            window.jsDir = '${jsDir!""}';
+            window.cssDir = '${cssDir!""}';
+            window.imageDir = '${imageDir!""}';
+            window.jsFile = '${jsFile!""}';
+            window.cssFile = '${cssFile!""}';
 
             window.errorPage = ${errorPage!"false"};
-            window.errorType = "${errorType!""}";
+            window.errorType = '${errorType!""}';
+
+            window.routerBase = '${ctxWithoutSlash!""}' + "/";
+            window.publicPath = window.jsDir;
         </script>
 
         <title>${siteName}</title>
 
-        <link rel="shortcut icon" href="${ctx }favicon.ico" type="image/x-icon" />
-        <link rel="icon" href="${ctx }favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />
 
-        <script src="${jsDir}lib/plugins/select2/select2.full.min.js"></script>
+        <link rel="stylesheet" href="${cssDir!""}${cssFile!""}" />
     </head>
     <body>
-        <div>index page</div>
+        <noscript>请打开浏览器Script功能.</noscript>
+        <div id="root">
+            <div style="margin-top: 50px; text-align: center; line-height: 20px; height: 20px; font-size: 12px; vertical-align: middle;">
+                加载中...
+                <img src="${imageDir!""}loading.gif" />
+            </div>
+        </div>
+
+        <script src="${jsDir!""}${jsFile!""}"></script>
     </body>
 </html>

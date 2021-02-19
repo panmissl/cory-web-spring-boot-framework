@@ -35,33 +35,18 @@ public class ContextInterceptor implements HandlerInterceptor {
 		builder.domainName(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.DOMAIN_NAME));
 		builder.siteName(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE_NAME));
 		builder.siteSlogan(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE_SLOGAN));
-		builder.jsDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_DOMAIN_PORT) + contextPathWithoutPrefix + "/static/js/");
-		builder.cssDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.CSS_DOMAIN_PORT) + contextPathWithoutPrefix + "/static/css/");
-		builder.imageDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.IMAGE_DOMAIN_PORT) + contextPathWithoutPrefix + "/static/img/");
+
+		builder.jsDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_DIR));
+		builder.cssDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.CSS_DIR));
+		builder.imageDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.IMAGE_DIR));
+		builder.jsFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_FILE));
+		builder.cssFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.CSS_FILE));
 
 		String adminSkin = SystemConfigCacheUtil.getCache(SystemConfigCacheKey.ADMIN_SKIN);
 		if (StringUtils.isEmpty(adminSkin)) {
 			adminSkin = "blue";
 		}
 		builder.adminSkin(adminSkin);
-
-		//JS_CSS_MIN,平常用压缩资源,调试时用非压缩资源
-		String JS_CSS_MIN = "";
-		boolean debugMode = "true".equalsIgnoreCase(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.DEBUG));
-		if (!debugMode) {
-			String debug = request.getParameter(SystemConfigCacheKey.DEBUG);
-			boolean requestDebug = null != debug && 
-				("y".equals(debug) || "yes".equals(debug) ||
-				"t".equals(debug) || "true".equals(debug));
-			debugMode = requestDebug;
-		}
-		if (!debugMode) {
-			builder.debugMode(false);
-			JS_CSS_MIN = SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_CSS_MIN);
-		} else {
-			builder.debugMode(true);
-		}
-		builder.JS_CSS_MIN(JS_CSS_MIN);
 
 		CoryContext ctx = builder.build();
 		CoryContext.set(ctx);

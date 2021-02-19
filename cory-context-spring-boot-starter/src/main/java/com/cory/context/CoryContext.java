@@ -31,10 +31,11 @@ public class CoryContext implements Serializable {
     private String cssDir;
     private String imageDir;
 
-    private String adminSkin;
+    //只有一个js文件和一个css文件。文件名比如：umixxx.js, umixxx.css
+    private String jsFile;
+    private String cssFile;
 
-    private Boolean debugMode;
-    private String JS_CSS_MIN;
+    private String adminSkin;
 
     public static CoryContext get() {
         return THREAD_LOCAL.get();

@@ -2,19 +2,26 @@ package com.cory.web.controller.base;
 
 import com.cory.constant.ErrorCode;
 import com.cory.context.CurrentUser;
+import com.cory.model.base.Resource;
+import com.cory.model.base.Role;
+import com.cory.model.base.User;
 import com.cory.sevice.base.UserService;
 import com.cory.util.AssertUtils;
+import com.cory.vo.base.CurrentUserVO;
 import com.cory.web.captcha.CaptchaValidation;
 import com.cory.web.controller.BaseController;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Cory on 2017/5/13.
@@ -54,7 +61,42 @@ public class LoginController extends BaseController {
 
     @PostMapping("/currentUser")
     @ResponseBody
-    public CurrentUser currentUser() {
-        return CurrentUser.get();
+    public CurrentUserVO currentUser() {
+        CurrentUser currentUser = CurrentUser.get();
+        User user = userService.findByLogonId(currentUser.getPrincipal());
+        return convert2UserVO(user);
+    }
+
+    private CurrentUserVO convert2UserVO(User user) {
+        if (null == user) {
+            return CurrentUserVO.builder().build();
+        }
+
+        List<String> roles = new ArrayList<>();
+        Set<String> resources = new HashSet<>();
+
+        List<Role> rolesList = user.getRoles();
+        if (CollectionUtils.isNotEmpty(rolesList)) {
+            rolesList.forEach(role -> {
+                roles.add(role.getName());
+
+                List<Resource> resourceList = role.getResources();
+                if (CollectionUtils.isNotEmpty(resourceList)) {
+                    resourceList.forEach(r -> resources.add(r.getValue()));
+                }
+            });
+        }
+
+        return CurrentUserVO.builder()
+                .email(user.getEmail())
+                .level(user.getLevel())
+                .phone(user.getPhone())
+                .status(user.getStatus())
+                .thirdpartyId(user.getThirdpartyId())
+                .thirdpartyType(user.getThirdpartyType())
+                .type(user.getType())
+                .roles(roles)
+                .resources(resources)
+                .build();
     }
 }
