@@ -35,6 +35,9 @@ public class CoryContext implements Serializable {
     private String jsFile;
     private String cssFile;
 
+    //true/false
+    private String debugMode;
+
     private String adminSkin;
 
     public static CoryContext get() {

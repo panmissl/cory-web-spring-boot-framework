@@ -5,6 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta name="_csrf" content="">
+        <meta name="__form_token__" content="">
 
         <script type="text/javascript" language="javascript">
             <#-- 一些从后台初始化的js数据可以放这里 -->
@@ -15,11 +17,13 @@
             window.cssDir = '${cssDir!""}';
             window.imageDir = '${imageDir!""}';
             window.jsFile = '${jsFile!""}';
+
+            window.DEBUG_MODE = ${debugMode!"false"};
+
             window.cssFile = '${cssFile!""}';
-
             window.errorPage = ${errorPage!"false"};
-            window.errorType = '${errorType!""}';
 
+            window.errorType = '${errorType!""}';
             window.routerBase = '${ctxWithoutSlash!""}' + "/";
             window.publicPath = window.jsDir;
         </script>

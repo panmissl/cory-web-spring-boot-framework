@@ -84,6 +84,9 @@ public class UserService extends BaseService<User> {
 
     @Cacheable(value = CacheConstants.User, key = "'logonId-'.concat(#logonId)")
     public User findByLogonId(String logonId) {
+        if (StringUtils.isBlank(logonId)) {
+            return null;
+        }
         User user = userDao.findByLogonId(logonId);
         assembleRoles(user);
         return user;

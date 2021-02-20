@@ -1,6 +1,7 @@
 package com.cory.web.interceptor;
 
 import com.alibaba.fastjson.JSON;
+import com.cory.constant.Constants;
 import com.cory.context.GenericResult;
 import com.cory.web.config.Constant;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,7 @@ public class FormTokenInterceptor implements HandlerInterceptor {
 			} else if (isGenerateFormTokenUrl(request)) {
 				String token = UUID.randomUUID().toString();
 				session.setAttribute(Constant.FORM_TOKEN, token);
+				response.setContentType(Constants.DEFAULT_CONTENT_TYPE);
 				response.getWriter().write(JSON.toJSONString(GenericResult.success(token)));
 				return false;
 			} else {

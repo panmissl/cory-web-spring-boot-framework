@@ -23,6 +23,9 @@ public class SystemConfigCacheKey {
     /** umixxx.css */
     public static final String CSS_FILE = "css_file";
 
+    /** true/false */
+    public static final String DEBUG_MODE = "debug_mode";
+
     /** admin skin: blue/green/... */
     public static final String ADMIN_SKIN = "admin-skin";
     /** login skin: default/simple */

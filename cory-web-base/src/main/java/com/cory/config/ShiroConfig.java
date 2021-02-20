@@ -1,6 +1,7 @@
 package com.cory.config;
 
 import com.cory.constant.Constants;
+import com.cory.sevice.base.UserService;
 import com.cory.util.MapBuilder;
 import com.cory.web.security.*;
 import com.cory.web.util.PasswordEncoder;
@@ -71,11 +72,12 @@ public class ShiroConfig {
     }
 
     @Bean
-    public Realm realm(CredentialsMatcher credentialsMatcher, AntPermissionResolver antPermissionResolver) {
+    public Realm realm(CredentialsMatcher credentialsMatcher, AntPermissionResolver antPermissionResolver, UserService userService) {
         AuthorizingRealm realm = new AuthorizingRealm();
         realm.setPermissionResolver(antPermissionResolver);
         realm.setCredentialsMatcher(credentialsMatcher);
         realm.setAuthenticationCachingEnabled(true);
+        realm.setUserService(userService);
         return realm;
     }
 
@@ -96,6 +98,9 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/doRegister*", "anon");
         chainDefinition.addPathDefinition("/login*", "anon");
         chainDefinition.addPathDefinition("/error*", "anon");
+        chainDefinition.addPathDefinition("/currentUser", "anon");
+        chainDefinition.addPathDefinition("/generateCsrfToken", "anon");
+        chainDefinition.addPathDefinition("/generateFormToken", "anon");
 
         chainDefinition.addPathDefinition("/**", "user");
         return chainDefinition;

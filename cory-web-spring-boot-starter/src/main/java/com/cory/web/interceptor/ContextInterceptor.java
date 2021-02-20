@@ -42,6 +42,8 @@ public class ContextInterceptor implements HandlerInterceptor {
 		builder.jsFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_FILE));
 		builder.cssFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.CSS_FILE));
 
+		builder.debugMode(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.DEBUG_MODE));
+
 		String adminSkin = SystemConfigCacheUtil.getCache(SystemConfigCacheKey.ADMIN_SKIN);
 		if (StringUtils.isEmpty(adminSkin)) {
 			adminSkin = "blue";

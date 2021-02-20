@@ -65,6 +65,8 @@ public class Constants {
 
     public static final String SUCCESS = "success";
 
+    public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=" + UTF8;
+
     public static final String CURRENT_USER = "currentUser";
 
     /**

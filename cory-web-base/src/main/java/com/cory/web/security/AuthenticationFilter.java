@@ -219,6 +219,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 
 	private void writeResponse(ServletResponse response, GenericResult result) {
 		try {
+			response.setContentType(Constants.DEFAULT_CONTENT_TYPE);
 			PrintWriter writer = response.getWriter();
 			writer.write(JSON.toJSONString(result));
 			writer.flush();

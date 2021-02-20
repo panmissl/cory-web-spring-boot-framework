@@ -89,6 +89,7 @@ public class AccessTokenInterceptor implements HandlerInterceptor {
 
 	private void response401(HttpServletResponse response) {
 		try {
+			response.setContentType(Constants.DEFAULT_CONTENT_TYPE);
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			response.getWriter().write(GenericResult.fail(ErrorCode.AUTH_ERROR).toString());
 			response.getWriter().flush();

@@ -1,6 +1,7 @@
 package com.cory.web.interceptor;
 
 import com.alibaba.fastjson.JSON;
+import com.cory.constant.Constants;
 import com.cory.context.GenericResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -34,6 +35,7 @@ public class CsrfTokenGeneratorInterceptor implements HandlerInterceptor {
 				httpSessionCsrfTokenRepository.saveToken(csrfToken, request, response);
 
 				String token = csrfToken.getToken();
+				response.setContentType(Constants.DEFAULT_CONTENT_TYPE);
 				response.getWriter().write(JSON.toJSONString(GenericResult.success(token)));
 				return false;
 			} else {
