@@ -12,6 +12,7 @@ import com.cory.web.captcha.CaptchaValidation;
 import com.cory.web.controller.BaseController;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,8 +65,8 @@ public class LoginController extends BaseController {
     @ResponseBody
     public CurrentUserVO currentUser() {
         CurrentUser currentUser = CurrentUser.get();
-        if (null == currentUser) {
-            return CurrentUserVO.builder().build();
+        if (null == currentUser || StringUtils.isBlank(currentUser.getPrincipal())) {
+            return null;
         }
         User user = userService.findByLogonId(currentUser.getPrincipal());
         return convert2UserVO(user);
@@ -73,7 +74,7 @@ public class LoginController extends BaseController {
 
     private CurrentUserVO convert2UserVO(User user) {
         if (null == user) {
-            return CurrentUserVO.builder().build();
+            return null;
         }
 
         List<String> roles = new ArrayList<>();

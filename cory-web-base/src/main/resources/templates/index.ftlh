@@ -10,6 +10,7 @@
 
         <script type="text/javascript" language="javascript">
             <#-- 一些从后台初始化的js数据可以放这里 -->
+            window.siteName = '${siteName!""}';
             window.domainName = '${domainName!""}';
             window.ctx = '${ctx!""}';
             window.ctxWithoutSlash = '${ctxWithoutSlash!""}';
@@ -28,7 +29,7 @@
             window.publicPath = window.jsDir;
         </script>
 
-        <title>${siteName}</title>
+        <title>${siteName!""}</title>
 
         <link rel="shortcut icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />
         <link rel="icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />

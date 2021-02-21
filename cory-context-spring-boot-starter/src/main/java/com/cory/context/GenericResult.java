@@ -22,13 +22,13 @@ public class GenericResult implements Serializable {
     /**
      * success = true
      */
-    public GenericResult() {}
+    private GenericResult() {}
 
     /**
      * success = false;
      * @param exception
      */
-    public GenericResult(CoryException exception) {
+    private GenericResult(CoryException exception) {
         this.errorCode = exception.getErrorCode();
         this.errorMsg = exception.getMessage();
         this.success = false;
@@ -39,7 +39,7 @@ public class GenericResult implements Serializable {
      * @param errorCode
      * @param errorMsg
      */
-    public GenericResult(int errorCode, String errorMsg) {
+    private GenericResult(int errorCode, String errorMsg) {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
         this.success = false;
@@ -49,7 +49,7 @@ public class GenericResult implements Serializable {
      * success = false;
      * @param errorCode
      */
-    public GenericResult(ErrorCode errorCode) {
+    private GenericResult(ErrorCode errorCode) {
         this.errorCode = errorCode.getCode();
         this.errorMsg = errorCode.getMessage();
         this.success = false;

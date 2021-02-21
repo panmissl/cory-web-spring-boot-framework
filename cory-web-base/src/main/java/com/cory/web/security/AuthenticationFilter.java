@@ -130,7 +130,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		WebUtils.redirectToSavedRequest(req, res, successUrl);
 		*/
 		//不跳转、直接返回登录成功
-		writeResponse(response, new GenericResult());
+		writeResponse(response, GenericResult.success(true));
 	}
 
 	protected boolean isLoginRequest(ServletRequest req, ServletResponse resp) {
@@ -162,7 +162,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 
 		//return super.onLoginFailure(token, e, request, response);
 		//不跳转、直接返回登录失败
-		writeResponse(response, new GenericResult(ErrorCode.LOGIN_ERROR));
+		writeResponse(response, GenericResult.fail(ErrorCode.LOGIN_ERROR));
 		return false;
 	}
 
