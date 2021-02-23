@@ -3,13 +3,17 @@ package com.cory.web.security;
 import com.alibaba.fastjson.JSON;
 import com.cory.constant.Constants;
 import com.cory.constant.ErrorCode;
+import com.cory.context.CorySystemContext;
 import com.cory.context.CurrentUser;
 import com.cory.context.GenericResult;
+import com.cory.model.base.Resource;
+import com.cory.model.base.Role;
 import com.cory.model.base.User;
 import com.cory.sevice.base.UserService;
 import com.cory.web.captcha.CaptchaValidation;
 import com.cory.web.util.CookieUtils;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -28,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * AuthenticationFilter自定义登录认证filter
@@ -148,10 +153,54 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 
 		String principal = token.getPrincipal().toString();
 		User user = userService.findByLogonId(principal);
-		CurrentUser currentUser = new CurrentUser(user.getId(), principal, UserUtils.isAdmin(), UserUtils.isRoot());
+		CurrentUser currentUser = convert2UserVO(principal, user);
 		((HttpServletRequest) request).getSession(true).setAttribute(Constants.CURRENT_USER, currentUser);
 
 		return super.onLoginSuccess(token, subject, request, response);
+	}
+
+	private CurrentUser convert2UserVO(String principle, User user) {
+		List<String> roles = new ArrayList<>();
+		Set<String> resources = new HashSet<>();
+
+		List<Role> rolesList = user.getRoles();
+		List<CorySystemContext.ModelMeta> modelMetaList = new ArrayList<>();
+
+		Map<String, CorySystemContext.ModelMeta> map = CorySystemContext.get().getModelMetaMap();
+
+		if (CollectionUtils.isNotEmpty(rolesList)) {
+			rolesList.forEach(role -> {
+				roles.add(role.getName());
+
+				List<Resource> resourceList = role.getResources();
+				if (CollectionUtils.isNotEmpty(resourceList)) {
+					resourceList.forEach(r -> {
+						String val = r.getValue();
+						resources.add(val);
+						CorySystemContext.ModelMeta modelMeta = map.get(val);
+						if (null != modelMeta) {
+							modelMetaList.add(modelMeta);
+						}
+					});
+				}
+			});
+		}
+		return CurrentUser.builder()
+				.principal(principle)
+				.id(user.getId())
+				.email(user.getEmail())
+				.phone(user.getPhone())
+				.type(user.getType().name())
+				.level(user.getLevel().name())
+				.status(user.getStatus().name())
+				.thirdpartyId(user.getThirdpartyId())
+				.thirdpartyType(user.getThirdpartyType())
+				.isAdmin(UserUtils.isAdmin())
+				.isRoot(UserUtils.isRoot())
+				.roles(roles)
+				.resources(resources)
+				.modelMetaList(modelMetaList)
+				.build();
 	}
 
 	@Override

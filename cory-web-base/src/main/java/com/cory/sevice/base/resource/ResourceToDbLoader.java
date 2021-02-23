@@ -33,7 +33,7 @@ public class ResourceToDbLoader {
             if (null == resourceService.getByValue(url)) {
                 Resource r = new Resource();
                 r.setDescription(url);
-                r.setType(ResourceType.URL.name());
+                r.setType(ResourceType.URL);
                 r.setValue(url);
                 r.setCreator(1);
                 r.setModifier(1);

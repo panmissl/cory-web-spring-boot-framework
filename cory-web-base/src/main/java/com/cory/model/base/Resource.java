@@ -3,6 +3,7 @@ package com.cory.model.base;
 import com.cory.db.annotations.Field;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
+import com.cory.enums.base.ResourceType;
 import com.cory.model.BaseModel;
 import lombok.Data;
 
@@ -16,8 +17,8 @@ public class Resource extends BaseModel {
     @Field(label = "值", type = CoryDbType.VARCHAR, len = 200)
     private String value;
 
-    @Field(label = "类型", type = CoryDbType.VARCHAR, len = 50)
-    private String type;
+    @Field(label = "类型", type = CoryDbType.ENUM, len = 50)
+    private ResourceType type;
 
     @Field(label = "说明", type = CoryDbType.VARCHAR, len = 200)
     private String description;

@@ -13,7 +13,7 @@ import lombok.Data;
 @Model(name = "系统配置", module = "base")
 public class SystemConfig extends BaseModel {
 
-    @Field(label = "编码", type = CoryDbType.VARCHAR, len = 50)
+    @Field(label = "编码", type = CoryDbType.VARCHAR, len = 50, filtered = true)
     private String code;
 
     @Field(label = "值", type = CoryDbType.VARCHAR, len = 1024)

@@ -20,6 +20,8 @@ public enum  CoryDbType {
 
     DATETIME("datetime"),
 
+    ENUM("varchar(64)"),
+
     ;
 
     private String type;

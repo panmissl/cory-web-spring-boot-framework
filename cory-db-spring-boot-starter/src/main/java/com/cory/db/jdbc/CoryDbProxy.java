@@ -7,6 +7,7 @@ import com.cory.db.jdbc.CorySqlBuilder.CorySelectSqlBuilder;
 import com.cory.db.jdbc.CorySqlBuilder.CorySqlInfo;
 import com.cory.db.jdbc.mapper.ResultMapper;
 import com.cory.db.jdbc.mapper.ResultMapperFactory;
+import com.cory.enums.CoryEnum;
 import com.cory.exception.CoryException;
 import com.cory.model.BaseModel;
 import com.cory.page.Pagination;
@@ -90,7 +91,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
         CorySqlBuilder.CoryUpdateModelSqlBuilder builder = CorySqlBuilder.createUpdateModelBuilder(table);
         if (MapUtils.isNotEmpty(columns)) {
-            columns.entrySet().forEach(entry -> builder.column(entry.getKey(), entry.getValue()));
+            columns.entrySet().forEach(entry -> builder.column(entry.getKey(), toValue(entry.getValue())));
         }
         CorySqlBuilder.CorySqlInfo sqlInfo = builder.build();
 
@@ -116,7 +117,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
             if (null != model) {
                 Map<String, Object> columns = ClassUtil.fetchProperties(model, modelClass, Field.class);
                 if (MapUtils.isNotEmpty(columns)) {
-                    columns.entrySet().forEach(entry -> builder.column(entry.getKey(), entry.getValue()));
+                    columns.entrySet().forEach(entry -> builder.column(entry.getKey(), toValue(entry.getValue())));
                 }
             }
         }
@@ -201,7 +202,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
         CoryInsertSqlBuilder builder = CorySqlBuilder.createInsertBuilder(table);
         if (MapUtils.isNotEmpty(columns)) {
-            columns.entrySet().forEach(entry -> builder.column(entry.getKey(), entry.getValue()));
+            columns.entrySet().forEach(entry -> builder.column(entry.getKey(), toValue(entry.getValue())));
         }
 
         CorySqlBuilder.CorySqlInfo sqlInfo = builder.build();
@@ -239,9 +240,18 @@ public class CoryDbProxy<T> implements InvocationHandler {
             Param param = parameter.getAnnotation(Param.class);
             AssertUtils.notNull(param, "参数(" + parameter.getName() + ")必须写Param注解", ErrorCode.DB_ERROR);
 
-            paramMap.put(param.value(), args[i]);
+            paramMap.put(param.value(), toValue(args[i]));
         }
         return paramMap;
     }
 
+    private Object toValue(Object o) {
+        if (null == o) {
+            return o;
+        }
+        if (o instanceof CoryEnum) {
+            return ((CoryEnum)o).name();
+        }
+        return o;
+    }
 }

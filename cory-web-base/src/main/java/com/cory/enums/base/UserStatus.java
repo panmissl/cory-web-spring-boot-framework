@@ -1,13 +1,24 @@
 package com.cory.enums.base;
 
+import com.cory.enums.CoryEnum;
+
 /**
  * Created by Cory on 2017/5/20.
  */
-public enum UserStatus {
-    /** 正常 */
-    NORMAL,
-    /** 锁定 */
-    LOCKED,
-    /** 注销 */
-    CLOSED
+public enum UserStatus implements CoryEnum {
+    NORMAL("正常"),
+    LOCKED("锁定"),
+    CLOSED("注销"),
+    ;
+
+    private String text;
+
+    UserStatus(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String text() {
+        return text;
+    }
 }

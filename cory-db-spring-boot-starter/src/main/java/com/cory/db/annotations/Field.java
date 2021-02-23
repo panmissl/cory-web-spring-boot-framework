@@ -1,6 +1,7 @@
 package com.cory.db.annotations;
 
 import com.cory.db.enums.CoryDbType;
+import com.cory.db.enums.FilterType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -44,6 +45,42 @@ public @interface Field {
     boolean showable() default true;
 
     /**
+     * 是否可编辑。默认为true。比如一般status状态都不能编辑
+     * @return
+     */
+    boolean editable() default true;
+
+    /**
+     * 是否作为列表查询过滤字段，默认不是
+     * @return
+     */
+    boolean filtered() default false;
+
+    /**
+     * 过滤类型
+     * @return
+     */
+    FilterType filterType() default FilterType.TEXT;
+
+    /**
+     * 当过滤类型是REMOTE_SELECT时，select的url（相对URL，比如：/ajax/base/user/list）
+     * @return
+     */
+    String filterSelectUrl() default "";
+
+    /**
+     * 渲染字段：有一些字段渲染时不能直接渲染自己，要渲染加工过的数据，比如枚举类型。
+     * <br />
+     * 对于继承自BaseEnum的枚举类型、Date型、布尔型，如果指定了此值则用这个名称，否则用默认规则：字段名+Text，比如：showable -> showableText
+     * <br />
+     * 其他特殊的字段自己在fillOtherFields方法里设置
+     *
+     * @see com.cory.model.BaseModel#renderFields
+     * @return
+     */
+    String renderName() default "";
+
+    /**
      * 数据库长度，只对varchar生效，默认为254
      * @return
      */
@@ -66,5 +103,4 @@ public @interface Field {
      * @return
      */
     String comment() default "";
-
 }

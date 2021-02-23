@@ -104,12 +104,11 @@ public class DatadictService extends BaseService<DataDict> {
         if (null == model) {
             return;
         }
-        if (null == model.getType() || model.getType() == 0) {
-            model.setTypeDescription("ROOT(根类型)");
-        } else {
+        String typeDesc = "ROOT(根类型)";
+        if (null != model.getType() && model.getType() > 0) {
             DataDict type = this.getDao().get(model.getType());
-            model.setTypeDescription(type.getValue() + "(" + type.getDescription() + ")");
+            typeDesc = type.getValue() + "(" + type.getDescription() + ")";
         }
-        model.setShowableName(null != model.getShowable() && model.getShowable() ? "是" : "否");
+        model.getRenderFields().put("typeDesc", typeDesc);
     }
 }

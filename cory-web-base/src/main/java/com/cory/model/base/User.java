@@ -3,6 +3,7 @@ package com.cory.model.base;
 import com.cory.db.annotations.Field;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
+import com.cory.enums.base.UserLevel;
 import com.cory.enums.base.UserStatus;
 import com.cory.enums.base.UserType;
 import com.cory.model.BaseModel;
@@ -32,14 +33,14 @@ public class User extends BaseModel {
     @Field(label = "第三方账号类型", type = CoryDbType.VARCHAR, len = 100, nullable = true)
     private String thirdpartyType;
 
-    @Field(label = "类型", type = CoryDbType.VARCHAR, len = 50)
-    private String type;
+    @Field(label = "类型", type = CoryDbType.ENUM, len = 50)
+    private UserType type;
 
-    @Field(label = "状态", type = CoryDbType.VARCHAR, len = 50)
-    private String status;
+    @Field(label = "状态", type = CoryDbType.ENUM, len = 50)
+    private UserStatus status;
 
-    @Field(label = "级别", type = CoryDbType.VARCHAR, len = 50)
-    private String level;
+    @Field(label = "级别", type = CoryDbType.ENUM, len = 50)
+    private UserLevel level;
 
     @Field(label = "额外信息", type = CoryDbType.VARCHAR, showable = false, len = 20480, nullable = true)
     private String extraInfo;
@@ -47,16 +48,16 @@ public class User extends BaseModel {
     private List<Role> roles;
 
     public String getLogonId() {
-        if (UserType.QQ.name().equals(this.getType())
-                || UserType.WEIBO.name().equals(this.getType())
-                || UserType.WEIXIN.name().equals(this.getType())) {
+        if (UserType.QQ.equals(this.getType())
+                || UserType.WEIBO.equals(this.getType())
+                || UserType.WEIXIN.equals(this.getType())) {
             return thirdpartyId;
         }
         return phone;
     }
 
     public boolean isDisabled() {
-        if (UserStatus.NORMAL.name().equals(this.getStatus())) {
+        if (UserStatus.NORMAL.equals(this.getStatus())) {
             return false;
         } else {
             return true;

@@ -131,9 +131,9 @@ public class UserService extends BaseService<User> {
         User user = new User();
         user.setPhone(phone);
         user.setPassword(passwordEncoder.encode(password));
-        user.setLevel(UserLevel.NORMAL.name());
-        user.setStatus(UserStatus.NORMAL.name());
-        user.setType(UserType.SITE.name());
+        user.setLevel(UserLevel.NORMAL);
+        user.setStatus(UserStatus.NORMAL);
+        user.setType(UserType.SITE);
         user.setCreator(BaseConstants.ADMIN_ID);
         user.setModifier(BaseConstants.ADMIN_ID);
 
