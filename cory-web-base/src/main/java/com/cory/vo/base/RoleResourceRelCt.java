@@ -1,6 +1,6 @@
 package com.cory.vo.base;
 
-import com.cory.model.base.RoleResourceRel;
+import com.cory.model.RoleResourceRel;
 
 import java.io.Serializable;
 import java.util.List;

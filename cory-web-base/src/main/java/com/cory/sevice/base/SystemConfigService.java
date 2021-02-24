@@ -1,6 +1,6 @@
 package com.cory.sevice.base;
 
-import com.cory.constant.base.CacheConstants;
+import com.cory.constant.CacheConstants;
 import com.cory.dao.base.SystemConfigDao;
 import com.cory.model.base.SystemConfig;
 import com.cory.page.Pagination;

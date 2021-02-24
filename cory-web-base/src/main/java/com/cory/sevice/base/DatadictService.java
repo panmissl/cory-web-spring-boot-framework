@@ -1,7 +1,7 @@
 package com.cory.sevice.base;
 
 import com.cory.constant.ErrorCode;
-import com.cory.constant.base.CacheConstants;
+import com.cory.constant.CacheConstants;
 import com.cory.context.CurrentUser;
 import com.cory.dao.base.DatadictDao;
 import com.cory.exception.CoryException;

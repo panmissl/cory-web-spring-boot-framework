@@ -2,9 +2,11 @@ package com.cory.web.interceptor;
 
 import com.cory.constant.Constants;
 import com.cory.context.CoryContext;
+import com.cory.context.CorySystemContext;
 import com.cory.context.CurrentUser;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
+import com.cory.web.security.UserUtils;
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
@@ -13,6 +15,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Order(120)
@@ -64,6 +69,15 @@ public class ContextInterceptor implements HandlerInterceptor {
 		CurrentUser currentUser = (CurrentUser) request.getSession().getAttribute(Constants.CURRENT_USER);
 		if (null == currentUser) {
 			currentUser = new CurrentUser();
+		} else {
+			List<CorySystemContext.ModelMeta> modelMetaList = new ArrayList<>();
+			Map<String, CorySystemContext.ModelMeta> map = CorySystemContext.get().getModelMetaMap();
+			map.entrySet().forEach(entry -> {
+				if (UserUtils.canAccess(entry.getKey())) {
+					modelMetaList.add(entry.getValue());
+				}
+			});
+			currentUser.setModelMetaList(modelMetaList);
 		}
 		CurrentUser.set(currentUser);
 	}

@@ -1,7 +1,7 @@
 package com.cory.web.controller.base;
 
-import com.cory.model.base.Resource;
-import com.cory.sevice.base.ResourceService;
+import com.cory.model.Resource;
+import com.cory.service.ResourceService;
 import com.cory.web.controller.BaseAjaxController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

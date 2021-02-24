@@ -2,7 +2,7 @@ package com.cory.web.controller.base;
 
 import com.cory.constant.ErrorCode;
 import com.cory.context.CurrentUser;
-import com.cory.sevice.base.UserService;
+import com.cory.service.UserService;
 import com.cory.util.AssertUtils;
 import com.cory.web.captcha.CaptchaValidation;
 import com.cory.web.controller.BaseController;

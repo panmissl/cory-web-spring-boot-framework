@@ -1,10 +1,10 @@
 package com.cory.web.controller.base;
 
 import com.cory.context.CurrentUser;
-import com.cory.model.base.Role;
-import com.cory.model.base.RoleResourceRel;
-import com.cory.sevice.base.RoleResourceRelService;
-import com.cory.sevice.base.RoleService;
+import com.cory.model.Role;
+import com.cory.model.RoleResourceRel;
+import com.cory.service.RoleResourceRelService;
+import com.cory.service.RoleService;
 import com.cory.vo.base.RoleResourceRelCt;
 import com.cory.web.controller.BaseAjaxController;
 import com.cory.web.security.ShiroCacheUtils;
