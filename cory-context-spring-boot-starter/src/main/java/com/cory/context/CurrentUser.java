@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Cory on 2017/5/20.
@@ -29,18 +27,6 @@ public class CurrentUser implements Serializable {
     private String principal;
     private boolean isAdmin = false;
     private boolean isRoot = false;
-
-    private String phone;
-    private String email;
-    private String thirdpartyId;
-    private String thirdpartyType;
-    private String type;
-    private String status;
-    private String level;
-
-    private List<String> roles;
-    private Set<String> resources;
-    private List<CorySystemContext.ModelMeta> modelMetaList;
 
     public static CurrentUser get() {
         CurrentUser user = THREAD_LOCAL.get();

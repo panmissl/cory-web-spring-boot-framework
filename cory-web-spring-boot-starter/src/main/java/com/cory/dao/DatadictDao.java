@@ -1,11 +1,11 @@
-package com.cory.dao.base;
+package com.cory.dao;
 
 import com.cory.dao.BaseDao;
 import com.cory.db.annotations.Dao;
 import com.cory.db.annotations.Param;
 import com.cory.db.annotations.Select;
 import com.cory.db.annotations.Update;
-import com.cory.model.base.DataDict;
+import com.cory.model.DataDict;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.cory.vo.base;
+package com.cory.vo;
 
 import com.cory.model.RoleResourceRel;
 

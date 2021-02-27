@@ -1,8 +1,7 @@
-package com.cory.sevice.base;
+package com.cory.service;
 
-import com.cory.dao.base.FeedbackDao;
-import com.cory.model.base.Feedback;
-import com.cory.service.BaseService;
+import com.cory.dao.FeedbackDao;
+import com.cory.model.Feedback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;

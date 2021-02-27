@@ -1,7 +1,7 @@
 package com.cory.web.controller.base;
 
-import com.cory.model.base.SystemConfig;
-import com.cory.sevice.base.SystemConfigService;
+import com.cory.model.SystemConfig;
+import com.cory.service.SystemConfigService;
 import com.cory.web.controller.BaseAjaxController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

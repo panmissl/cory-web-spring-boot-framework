@@ -1,7 +1,7 @@
 package com.cory.web.controller.base;
 
-import com.cory.model.base.Feedback;
-import com.cory.sevice.base.FeedbackService;
+import com.cory.model.Feedback;
+import com.cory.service.FeedbackService;
 import com.cory.web.controller.BaseAjaxController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

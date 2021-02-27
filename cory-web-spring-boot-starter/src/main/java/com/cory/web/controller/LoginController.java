@@ -1,30 +1,31 @@
-package com.cory.web.controller.base;
+package com.cory.web.controller;
 
 import com.cory.constant.ErrorCode;
-import com.cory.context.CurrentUser;
+import com.cory.service.CurrentUserService;
 import com.cory.service.UserService;
 import com.cory.util.AssertUtils;
+import com.cory.vo.UserVO;
 import com.cory.web.captcha.CaptchaValidation;
-import com.cory.web.controller.BaseController;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by Cory on 2017/5/13.
  */
-@Controller
+@RestController
 public class LoginController extends BaseController {
 
     @Autowired
     private GenericManageableCaptchaService captchaService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CurrentUserService currentUserService;
 
     /* 会访问到PortalController里的/**，不用单独定义
     @GetMapping("/login")
@@ -41,7 +42,6 @@ public class LoginController extends BaseController {
     */
 
     @PostMapping("/doRegister")
-    @ResponseBody
     public boolean doRegister(HttpServletRequest request, String phone, String password, String passwordConfirm, String captcha) {
         //这里是验证手机验证码，不是普通验证码
         AssertUtils.isTrue(CaptchaValidation.valid(request, captchaService), "验证码输入错误", ErrorCode.LOGIN_ERROR);
@@ -52,9 +52,8 @@ public class LoginController extends BaseController {
     }
 
     @GetMapping("/currentUser")
-    @ResponseBody
-    public CurrentUser currentUser() {
-        return CurrentUser.get();
+    public UserVO currentUser() {
+        return currentUserService.getCurrentUserVO();
     }
 
 }

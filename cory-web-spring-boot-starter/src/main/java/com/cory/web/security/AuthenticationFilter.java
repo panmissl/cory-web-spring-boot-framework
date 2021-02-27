@@ -5,14 +5,11 @@ import com.cory.constant.Constants;
 import com.cory.constant.ErrorCode;
 import com.cory.context.CurrentUser;
 import com.cory.context.GenericResult;
-import com.cory.model.Resource;
-import com.cory.model.Role;
 import com.cory.model.User;
 import com.cory.service.UserService;
 import com.cory.web.captcha.CaptchaValidation;
 import com.cory.web.util.CookieUtils;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -31,10 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * AuthenticationFilter自定义登录认证filter
@@ -162,35 +155,11 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	}
 
 	private CurrentUser convert2UserVO(String principle, User user) {
-		List<String> roles = new ArrayList<>();
-		Set<String> resources = new HashSet<>();
-
-		List<Role> rolesList = user.getRoles();
-
-		if (CollectionUtils.isNotEmpty(rolesList)) {
-			rolesList.forEach(role -> {
-				roles.add(role.getName());
-
-				List<Resource> resourceList = role.getResources();
-				if (CollectionUtils.isNotEmpty(resourceList)) {
-					resourceList.forEach(r -> resources.add(r.getValue()));
-				}
-			});
-		}
 		return CurrentUser.builder()
 				.principal(principle)
 				.id(user.getId())
-				.email(user.getEmail())
-				.phone(user.getPhone())
-				.type(user.getType().name())
-				.level(user.getLevel().name())
-				.status(user.getStatus().name())
-				.thirdpartyId(user.getThirdpartyId())
-				.thirdpartyType(user.getThirdpartyType())
 				.isAdmin(UserUtils.isAdmin())
 				.isRoot(UserUtils.isRoot())
-				.roles(roles)
-				.resources(resources)
 				.build();
 	}
 

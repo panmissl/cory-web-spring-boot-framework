@@ -5,7 +5,7 @@ import com.cory.model.Role;
 import com.cory.model.RoleResourceRel;
 import com.cory.service.RoleResourceRelService;
 import com.cory.service.RoleService;
-import com.cory.vo.base.RoleResourceRelCt;
+import com.cory.vo.RoleResourceRelCt;
 import com.cory.web.controller.BaseAjaxController;
 import com.cory.web.security.ShiroCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;

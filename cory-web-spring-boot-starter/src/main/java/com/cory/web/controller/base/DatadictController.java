@@ -1,7 +1,7 @@
 package com.cory.web.controller.base;
 
-import com.cory.model.base.DataDict;
-import com.cory.sevice.base.DatadictService;
+import com.cory.model.DataDict;
+import com.cory.service.DatadictService;
 import com.cory.web.controller.BaseAjaxController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

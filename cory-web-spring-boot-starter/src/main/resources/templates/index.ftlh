@@ -18,15 +18,12 @@
             window.cssDir = '${cssDir!""}';
             window.imageDir = '${imageDir!""}';
             window.jsFile = '${jsFile!""}';
-
-            window.DEBUG_MODE = ${debugMode!"false"};
-
             window.cssFile = '${cssFile!""}';
             window.errorPage = ${errorPage!"false"};
-
             window.errorType = '${errorType!""}';
             window.routerBase = '${ctxWithoutSlash!""}' + "/";
             window.publicPath = window.jsDir;
+            window.DEBUG_MODE = ${debugMode!"false"};
         </script>
 
         <title>${siteName!""}</title>
@@ -37,6 +34,15 @@
         <link rel="stylesheet" href="${cssDir!""}${cssFile!""}" />
     </head>
     <body>
+        <#if user??>
+        <input type="hidden" id="current-user" value='${user}' />
+        <script type="text/javascript" language="javascript" id="current-user-script">
+            const userJson = document.getElementById('current-user').value;
+            window.USER = JSON.parse(userJson);
+            document.getElementById('current-user').remove();
+            document.getElementById('current-user-script').remove();
+        </script>
+        </#if>
         <noscript>请打开浏览器Script功能.</noscript>
         <div id="root">
             <div style="margin-top: 50px; text-align: center; line-height: 20px; height: 20px; font-size: 12px; vertical-align: middle;">

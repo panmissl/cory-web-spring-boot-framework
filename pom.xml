@@ -24,7 +24,6 @@
         <module>cory-cache-spring-boot-starter</module>
 		<module>cory-swagger-spring-boot-starter</module>
 		<module>cory-scheduler-spring-boot-starter</module>
-        <module>cory-web-base</module>
     </modules>
 
 	<properties>

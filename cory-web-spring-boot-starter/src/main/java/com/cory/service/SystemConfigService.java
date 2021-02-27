@@ -1,10 +1,9 @@
-package com.cory.sevice.base;
+package com.cory.service;
 
 import com.cory.constant.CacheConstants;
-import com.cory.dao.base.SystemConfigDao;
-import com.cory.model.base.SystemConfig;
+import com.cory.dao.SystemConfigDao;
+import com.cory.model.SystemConfig;
 import com.cory.page.Pagination;
-import com.cory.service.BaseService;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
