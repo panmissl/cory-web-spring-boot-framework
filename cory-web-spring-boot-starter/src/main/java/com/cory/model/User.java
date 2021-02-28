@@ -6,8 +6,11 @@ import com.cory.db.enums.CoryDbType;
 import com.cory.enums.UserLevel;
 import com.cory.enums.UserStatus;
 import com.cory.enums.UserType;
+import com.cory.validation.UpdateGroup;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -23,6 +26,7 @@ public class User extends BaseModel {
     @Field(label = "邮箱", type = CoryDbType.VARCHAR, len = 100, nullable = true)
     private String email;
 
+    @NotEmpty
     @Field(label = "密码", type = CoryDbType.VARCHAR, showable = false)
     private String password;
 
@@ -32,6 +36,7 @@ public class User extends BaseModel {
     @Field(label = "第三方账号类型", type = CoryDbType.VARCHAR, len = 100, nullable = true)
     private String thirdpartyType;
 
+    @NotNull
     @Field(label = "类型", type = CoryDbType.ENUM, len = 50)
     private UserType type;
 

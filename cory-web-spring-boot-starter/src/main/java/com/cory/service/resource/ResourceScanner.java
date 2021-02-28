@@ -4,10 +4,12 @@ import com.cory.context.CorySystemContext;
 import com.cory.context.CorySystemContext.FieldMeta;
 import com.cory.context.CorySystemContext.ModelMeta;
 import com.cory.db.annotations.Model;
+import com.cory.db.enums.CoryDbType;
 import com.cory.web.controller.BaseAjaxController;
 import com.cory.web.controller.BaseOpenApiController;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.util.AnnotatedTypeScanner;
@@ -91,10 +93,16 @@ public class ResourceScanner {
                     if (null == fieldAnno) {
                         continue;
                     }
+                    String renderName = fieldAnno.renderName();
+                    if (StringUtils.isBlank(renderName) && CoryDbType.ENUM.equals(fieldAnno.type())) {
+                        renderName = field.getName() + "Text";
+                    }
+
                     FieldMeta fieldMeta = FieldMeta.builder()
+                            .name(field.getName())
                             .type(fieldAnno.type().name())
                             .showable(fieldAnno.showable())
-                            .renderName(fieldAnno.renderName())
+                            .renderName(renderName)
                             .nullable(fieldAnno.nullable())
                             .len(fieldAnno.len())
                             .label(fieldAnno.label())
@@ -107,7 +115,16 @@ public class ResourceScanner {
                     fieldMetaList.add(fieldMeta);
                 }
             }
-            ModelMeta modelMeta = ModelMeta.builder().className(model.getName()).fieldList(fieldMetaList).module(anno.module()).name(anno.name()).pageUrl(url).build();
+            ModelMeta modelMeta = ModelMeta.builder()
+                    .className(model.getName())
+                    .fieldList(fieldMetaList)
+                    .module(anno.module())
+                    .name(anno.name())
+                    .createable(anno.createable())
+                    .updateable(anno.updateable())
+                    .deleteable(anno.deleteable())
+                    .pageUrl(url)
+                    .build();
             modelMetaSet.add(modelMeta);
             modelMetaMap.put(url, modelMeta);
 

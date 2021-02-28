@@ -25,4 +25,13 @@ public @interface Model {
      * @return
      */
     String module();
+
+    /** 是否可添加 */
+    boolean createable() default true;
+
+    /** 是否可修改 */
+    boolean updateable() default true;
+
+    /** 是否可删除 */
+    boolean deleteable() default true;
 }

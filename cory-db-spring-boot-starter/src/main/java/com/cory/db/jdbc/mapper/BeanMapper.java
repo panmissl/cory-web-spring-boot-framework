@@ -16,6 +16,7 @@ import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
@@ -61,9 +62,9 @@ public class BeanMapper extends SingleResultMapper {
 
         //"createTime", "modifyTime", "isDeleted" from Constants.BASE_MODEL_COLUMNS;
         BaseModel baseModel = (BaseModel) obj;
-        baseModel.getRenderFields().put("createTimeText", DateUtils.formatFull(baseModel.getCreateTime()));
-        baseModel.getRenderFields().put("modifyTimeText", DateUtils.formatFull(baseModel.getModifyTime()));
-        baseModel.getRenderFields().put("isDeletedText", null != baseModel.getIsDeleted() && baseModel.getIsDeleted() ? "已删除" : "未删除");
+        baseModel.getRenderFieldMap().put("createTimeText", DateUtils.formatFull(baseModel.getCreateTime()));
+        baseModel.getRenderFieldMap().put("modifyTimeText", DateUtils.formatFull(baseModel.getModifyTime()));
+        baseModel.getRenderFieldMap().put("isDeletedText", null != baseModel.getIsDeleted() && baseModel.getIsDeleted() ? "已删除" : "未删除");
 
         Field[] fields = obj.getClass().getDeclaredFields();
         if (null == fields || fields.length == 0) {
@@ -79,14 +80,14 @@ public class BeanMapper extends SingleResultMapper {
             }
 
             com.cory.db.annotations.Field fieldAnno = field.getAnnotation(com.cory.db.annotations.Field.class);
-            String renderName = null == fieldAnno ? name + TEXT : fieldAnno.renderName();
+            String renderName = null == fieldAnno || StringUtils.isBlank(fieldAnno.renderName()) ? name + TEXT : fieldAnno.renderName();
 
             if (field.getType().equals(Boolean.class)) {
-                baseModel.getRenderFields().put(renderName, (Boolean) value ? "是" : "否");
+                baseModel.getRenderFieldMap().put(renderName, (Boolean) value ? "是" : "否");
             } else if (CoryEnum.class.isAssignableFrom(field.getType())) {
-                baseModel.getRenderFields().put(renderName, ((CoryEnum) value).text());
+                baseModel.getRenderFieldMap().put(renderName, ((CoryEnum) value).text());
             } else if (Date.class.isAssignableFrom(field.getType())) {
-                baseModel.getRenderFields().put(renderName, DateUtils.formatFull((Date) value));
+                baseModel.getRenderFieldMap().put(renderName, DateUtils.formatFull((Date) value));
             }
         }
     }

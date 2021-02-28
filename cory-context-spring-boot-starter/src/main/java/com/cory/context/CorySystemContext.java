@@ -46,6 +46,9 @@ public class CorySystemContext implements Serializable {
         private String name;
         //页面的url，规则："/" + module + "/" + simpleClassName.toLowerCase -> /base/systemconfig
         private String pageUrl;
+        private boolean createable;
+        private boolean updateable;
+        private boolean deleteable;
         private List<FieldMeta> fieldList;
     }
 
@@ -55,6 +58,8 @@ public class CorySystemContext implements Serializable {
     @Data
     @Builder
     public static class FieldMeta implements Serializable {
+        // id, code, ...
+        private String name;
         private String label;
 
         //default TEXT

@@ -4,6 +4,7 @@ import com.cory.model.BaseModel;
 import com.cory.page.Pagination;
 import com.cory.service.BaseService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,7 @@ public abstract class BaseAjaxController<T extends BaseModel> extends BaseContro
     }
 
     @PostMapping(value="save")
-    public int save(T entity) {
+    public int save(@Validated T entity) {
         if (null != entity.getId() && entity.getId() > 0) {
             getService().update(entity);
         } else {

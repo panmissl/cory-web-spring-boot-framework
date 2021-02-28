@@ -1,5 +1,6 @@
 package com.cory.db.jdbc.mapper;
 
+import com.cory.model.BaseModel;
 import com.cory.util.ClassUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -39,6 +40,10 @@ public class ResultMapperFactory {
         }
         if (isTimestampType(returnType)) {
             return Pair.of(new TimestampMapper(), returnType);
+        }
+        //如果时BaseModel，直接用ModelClass
+        if (BaseModel.class.equals(returnType)) {
+            returnType = modelClass;
         }
         return Pair.of(new BeanMapper(), returnType);
     }

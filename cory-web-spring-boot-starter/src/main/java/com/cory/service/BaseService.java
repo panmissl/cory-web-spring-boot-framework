@@ -68,8 +68,12 @@ public abstract class BaseService<T extends BaseModel> {
         if (StringUtils.isBlank(sort)) {
             sort = "ID DESC";
         }
+        int pageNo = pagination.getPageNo();
+        int pageSize = pagination.getPageSize();
         pagination = getDao().pagination(model, (pagination.getPageNo() - 1) * pagination.getPageSize(), pagination.getPageSize(), sort);
         if (null != pagination) {
+            pagination.setPageNo(pageNo);
+            pagination.setPageSize(pageSize);
             fillOtherFields(pagination.getList());
         }
         return pagination;

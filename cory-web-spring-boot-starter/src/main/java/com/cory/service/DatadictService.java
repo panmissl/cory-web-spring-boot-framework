@@ -108,6 +108,6 @@ public class DatadictService extends BaseService<DataDict> {
             DataDict type = this.getDao().get(model.getType());
             typeDesc = type.getValue() + "(" + type.getDescription() + ")";
         }
-        model.getRenderFields().put("typeDesc", typeDesc);
+        model.getRenderFieldMap().put("typeDesc", typeDesc);
     }
 }

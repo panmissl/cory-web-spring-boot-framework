@@ -5,6 +5,7 @@ import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -14,9 +15,11 @@ import java.util.List;
 @Model(name = "角色", module = "base")
 public class Role extends BaseModel {
 
+    @NotEmpty
     @Field(label = "名称", type = CoryDbType.VARCHAR, len = 100)
     private String name;
 
+    @NotEmpty
     @Field(label = "说明", type = CoryDbType.VARCHAR, len = 200)
     private String description;
 

@@ -348,6 +348,7 @@ public class CorySqlBuilder {
     public static class CorySqlInfo implements Serializable {
 
         private String sql;
+        @Builder.Default
         private List<Object> params = new ArrayList<>();
 
         @Override
