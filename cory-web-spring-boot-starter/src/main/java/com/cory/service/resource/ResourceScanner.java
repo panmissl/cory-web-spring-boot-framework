@@ -101,6 +101,7 @@ public class ResourceScanner {
                     FieldMeta fieldMeta = FieldMeta.builder()
                             .name(field.getName())
                             .type(fieldAnno.type().name())
+                            .javaType(field.getType())
                             .showable(fieldAnno.showable())
                             .renderName(renderName)
                             .nullable(fieldAnno.nullable())

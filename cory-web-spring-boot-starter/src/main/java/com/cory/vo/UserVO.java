@@ -20,4 +20,5 @@ public class UserVO implements Serializable {
     private String avatar;
     private Set<String> resources;
     private List<CorySystemContext.ModelMeta> modelMetaList;
+    private Set<CorySystemContext.EnumMeta> enumMetaSet;
 }

@@ -49,7 +49,21 @@ public class CorySystemContext implements Serializable {
         private boolean createable;
         private boolean updateable;
         private boolean deleteable;
-        private List<FieldMeta> fieldList;
+        @Builder.Default
+        private List<FieldMeta> fieldList = new ArrayList<>();
+
+        @Override
+        public int hashCode() {
+            return className.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || !(o instanceof ModelMeta)) {
+                return false;
+            }
+            return className.equals(((ModelMeta)o).getClassName());
+        }
     }
 
     /**
@@ -65,6 +79,9 @@ public class CorySystemContext implements Serializable {
         //default TEXT
         //@see com.cory.db.enums.CoryDbType
         private String type;
+
+        //java field type
+        private Class<?> javaType;
 
         //default ""
         private String desc;
@@ -87,5 +104,40 @@ public class CorySystemContext implements Serializable {
         private int len;
         //default false
         private boolean nullable;
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || !(o instanceof FieldMeta)) {
+                return false;
+            }
+            return name.equals(((FieldMeta)o).getName());
+        }
+    }
+
+    @Data
+    @Builder
+    public static class EnumMeta implements Serializable {
+        private String className;
+        //[{value: label}]
+        @Builder.Default
+        private Map<String, String> valueLabelMap = new HashMap<>();
+
+        @Override
+        public int hashCode() {
+            return className.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || !(o instanceof EnumMeta)) {
+                return false;
+            }
+            return className.equals(((EnumMeta)o).getClassName());
+        }
     }
 }

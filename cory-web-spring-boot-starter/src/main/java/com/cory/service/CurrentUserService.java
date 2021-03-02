@@ -2,6 +2,7 @@ package com.cory.service;
 
 import com.cory.context.CorySystemContext;
 import com.cory.context.CurrentUser;
+import com.cory.enums.CoryEnum;
 import com.cory.model.Resource;
 import com.cory.model.Role;
 import com.cory.model.User;
@@ -11,6 +12,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -52,11 +54,37 @@ public class CurrentUserService {
             }
         });
 
+        Set<CorySystemContext.EnumMeta> enumMetaSet = new HashSet<>();
+        modelMetaList.forEach(modelMeta -> modelMeta.getFieldList().forEach(fieldMeta -> {
+            if (!CoryEnum.class.isAssignableFrom(fieldMeta.getJavaType())) {
+                return;
+            }
+            Object[] arr = fieldMeta.getJavaType().getEnumConstants();
+            Map<String, String> valueLabelMap = new HashMap<>();
+            if (null != arr && arr.length > 0) {
+                try {
+                    Method nameMethod = fieldMeta.getJavaType().getMethod("name");
+                    Method textMethod = fieldMeta.getJavaType().getMethod("text");
+                    for (Object o : arr) {
+                        String name = (String) nameMethod.invoke(o);
+                        String text = (String) textMethod.invoke(o);
+                        valueLabelMap.put(name, text);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+
+            enumMetaSet.add(CorySystemContext.EnumMeta.builder().className(fieldMeta.getJavaType().getName()).valueLabelMap(valueLabelMap).build());
+        }));
+
         return UserVO.builder()
                 .id(user.getId())
                 .logonId(user.getLogonId())
                 .avatar("https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png")
                 .modelMetaList(modelMetaList)
+                .enumMetaSet(enumMetaSet)
                 .resources(resources)
                 .build();
     }
