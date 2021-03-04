@@ -10,4 +10,7 @@ public interface CoryEnum {
 
     /** 在页面上显示的内容 */
     String text();
+
+    /** 排序：数字越小约在前 */
+    Integer order();
 }

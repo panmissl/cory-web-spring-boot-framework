@@ -9,6 +9,7 @@ import com.cory.model.User;
 import com.cory.vo.UserVO;
 import com.cory.web.security.UserUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,15 +61,17 @@ public class CurrentUserService {
                 return;
             }
             Object[] arr = fieldMeta.getJavaType().getEnumConstants();
-            Map<String, String> valueLabelMap = new HashMap<>();
+            Map<String, Pair<String, Integer>> valueLabelOrderMap = new HashMap<>();
             if (null != arr && arr.length > 0) {
                 try {
                     Method nameMethod = fieldMeta.getJavaType().getMethod("name");
                     Method textMethod = fieldMeta.getJavaType().getMethod("text");
+                    Method orderMethod = fieldMeta.getJavaType().getMethod("order");
                     for (Object o : arr) {
                         String name = (String) nameMethod.invoke(o);
                         String text = (String) textMethod.invoke(o);
-                        valueLabelMap.put(name, text);
+                        Integer order = (Integer) orderMethod.invoke(o);
+                        valueLabelOrderMap.put(name, Pair.of(text, order));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -76,7 +79,7 @@ public class CurrentUserService {
                 }
             }
 
-            enumMetaSet.add(CorySystemContext.EnumMeta.builder().className(fieldMeta.getJavaType().getName()).valueLabelMap(valueLabelMap).build());
+            enumMetaSet.add(CorySystemContext.EnumMeta.builder().className(fieldMeta.getJavaType().getName()).valueLabelOrderMap(valueLabelOrderMap).build());
         }));
 
         return UserVO.builder()

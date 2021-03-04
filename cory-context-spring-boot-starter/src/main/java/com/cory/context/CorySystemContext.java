@@ -4,6 +4,7 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 import com.cory.enums.CoryEnum;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 import java.util.*;
@@ -123,9 +124,9 @@ public class CorySystemContext implements Serializable {
     @Builder
     public static class EnumMeta implements Serializable {
         private String className;
-        //[{value: label}]
+        //[{value: {label: xx, order: 1}]
         @Builder.Default
-        private Map<String, String> valueLabelMap = new HashMap<>();
+        private Map<String, Pair<String, Integer>> valueLabelOrderMap = new HashMap<>();
 
         @Override
         public int hashCode() {
