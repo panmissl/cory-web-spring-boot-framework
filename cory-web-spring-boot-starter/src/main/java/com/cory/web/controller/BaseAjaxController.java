@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-//@RequestMapping("/ajax")
+//@RequestMapping("/ajax/")
 public abstract class BaseAjaxController<T extends BaseModel> extends BaseController {
 
     @GetMapping("listData")
