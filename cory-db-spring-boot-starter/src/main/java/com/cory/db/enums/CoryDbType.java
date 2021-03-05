@@ -18,6 +18,8 @@ public enum  CoryDbType {
     //SMALLINT
     BOOLEAN("smallint(1)"),
 
+    DATE("datetime"),
+
     DATETIME("datetime"),
 
     ENUM("varchar(64)"),
