@@ -94,7 +94,7 @@ public class ResourceScanner {
                         continue;
                     }
                     String renderName = fieldAnno.renderName();
-                    if (StringUtils.isBlank(renderName) && CoryDbType.ENUM.equals(fieldAnno.type())) {
+                    if (StringUtils.isBlank(renderName) && (CoryDbType.ENUM.equals(fieldAnno.type())) || CoryDbType.BOOLEAN.equals(fieldAnno.type()) || CoryDbType.DATETIME.equals(fieldAnno.type()) || CoryDbType.DATE.equals(fieldAnno.type())) {
                         renderName = field.getName() + "Text";
                     }
 
