@@ -7,4 +7,6 @@ DB:
     # 不支持mybatis的${}，后续有需要再支持
 
 
+对日期类型的字段，已经做特殊处理：页面过滤时会自动增加xxStart和xxEnd字段。sql里也将条件加上了。规则为：start是inclusion，end是exclution。最终会加成这样的效果：createTime >= #{createTimeStart} and createTime < #{createTimeEnd}
+
 mvn -DskipTests=true -Dmaven.skip.test=true source:jar install

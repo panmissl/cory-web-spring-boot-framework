@@ -3,6 +3,7 @@ package com.cory.db.jdbc;
 import com.alibaba.fastjson.JSON;
 import com.cory.constant.ErrorCode;
 import com.cory.exception.CoryException;
+import com.cory.model.BaseModel;
 import com.cory.util.AssertUtils;
 import com.cory.util.MapBuilder;
 import com.cory.util.OgnlUtil;
@@ -12,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -562,6 +564,39 @@ public class CorySqlBuilder {
                     params.add(cv.getParam());
                 });
             }
+
+            //处理特殊过滤字段：model.getFilterFieldMap()
+            if (MapUtils.isNotEmpty(ognlParamMap)) {
+                ognlParamMap.entrySet().forEach(entry -> {
+                    Object value = entry.getValue();
+                    if (!(value instanceof BaseModel)) {
+                        return;
+                    }
+                    BaseModel model = (BaseModel) value;
+                    if (MapUtils.isEmpty(model.getFilterFieldMap())) {
+                        return;
+                    }
+                    model.getFilterFieldMap().entrySet().forEach(filter -> {
+                        if (null == filter.getValue()) {
+                            return;
+                        }
+                        //createTimeStart >= ? AND createTimeEnd < ?
+                        String key = filter.getKey();
+                        if (key.endsWith("Start")) {
+                            String columnField = key.substring(0, key.length() - "Start".length());
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+                            whereSql.append(" AND " + columnName + " >= " + QUESTION_MARK);
+                            params.add(filter.getValue());
+                        } else if (key.endsWith("End")) {
+                            String columnField = key.substring(0, key.length() - "End".length());
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+                            whereSql.append(" AND " + columnName + " < " + QUESTION_MARK);
+                            params.add(filter.getValue());
+                        }
+                    });
+                });
+            }
+
             return CorySqlInfo.builder().sql(whereSql.toString()).params(params).build();
         }
 

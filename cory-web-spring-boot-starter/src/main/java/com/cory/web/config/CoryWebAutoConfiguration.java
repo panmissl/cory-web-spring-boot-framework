@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -30,6 +31,7 @@ import java.util.List;
 @Configuration
 @EnableConfigurationProperties(CoryWebProperties.class)
 @EnableRedisHttpSession
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class CoryWebAutoConfiguration implements WebMvcConfigurer {
 
     @Autowired
