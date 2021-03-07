@@ -10,6 +10,8 @@ import com.cory.web.security.ShiroCacheUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -33,13 +35,13 @@ public class UserController extends BaseAjaxController<User> {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(@PathVariable int id) {
         boolean r= super.delete(id);
         ShiroCacheUtils.clearAllCache();
         return r;
     }
 
-    @RequestMapping("doAssign")
+    @PostMapping("doAssign")
     public boolean doAssign(UserRoleRel userRoleRel) {
         userRoleRel.setCreator(CurrentUser.get().getId());
         userRoleRel.setModifier(CurrentUser.get().getId());
@@ -54,14 +56,14 @@ public class UserController extends BaseAjaxController<User> {
      * @param newPassword
      * @return
      */
-    @RequestMapping("changePasswordDirectly")
+    @PostMapping("changePasswordDirectly")
     public boolean changePassword(Integer userId, String newPassword) {
         this.getService().changePasswordDirectly(userId, newPassword);
         ShiroCacheUtils.clearCache(SecurityUtils.getSubject().getPrincipal().toString());
         return true;
     }
 
-    @RequestMapping(value = "changePassword", method = RequestMethod.POST)
+    @PostMapping("changePassword")
     public boolean changePassword2(String password, String newPassword, String passwordConfirm) {
         this.getService().checkAndChangePassword(password, newPassword, passwordConfirm);
         ShiroCacheUtils.clearCache(SecurityUtils.getSubject().getPrincipal().toString());

@@ -11,6 +11,8 @@ import com.cory.web.security.ShiroCacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -28,13 +30,13 @@ public class RoleController extends BaseAjaxController<Role> {
     private RoleResourceRelService roleResourceRelService;
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(@PathVariable int id) {
         boolean r = super.delete(id);
         ShiroCacheUtils.clearAllCache();
         return r;
     }
 
-    @RequestMapping("doAssign")
+    @PostMapping("doAssign")
     public boolean doAssign(RoleResourceRelCt roleResourceRelCt) {
         List<RoleResourceRel> roleResourceRelList = roleResourceRelCt.getRoleResourceRelList();
         if (!CollectionUtils.isEmpty(roleResourceRelList)) {

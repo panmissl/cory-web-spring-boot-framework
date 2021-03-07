@@ -27,13 +27,13 @@ public class User extends BaseModel {
     private String email;
 
     @NotEmpty
-    @Field(label = "密码", type = CoryDbType.VARCHAR, showable = false)
+    @Field(label = "密码", type = CoryDbType.VARCHAR, desc = "(不会自动加密，请填写加密后的密码)[可以使用默认密码：123456，对应的加密密码为：__MTIzNDU2IUAwIyQxJV4yKigp__添加后再修改用户密码即可]")
     private String password;
 
-    @Field(label = "第三方账号ID", type = CoryDbType.VARCHAR, len = 200, nullable = true)
+    @Field(label = "第三方账号ID", type = CoryDbType.VARCHAR, len = 200, nullable = true, desc = "没有可以留空")
     private String thirdpartyId;
 
-    @Field(label = "第三方账号类型", type = CoryDbType.VARCHAR, len = 100, nullable = true)
+    @Field(label = "第三方账号类型", type = CoryDbType.VARCHAR, len = 100, nullable = true, desc = "没有可以留空")
     private String thirdpartyType;
 
     @NotNull
