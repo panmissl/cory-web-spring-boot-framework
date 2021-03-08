@@ -20,6 +20,9 @@ public class BindingInitializer extends ConfigurableWebBindingInitializer {
 	public void initBinder(WebDataBinder webDataBinder) {
 		super.initBinder(webDataBinder);
 
+		webDataBinder.setAutoGrowNestedPaths(true);
+		webDataBinder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
+
 		webDataBinder.registerCustomEditor(Date.class, new DateTypeEditor());
 		webDataBinder.registerCustomEditor(Timestamp.class, new TimestampTypeEditor());
 	}
