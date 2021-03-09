@@ -2,6 +2,7 @@ package com.cory.db.jdbc;
 
 import com.cory.constant.ErrorCode;
 import com.cory.db.annotations.*;
+import com.cory.db.enums.CustomSqlType;
 import com.cory.db.jdbc.CorySqlBuilder.CoryInsertSqlBuilder;
 import com.cory.db.jdbc.CorySqlBuilder.CorySelectSqlBuilder;
 import com.cory.db.jdbc.CorySqlBuilder.CorySqlInfo;
@@ -31,7 +32,7 @@ import java.util.Map;
 @Slf4j
 public class CoryDbProxy<T> implements InvocationHandler {
 
-    private static final String DAO_MISSING_ANNOTATION_MSG = "Dao方法上，注解Insert、Update、Delete、Select、UpdateModel必须有且仅有一个";
+    private static final String DAO_MISSING_ANNOTATION_MSG = "Dao方法上，注解Insert、Update、Delete、Select、UpdateModel、Sql必须有且仅有一个";
 
     private static final String CODE = "code";
     private static final String GET_BY_CODE = "getByCode";
@@ -65,8 +66,9 @@ public class CoryDbProxy<T> implements InvocationHandler {
         Delete delete = method.getAnnotation(Delete.class);
         Select select = method.getAnnotation(Select.class);
         UpdateModel updateModel = method.getAnnotation(UpdateModel.class);
+        Sql sql = method.getAnnotation(Sql.class);
 
-        int opCount = (null == insert ? 0 : 1) + (null == update ? 0 : 1) + (null == delete ? 0 : 1) + (null == select ? 0 : 1) + (null == updateModel ? 0 : 1);
+        int opCount = (null == insert ? 0 : 1) + (null == update ? 0 : 1) + (null == delete ? 0 : 1) + (null == select ? 0 : 1) + (null == updateModel ? 0 : 1) + (null == sql ? 0 : 1);
         AssertUtils.isTrue(opCount == 1, DAO_MISSING_ANNOTATION_MSG, ErrorCode.DB_ERROR);
 
         if (null != insert) {
@@ -79,8 +81,34 @@ public class CoryDbProxy<T> implements InvocationHandler {
             return select(method, args, select);
         } else if (null != updateModel) {
             return updateModel(method, args, updateModel);
+        } else if (null != sql) {
+            return executeCustomSql(method, args, sql);
         }
         throw new CoryException(ErrorCode.DB_ERROR, DAO_MISSING_ANNOTATION_MSG);
+    }
+
+    private Object executeCustomSql(Method method, Object[] args, Sql sql) {
+        AssertUtils.isTrue(null != args && args.length == 1 && args[0].getClass().equals(String.class), "Sql时有且只能有一个类型是String的参数", ErrorCode.DB_ERROR);
+
+        String sqlValue = (String) args[0];
+
+        if (logEnable) {
+            log.info("type: {}, sql: {}", sql.type().name(), sqlValue);
+        }
+
+        if (CustomSqlType.DDL.equals(sql.type())) {
+            AssertUtils.isTrue(method.getReturnType().equals(Void.TYPE), "DDL Sql返回值类型必须是void", ErrorCode.DB_ERROR);
+            coryDb.executeSql(sqlValue);
+            return Void.TYPE;
+        } else if (CustomSqlType.EXECUTE.equals(sql.type())) {
+            AssertUtils.isTrue(method.getReturnType().equals(Integer.TYPE), "Sql时返回值类型必须是int", ErrorCode.DB_ERROR);
+            return coryDb.update(sqlValue);
+        } else if (CustomSqlType.QUERY.equals(sql.type())) {
+            AssertUtils.isTrue(method.getReturnType().equals(List.class), "Sql时返回值类型必须是List<Map<String, Object>>", ErrorCode.DB_ERROR);
+            return coryDb.query(sqlValue);
+        } else {
+            throw new CoryException(ErrorCode.DB_ERROR, "sql类型错误!");
+        }
     }
 
     private int updateModel(Method method, Object[] args, UpdateModel updateModel) {

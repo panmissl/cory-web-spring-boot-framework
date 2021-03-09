@@ -66,7 +66,29 @@ public class CoryDb {
         return null == params ? new Object[0] : params.toArray(new Object[params.size()]);
     }
 
+    /**
+     * 执行一条DDL sql
+     * @param sql
+     */
     public void executeSql(String sql) {
         jdbcTemplate.execute(sql);
+    }
+
+    /**
+     * 执行一条insert、update或delete sql
+     * @param sql
+     * @return
+     */
+    public int update(String sql) {
+        return jdbcTemplate.update(sql);
+    }
+
+    /**
+     * 执行一条查询sql，返回通用类型
+     * @param sql
+     * @return
+     */
+    public List<Map<String, Object>> query(String sql) {
+        return jdbcTemplate.queryForList(sql);
     }
 }
