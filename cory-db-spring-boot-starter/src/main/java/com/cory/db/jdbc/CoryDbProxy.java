@@ -42,6 +42,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
     private Class<T> daoClass;
     private Class<? extends BaseModel> modelClass;
     private String table;
+    private boolean noTable;
     private boolean logEnable;
 
     public CoryDbProxy(Class<T> daoClass, CoryDb coryDb, boolean logEnable) {
@@ -51,6 +52,9 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
         Dao dao = daoClass.getAnnotation(Dao.class);
         this.modelClass = dao.model();
+
+        Model model = modelClass.getAnnotation(Model.class);
+        noTable = null == model ? false : model.noTable();
 
         this.table = CoryModelUtil.buildTableName(modelClass);
     }
@@ -70,6 +74,10 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
         int opCount = (null == insert ? 0 : 1) + (null == update ? 0 : 1) + (null == delete ? 0 : 1) + (null == select ? 0 : 1) + (null == updateModel ? 0 : 1) + (null == sql ? 0 : 1);
         AssertUtils.isTrue(opCount == 1, DAO_MISSING_ANNOTATION_MSG, ErrorCode.DB_ERROR);
+
+        if (noTable && null == sql) {
+            AssertUtils.isTrue(false, "noTable时只能有用Sql注解的方法.", ErrorCode.DB_ERROR);
+        }
 
         if (null != insert) {
             return insert(method, args, insert);

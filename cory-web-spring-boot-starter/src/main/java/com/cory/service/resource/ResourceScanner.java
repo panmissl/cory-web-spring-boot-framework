@@ -85,52 +85,64 @@ public class ResourceScanner {
             Model anno = model.getAnnotation(Model.class);
             String url = SLASH + anno.module() + SLASH + model.getSimpleName().toLowerCase();
 
-            List<FieldMeta> fieldMetaList = new ArrayList<>();
-            Field[] fields = model.getDeclaredFields();
-            if (null != fields && fields.length > 0) {
-                for (Field field : fields) {
-                    com.cory.db.annotations.Field fieldAnno = field.getAnnotation(com.cory.db.annotations.Field.class);
-                    if (null == fieldAnno) {
-                        continue;
-                    }
-                    String renderName = fieldAnno.renderName();
-                    if (StringUtils.isBlank(renderName) && (CoryDbType.ENUM.equals(fieldAnno.type())) || CoryDbType.BOOLEAN.equals(fieldAnno.type()) || CoryDbType.DATETIME.equals(fieldAnno.type()) || CoryDbType.DATE.equals(fieldAnno.type())) {
-                        renderName = field.getName() + "Text";
-                    }
+            log.info("scan model: {}", model.getName());
 
-                    FieldMeta fieldMeta = FieldMeta.builder()
-                            .name(field.getName())
-                            .type(fieldAnno.type().name())
-                            .javaType(field.getType())
-                            .showable(fieldAnno.showable())
-                            .renderName(renderName)
-                            .nullable(fieldAnno.nullable())
-                            .len(fieldAnno.len())
-                            .label(fieldAnno.label())
-                            .filterType(fieldAnno.filterType().name())
-                            .filterSelectUrl(fieldAnno.filterSelectUrl())
-                            .filtered(fieldAnno.filtered())
-                            .editable(fieldAnno.editable())
-                            .desc(fieldAnno.desc())
-                            .build();
-                    fieldMetaList.add(fieldMeta);
+            if (!anno.noTable()) {
+                List<FieldMeta> fieldMetaList = new ArrayList<>();
+                Field[] fields = model.getDeclaredFields();
+                if (null != fields && fields.length > 0) {
+                    for (Field field : fields) {
+                        com.cory.db.annotations.Field fieldAnno = field.getAnnotation(com.cory.db.annotations.Field.class);
+                        if (null == fieldAnno) {
+                            continue;
+                        }
+                        String renderName = fieldAnno.renderName();
+                        if (StringUtils.isBlank(renderName) && (CoryDbType.ENUM.equals(fieldAnno.type())) || CoryDbType.BOOLEAN.equals(fieldAnno.type()) || CoryDbType.DATETIME.equals(fieldAnno.type()) || CoryDbType.DATE.equals(fieldAnno.type())) {
+                            renderName = field.getName() + "Text";
+                        }
+
+                        FieldMeta fieldMeta = FieldMeta.builder()
+                                .name(field.getName())
+                                .type(fieldAnno.type().name())
+                                .javaType(field.getType())
+                                .showable(fieldAnno.showable())
+                                .renderName(renderName)
+                                .nullable(fieldAnno.nullable())
+                                .len(fieldAnno.len())
+                                .label(fieldAnno.label())
+                                .filterType(fieldAnno.filterType().name())
+                                .filterSelectUrl(fieldAnno.filterSelectUrl())
+                                .filtered(fieldAnno.filtered())
+                                .editable(fieldAnno.editable())
+                                .desc(fieldAnno.desc())
+                                .build();
+                        fieldMetaList.add(fieldMeta);
+                    }
                 }
+                ModelMeta modelMeta = ModelMeta.builder()
+                        .className(model.getName())
+                        .fieldList(fieldMetaList)
+                        .module(anno.module())
+                        .name(anno.name())
+                        .createable(anno.createable())
+                        .updateable(anno.updateable())
+                        .deleteable(anno.deleteable())
+                        .pageUrl(url)
+                        .build();
+                modelMetaSet.add(modelMeta);
+                modelMetaMap.put(url, modelMeta);
             }
-            ModelMeta modelMeta = ModelMeta.builder()
-                    .className(model.getName())
-                    .fieldList(fieldMetaList)
-                    .module(anno.module())
-                    .name(anno.name())
-                    .createable(anno.createable())
-                    .updateable(anno.updateable())
-                    .deleteable(anno.deleteable())
-                    .pageUrl(url)
-                    .build();
-            modelMetaSet.add(modelMeta);
-            modelMetaMap.put(url, modelMeta);
 
             return url;
         }).collect(Collectors.toSet());
+
+        Set<String> additional = new HashSet<>();
+        urls.forEach(u -> {
+            if (!u.contains("*")) {
+                additional.add(u + "**");
+            }
+        });
+        urls.addAll(additional);
 
         resourceToDbLoader.loadToDb(urls);
 
@@ -145,6 +157,9 @@ public class ResourceScanner {
         }
         boolean isAjax = BaseAjaxController.class.isAssignableFrom(cls);
         String clsRequestMapping = getClassLevelRequestMapping(cls);
+
+        log.info("san controller: {}", cls.getName());
+
         return resourceToDbLoader.loadToDb(scanClass(isAjax, cls, clsRequestMapping));
     }
 

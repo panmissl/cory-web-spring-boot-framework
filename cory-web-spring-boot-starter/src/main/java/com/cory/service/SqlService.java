@@ -1,6 +1,6 @@
 package com.cory.service;
 
-import com.cory.dao.FeedbackDao;
+import com.cory.dao.SqlDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -21,19 +21,19 @@ import java.util.function.Consumer;
 public class SqlService {
 
     @Autowired
-    private FeedbackDao feedbackDao;
+    private SqlDao sqlDao;
 
     public boolean customDDLSql(String sql) {
-        batchExecute(sql, s -> feedbackDao.customDDLSql(s));
+        batchExecute(sql, s -> sqlDao.customDDLSql(s));
         return true;
     }
 
     public int customExecuteSql(String sql) {
-        return batchExecute(sql, s -> feedbackDao.customExecuteSql(s));
+        return batchExecute(sql, s -> sqlDao.customExecuteSql(s));
     }
 
     public List<Map<String, Object>> customQuerySql(String sql) {
-        return feedbackDao.customQuerySql(sql);
+        return sqlDao.customQuerySql(sql);
     }
 
     private int batchExecute(String sqlListStr, Consumer<String> consumer) {

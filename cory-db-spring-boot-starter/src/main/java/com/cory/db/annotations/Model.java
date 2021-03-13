@@ -34,4 +34,7 @@ public @interface Model {
 
     /** 是否可删除 */
     boolean deleteable() default true;
+
+    /** 是否不建表：仅解析DAO里面的方法，且每个方法都只能有 {@link Sql} 的注解，不能有其他的 */
+    boolean noTable() default false;
 }
