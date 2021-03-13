@@ -4,7 +4,7 @@
     <springProperty scope="context" name="LOGGING_FILE_PATH" source="logging.file.path" defaultValue="./logs" />
     <springProperty scope="context" name="LOG_FILE_NAME" source="logging.file.name" defaultValue="cory" />
 
-    <property name="COMMON_PATTERN" value="[%d{'MM-dd HH:mm:ss,SSS',GMT+8:00}] %-5p [%.10t][%X{CU}] %logger{36}{%L} - %m%n" />
+    <property name="COMMON_PATTERN" value="[eagleEyeId: %X{EAGLE_EYE_ID}] - [%d{'MM-dd HH:mm:ss,SSS',GMT+8:00}] %-5p [%.10t][%X{CU}] %logger{36}{%L} - %m%n" />
     <property name="LOG_CHARSET" value="UTF-8" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

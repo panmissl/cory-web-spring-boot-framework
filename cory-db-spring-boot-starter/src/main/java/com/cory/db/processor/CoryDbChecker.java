@@ -196,7 +196,7 @@ public class CoryDbChecker implements InitializingBean {
 
         for (Class<?> cls : set) {
             Model model = cls.getAnnotation(Model.class);
-            if (null == model) {
+            if (null == model || model.noTable()) {
                 continue;
             }
 

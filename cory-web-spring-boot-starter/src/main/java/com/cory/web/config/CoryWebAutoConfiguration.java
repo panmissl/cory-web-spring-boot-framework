@@ -4,14 +4,17 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.cory.constant.Constants;
+import com.cory.web.eagleeye.EagleEyeFilter;
 import com.cory.web.interceptor.AccessTokenInterceptor;
 import com.cory.web.util.PostRequestMatcher;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -38,6 +41,14 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
     private List<HandlerInterceptor> interceptorList;
     @Autowired
     private AccessTokenInterceptor accessTokenInterceptor;
+
+    @Bean
+    public FilterRegistrationBean eagleEyeFilter() {
+        FilterRegistrationBean bean = new FilterRegistrationBean();
+        bean.setFilter(new EagleEyeFilter());
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
 
     @Bean
     public HttpSessionCsrfTokenRepository httpSessionCsrfTokenRepository() {
