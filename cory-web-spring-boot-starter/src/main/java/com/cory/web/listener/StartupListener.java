@@ -45,10 +45,11 @@ public class StartupListener implements ServletContextListener {
 		String staticResourcePath = event.getServletContext().getRealPath("static");
 		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.STATIC_RESOURCE_PATH, staticResourcePath);
 
+		//先生成代码，否则加载系统参数出错
+		generateCode(ctx);
 		initForEnum();
     	initSystemConfigCache(ctx);
 		scanResourceAndLoadToDb(ctx);
-		generateCode(ctx);
     }
 
 	private void generateCode(WebApplicationContext ctx) {
@@ -76,6 +77,7 @@ public class StartupListener implements ServletContextListener {
 		}
 		int count = 0;
 		for (Class<?> modelClass : modelSet) {
+			System.out.println();
 			System.out.println("代码生成模块：检测到：" + modelClass.getSimpleName() + "没有Dao类，是否生成代码？");
 			System.out.println("1、生成所有代码（Controller、Service、Dao、JS）（默认）");
 			System.out.println("2、生成Service代码（Service、Dao）");
@@ -96,7 +98,7 @@ public class StartupListener implements ServletContextListener {
 			}
 		}
 		if (count > 0) {
-			System.out.println("代码生成模块，代码生成完成，请重新build工程然后启动。");
+			System.out.println("代码生成模块，代码生成完成，请重新build工程然后启动(如果有初始化数据，请在启动前将数据初始化)。");
 			System.exit(0);
 		}
 	}
@@ -115,6 +117,7 @@ public class StartupListener implements ServletContextListener {
 			codeGenerator.generateJs();
 		}
 		System.out.println("已经为：" + modelClass.getSimpleName() + "生成" + (generateAll ? "Controller、Service、Dao及JS" : "Service及Dao"));
+		System.out.println();
 		return 1;
 	}
 
