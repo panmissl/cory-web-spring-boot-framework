@@ -101,6 +101,7 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/currentUser", "anon");
         chainDefinition.addPathDefinition("/generateCsrfToken", "anon");
         chainDefinition.addPathDefinition("/generateFormToken", "anon");
+        chainDefinition.addPathDefinition("/openapi/**", "anon");
 
         chainDefinition.addPathDefinition("/**", "user");
         return chainDefinition;
