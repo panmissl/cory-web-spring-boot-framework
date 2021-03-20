@@ -141,6 +141,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
     private Object select(Method method, Object[] args, Select select) {
         //check for byCode
         checkForSelectByCodeMethod(method);
+        checkForSelectCount(method, select.count());
 
         Map<String, Object> paramMap = buildNotNullParamMap(method, args);
 
@@ -167,6 +168,16 @@ public class CoryDbProxy<T> implements InvocationHandler {
         Class selectReturnType = select.returnType();
         List<Map<String, Object>> listData = coryDb.select(dataSqlInfo);
 
+        if (select.count()) {
+            CorySqlInfo countSqlInfo = builder.buildCountSql();
+
+            if (logEnable) {
+                log.info(countSqlInfo.toString());
+            }
+
+            return coryDb.selectCount(countSqlInfo);
+        }
+
         Class<?> returnType = method.getReturnType();
         if (returnType.equals(Pagination.class)) {
             CorySqlInfo countSqlInfo = builder.buildCountSql();
@@ -191,6 +202,13 @@ public class CoryDbProxy<T> implements InvocationHandler {
             Pair<ResultMapper, Class<?>> pair = ResultMapperFactory.parseMapper(returnType, modelClass, selectReturnType);
             return pair.getLeft().map(listData, pair.getRight());
         }
+    }
+
+    private void checkForSelectCount(Method method, boolean count) {
+        if (!count) {
+            return;
+        }
+        AssertUtils.isTrue(Integer.class.equals(method.getReturnType()), "查询记录数(count = true)时，返回值必须是Integer", ErrorCode.DB_ERROR);
     }
 
     private void checkForSelectByCodeMethod(Method method) {

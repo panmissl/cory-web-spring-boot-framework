@@ -34,6 +34,12 @@ public @interface Select {
     boolean whereByModel() default false;
 
     /**
+     * 是否查询总记录数，如果为true，则查询记录数返回。此时要求返回值是Integer
+     * @return
+     */
+    boolean count() default false;
+
+    /**
      * 是否需要order by语句，默认不需要。如果为true，则需要参数：sort，如果没有则使用ORDER BY MODIFY_TIME DESC。会拼接成：order by #{sort}，所以sort是：id desc, create_time desc
      * @return
      */
