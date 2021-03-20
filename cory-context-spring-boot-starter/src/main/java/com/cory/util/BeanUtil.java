@@ -1,8 +1,11 @@
 package com.cory.util;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cglib.beans.BeanCopier;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author cory
@@ -10,6 +13,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BeanUtil {
 
 	private static final ConcurrentHashMap<String, BeanCopier> BEAN_COPIER_CACHE = new ConcurrentHashMap<>();
+
+	public static <T> List<T> copy(List<? extends Object> source, Class<T> cls) {
+		if (CollectionUtils.isEmpty(source)) {
+			return null;
+		}
+		try {
+			return source.stream().map(s -> BeanUtil.copy(s, cls)).collect(Collectors.toList());
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
 
 	public static <T> T copy(Object source, Class<T> cls) {
 		if (null == source) {
