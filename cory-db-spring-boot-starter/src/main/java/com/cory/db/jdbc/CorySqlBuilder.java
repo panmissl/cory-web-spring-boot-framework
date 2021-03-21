@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * where 条件，直接写条件，不用加where。
@@ -60,6 +62,7 @@ public class CorySqlBuilder {
     private static final String NULLABLE_PARAM_PATTERN = "#!\\{.*?\\}\\)?";
     private static final String PARAM_PATTERN_FULL = ".*?#\\{.*?\\}.*";
     private static final String NULLABLE_PARAM_PATTERN_FULL = ".*?#!\\{.*?\\}.*";
+    private static final Pattern PARAM_PATTERN_REG = Pattern.compile("#\\{.*?}");
     private static final String ALL_SPACE_PATTERN = " +";
 
     private CorySqlBuilder() {}
@@ -113,39 +116,28 @@ public class CorySqlBuilder {
     }
 
     private static CorySqlInfo parseColumnPart(String columnSql, Map<String, Object> ognlParamMap) {
-        //col_a = #{colA}, col_b = #{colB}, col_c = 3
+        //col_a = #{colA}, col_b = #{colB}, col_c = 3, col_d = col_d + #{colD}
+        //column part不支持可空参数
+
         AssertUtils.hasText(columnSql, "column sql 不能为空", ErrorCode.DB_ERROR);
 
-        String[] columns = columnSql.split(COMMA);
-        List<String> sqlList = new ArrayList<>();
+        Matcher matcher = PARAM_PATTERN_REG.matcher(columnSql);
+
         List<Object> paramList = new ArrayList<>();
 
-        for (String column : columns) {
-            //xx = #{xx}
-            String[] arr = column.split(EQUAL);
-            AssertUtils.isTrue(arr.length == 2, "column sql 格式错误(" + column + "). sql: " + columnSql, ErrorCode.DB_ERROR);
-
-            String name = arr[0].trim();
-            String param = arr[1].trim();
-            boolean isVariable = false;
-            Object value = param;
-            if (param.matches(PARAM_PATTERN)) {
-                //remove #{ and }
-                param = param.trim().substring(2);
-                param = param.substring(0, param.length() - 1);
-
-                value = OgnlUtil.get(ognlParamMap, param);
-                AssertUtils.notNull(value, "字段(" + param + ")未设置值. sql: " + columnSql + ", paramMap: " + JSON.toJSONString(ognlParamMap), ErrorCode.DB_ERROR);
-                isVariable = true;
-            }
-            if (isVariable) {
-                sqlList.add(name + " = ?");
-                paramList.add(value);
-            } else {
-                sqlList.add(name + " = " + value);
-            }
+        while (matcher.find()) {
+            String group = matcher.group(0);
+            //remove #{ and }
+            String paramName = group.trim().substring(2);
+            paramName = paramName.substring(0, paramName.length() - 1);
+            paramName = paramName.trim();
+            Object value = ognlParamMap.get(paramName);
+            paramList.add(value);
         }
-        return CorySqlInfo.builder().sql(StringUtils.join(sqlList, COMMA)).params(paramList).build();
+
+        columnSql = matcher.replaceAll("?");
+
+        return CorySqlInfo.builder().sql(columnSql).params(paramList).build();
     }
 
     /**

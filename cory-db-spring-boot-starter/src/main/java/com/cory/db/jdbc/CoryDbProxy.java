@@ -217,7 +217,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
         }
         CoryException ex = new CoryException(ErrorCode.DB_ERROR, "model类" + modelClass + "没有code字段(并且需要加上Field注解)，不能调用" + method.getName() + "方法");
         try {
-            java.lang.reflect.Field javaField = modelClass.getField(CODE);
+            java.lang.reflect.Field javaField = modelClass.getDeclaredField(CODE);
             if (null == javaField || !javaField.isAnnotationPresent(Field.class)) {
                 throw ex;
             }
