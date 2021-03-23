@@ -1,6 +1,5 @@
 package com.cory.db.config;
 
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.cory.db.jdbc.CoryDb;
 import com.cory.db.processor.CoryDbChecker;
 import com.cory.db.processor.CoryDbDaoProcessor;
@@ -8,7 +7,6 @@ import com.cory.db.processor.CoryDbInitializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +24,8 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableConfigurationProperties(CoryDbProperties.class)
-@AutoConfigureAfter({DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
+@AutoConfigureAfter({DataSourceAutoConfiguration.class})
 @ConditionalOnBean(DataSource.class)
-@ConditionalOnClass(DruidDataSourceAutoConfigure.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CoryDbAutoConfiguration {
 
