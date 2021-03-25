@@ -1,6 +1,5 @@
 package com.cory.service;
 
-import com.cory.constant.CacheConstants;
 import com.cory.dao.SystemConfigDao;
 import com.cory.model.SystemConfig;
 import com.cory.page.Pagination;
@@ -8,9 +7,6 @@ import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
@@ -30,31 +26,28 @@ public class SystemConfigService extends BaseService<SystemConfig> {
     @Autowired
     private SystemConfigDao systemConfigDao;
 
-    @CachePut(value = CacheConstants.SystemConfig)
+    //此类不用缓存，因为会加载到Util里去，目前Util是单机版，后期考虑Util的分布式版本，否则更新缓存只能靠一直刷新轮询到或重启
+
     @Override
     public void add(SystemConfig model) {
         super.add(model);
     }
 
-    @CacheEvict(value = CacheConstants.SystemConfig, key = "#model.id")
     @Override
     public void delete(SystemConfig model) {
         super.delete(model);
     }
 
-    @CacheEvict(value = CacheConstants.SystemConfig, key = "#id")
     @Override
     public void delete(int id) {
         super.delete(id);
     }
 
-    @CacheEvict(value = CacheConstants.SystemConfig, key = "#model.id")
     @Override
     public void update(SystemConfig model) {
         super.update(model);
     }
 
-    @Cacheable(value = CacheConstants.SystemConfig, key = "#id")
     @Override
     public SystemConfig get(int id) {
         return super.get(id);
