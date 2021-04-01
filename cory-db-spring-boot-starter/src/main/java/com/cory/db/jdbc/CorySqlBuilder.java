@@ -89,10 +89,11 @@ public class CorySqlBuilder {
      * 构建delete语句
      * @param table 表明
      * @param whereSql where语句：直接写条件，不用加where。详见CorySqlBuilder上的注释
+     * @param logicDelete 逻辑删除
      * @return
      */
-    public static CoryDeleteSqlBuilder createDeleteBuilder(String table, String whereSql, Map<String, Object> ognlParamMap) {
-        return new CoryDeleteSqlBuilder(table, whereSql, ognlParamMap);
+    public static CoryDeleteSqlBuilder createDeleteBuilder(String table, String whereSql, boolean logicDelete, Map<String, Object> ognlParamMap) {
+        return new CoryDeleteSqlBuilder(table, whereSql, logicDelete, ognlParamMap);
     }
 
     /**
@@ -440,16 +441,26 @@ public class CorySqlBuilder {
 
     public static class CoryDeleteSqlBuilder extends CoryUpdateSqlBuilder {
 
-        CoryDeleteSqlBuilder(String table, String whereSql, Map<String, Object> ognlParamMap) {
+        private boolean logicDelete;
+
+        CoryDeleteSqlBuilder(String table, String whereSql, boolean logicDelete, Map<String, Object> ognlParamMap) {
             super(table, null, whereSql, ognlParamMap);
+            this.logicDelete = logicDelete;
         }
 
         @Override
         public CorySqlInfo build() {
             //update xxx set is_deleted = 1, MODIFY_TIME = now() where IS_DELETED = 0 and col_a = #{colA} and col_b in #{colB}
-            CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap, true);
-
-            String sql = String.format("UPDATE %s SET IS_DELETED = 1, MODIFY_TIME = now() WHERE IS_DELETED = 0 %s", table, wherePart.getSql());
+            //delete from xxx where xxx
+            CorySqlInfo wherePart;
+            String sql;
+            if (logicDelete) {
+                wherePart = parseWherePart(whereSql, ognlParamMap, true);
+                sql = String.format("UPDATE %s SET IS_DELETED = 1, MODIFY_TIME = now() WHERE IS_DELETED = 0 %s", table, wherePart.getSql());
+            } else {
+                wherePart = parseWherePart(whereSql, ognlParamMap, false);
+                sql = String.format("DELETE FROM %s WHERE %s", table, wherePart.getSql());
+            }
             return CorySqlInfo.builder().sql(formatSql(sql)).params(wherePart.getParams()).build();
         }
     }
@@ -688,7 +699,7 @@ public class CorySqlBuilder {
                 .put("sort", "code desc")
                 .build();
 
-        sqlInfo = CorySqlBuilder.createDeleteBuilder("lm_device", "code in #{codeList} and name like #!{name} and name not like #{name} and not exists (select 1 from xx where code = #{foreignCode}) and type_code = #{typeCode}", params).build();
+        sqlInfo = CorySqlBuilder.createDeleteBuilder("lm_device", "code in #{codeList} and name like #!{name} and name not like #{name} and not exists (select 1 from xx where code = #{foreignCode}) and type_code = #{typeCode}", true, params).build();
 
         System.out.println("sql: " + sqlInfo.getSql());
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));

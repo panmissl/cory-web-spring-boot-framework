@@ -19,4 +19,10 @@ public @interface Delete {
      * @return
      */
     String whereSql();
+
+    /**
+     * 是否逻辑删除，默认物理删除，否则索引不好建
+     * @return
+     */
+    boolean logicDelete() default false;
 }

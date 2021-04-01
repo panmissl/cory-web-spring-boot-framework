@@ -31,7 +31,7 @@ public class AccessTokenInterceptor implements HandlerInterceptor {
 	/** ID::SECRET::TIMESTAMP */
 	private static final String TOKEN_FORMAT = "%s::%s::%s";
 
-	private static final int EXPIRE_TIME = 10 * 60 * 1000;
+	private static final int DEFAULT_EXPIRE_TIME = 10 * 1000;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
@@ -47,7 +47,8 @@ public class AccessTokenInterceptor implements HandlerInterceptor {
 
 			//先校验时间
 			long time = DateUtils.parseDate(ts, Constants.DATE_FORMAT_FULL_WITHOUT_DASH).getTime();
-			if (System.currentTimeMillis() - time > EXPIRE_TIME) {
+			int expireTime = SystemConfigCacheUtil.getIntCache(SystemConfigCacheKey.TOKEN_EXPIRE_TIME_IN_SECOND, DEFAULT_EXPIRE_TIME);
+			if (System.currentTimeMillis() - time > expireTime) {
 				response401(response);
 				return false;
 			}

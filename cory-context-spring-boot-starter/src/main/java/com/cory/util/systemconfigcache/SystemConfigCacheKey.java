@@ -55,4 +55,5 @@ public class SystemConfigCacheKey {
 
     /** token configs */
     public static final String TOKEN_CONFIGS = "__token_configs__";
+    public static final String TOKEN_EXPIRE_TIME_IN_SECOND = "__token_expire_time_in_second__";
 }

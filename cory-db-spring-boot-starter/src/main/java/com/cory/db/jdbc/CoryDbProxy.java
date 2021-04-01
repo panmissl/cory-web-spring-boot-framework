@@ -228,7 +228,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
     private int delete(Method method, Object[] args, Delete delete) {
         Map<String, Object> paramMap = buildNotNullParamMap(method, args);
-        CorySqlInfo sqlInfo = CorySqlBuilder.createDeleteBuilder(table, delete.whereSql(), paramMap).build();
+        CorySqlInfo sqlInfo = CorySqlBuilder.createDeleteBuilder(table, delete.whereSql(), delete.logicDelete(), paramMap).build();
 
         if (logEnable) {
             log.info(sqlInfo.toString());

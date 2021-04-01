@@ -1,8 +1,10 @@
 package com.cory.service;
 
 import com.cory.dao.BaseDao;
+import com.cory.model.ActionLog;
 import com.cory.model.BaseModel;
 import com.cory.page.Pagination;
+import com.cory.web.util.ActionLogUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,18 +17,28 @@ public abstract class BaseService<T extends BaseModel> {
 
     public void add(T model) {
         getDao().add(model);
+        if (!model.getClass().equals(ActionLog.class)) {
+            ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "添加数据");
+        }
     }
 
     public void delete(T model) {
         getDao().delete(model);
+        if (!model.getClass().equals(ActionLog.class)) {
+            ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "删除数据");
+        }
     }
 
     public void delete(int id) {
         getDao().deleteById(id);
+        ActionLogUtil.addActionLog(this.getClass().getName(), id + "", "根据ID删除数据");
     }
 
     public void update(T model) {
         getDao().updateModel(model);
+        if (!model.getClass().equals(ActionLog.class)) {
+            ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "修改数据");
+        }
     }
 
     public T get(int id) {
