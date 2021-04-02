@@ -17,26 +17,28 @@ public abstract class BaseService<T extends BaseModel> {
 
     public void add(T model) {
         getDao().add(model);
-        if (!model.getClass().equals(ActionLog.class)) {
+        if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
             ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "添加数据");
         }
     }
 
     public void delete(T model) {
         getDao().delete(model);
-        if (!model.getClass().equals(ActionLog.class)) {
+        if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
             ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "删除数据");
         }
     }
 
     public void delete(int id) {
         getDao().deleteById(id);
-        ActionLogUtil.addActionLog(this.getClass().getName(), id + "", "根据ID删除数据");
+        if (actionLogEnable()) {
+            ActionLogUtil.addActionLog(this.getClass().getName(), id + "", "根据ID删除数据");
+        }
     }
 
     public void update(T model) {
         getDao().updateModel(model);
-        if (!model.getClass().equals(ActionLog.class)) {
+        if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
             ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "修改数据");
         }
     }
@@ -101,4 +103,10 @@ public abstract class BaseService<T extends BaseModel> {
     }
 
     protected void fillOtherFields(T model) {}
+
+    /**
+     * 增删改时记录操作日志，默认记录，如果不需要可以复写返回false
+     * @return
+     */
+    protected boolean actionLogEnable() {return true;}
 }
