@@ -18,7 +18,7 @@ public @interface Select {
 
     /**
      * where 部分sql。不要加前面的where，会自动加上is_deleted = 0条件。比如：
-     * code = #{code} and create_time < #!{createTimeEnd} and create_time > #!{createTimeStart}
+     * code = #{code} and create_time < #{createTimeEnd} and create_time > #{createTimeStart}
      * @return
      */
     String whereSql() default "";

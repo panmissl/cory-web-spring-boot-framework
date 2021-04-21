@@ -6,7 +6,6 @@ import com.cory.exception.CoryException;
 import com.cory.model.BaseModel;
 import com.cory.util.AssertUtils;
 import com.cory.util.MapBuilder;
-import com.cory.util.OgnlUtil;
 import com.google.common.base.CaseFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -31,7 +29,8 @@ import java.util.regex.Pattern;
  * <br />
  * 里面可以加参数，写法和mybatis一样，参数从@Param注解里获取。类型为list或set或数组的会自动解析为IN。参数必须写Param注解
  * <br />
- * 如果需要做判空处理，那么在写参数时形式写成这样：col_a = #!{colA}，在#和{}之间加一个叹号。会自动判空
+ * 如果需要做判空处理，那么在写参数时用：#![ xxx ]包裹，则会判断里面的参数，如果参数没有值，则不输出。注意：1、AND等连接符也需要加在里面；2、不能嵌套，一个#![]里只能包含一个参数。如果参数是数组，会展开成(x, y, z)的形式（IN的语法）
+ * #![AND col_a = #{colA}] #![ or col_b in #{colB}]
  *
  * Created by Cory on 2021/2/9.
  */
@@ -50,19 +49,15 @@ public class CorySqlBuilder {
 
     private static final String COMMA = ",";
     private static final String SPACE = " ";
-    private static final String QUESTION_MARK = "?";
     private static final String EQUAL = "=";
-    private static final String IN = "IN";
-    private static final String NOT = "NOT";
-    private static final String BRACKET = ")";
+    private static final String QUESTION_MARK = "?";
 
-    private static final String ADD_PATTERN = "and|AND";
-    private static final String OP_PATTERN = "=|!=|>|>=|<|<=|in|like|IN|LIKE";
-    private static final String PARAM_PATTERN = "#\\{.*?\\}\\)?";
-    private static final String NULLABLE_PARAM_PATTERN = "#!\\{.*?\\}\\)?";
-    private static final String PARAM_PATTERN_FULL = ".*?#\\{.*?\\}.*";
-    private static final String NULLABLE_PARAM_PATTERN_FULL = ".*?#!\\{.*?\\}.*";
     private static final Pattern PARAM_PATTERN_REG = Pattern.compile("#\\{.*?}");
+    private static final Pattern NULLABLE_PARAM_PATTERN_REG = Pattern.compile("#!\\[.*?]");
+
+    private static final String PARAM_PATTERN_FULL = ".*?#\\{.*?}.*";
+    private static final String NULLABLE_PARAM_PATTERN_FULL = ".*?#!\\[.*?].*";
+
     private static final String ALL_SPACE_PATTERN = " +";
 
     private CorySqlBuilder() {}
@@ -117,12 +112,80 @@ public class CorySqlBuilder {
     }
 
     private static CorySqlInfo parseColumnPart(String columnSql, Map<String, Object> ognlParamMap) {
-        //col_a = #{colA}, col_b = #{colB}, col_c = 3, col_d = col_d + #{colD}
-        //column part不支持可空参数
+        return parseParamSql(columnSql, ognlParamMap);
+    }
 
-        AssertUtils.hasText(columnSql, "column sql 不能为空", ErrorCode.DB_ERROR);
+    /**
+     * @param whereSql
+     * @param ognlParamMap
+     * @param wrapAnd 自定义sql的地方，不要包裹AND ()
+     * @return
+     */
+    private static CorySqlInfo parseWherePart(String whereSql, Map<String, Object> ognlParamMap, boolean wrapAnd) {
+        CorySqlInfo sqlInfo = parseParamSql(whereSql, ognlParamMap);
 
-        Matcher matcher = PARAM_PATTERN_REG.matcher(columnSql);
+        //处理完后没有条件（全部都是可空参数），则返回空即可
+        if (StringUtils.isBlank(sqlInfo.getSql())) {
+            return CorySqlInfo.builder().sql("").build();
+        }
+        if (wrapAnd) {
+            String sql = " AND (" + sqlInfo.getSql() + ")";
+            sqlInfo.setSql(sql);
+        }
+        return sqlInfo;
+    }
+
+    private static CorySqlInfo parseParamSql(String sql, Map<String, Object> ognlParamMap) {
+        if (StringUtils.isBlank(sql)) {
+            return CorySqlInfo.builder().sql("").build();
+        }
+
+        boolean hasParam = sql.matches(PARAM_PATTERN_FULL);
+        boolean hasNullableParam = sql.matches(NULLABLE_PARAM_PATTERN_FULL);
+
+        //如果不包含变量，直接返回即可
+        if (!hasParam && !hasNullableParam) {
+            return CorySqlInfo.builder().sql(sql).build();
+        }
+
+        //包含可空变量，先处理可空变量：把空的删除，不空的留下
+        if (hasNullableParam) {
+            Matcher nullableMatcher = NULLABLE_PARAM_PATTERN_REG.matcher(sql);
+
+            while (nullableMatcher.find()) {
+                String group = nullableMatcher.group(0);
+                //remove #![ and ]
+                String subSql = group.trim().substring(3);
+                subSql = subSql.substring(0, subSql.length() - 1);
+                subSql = subSql.trim();
+
+                Matcher paramMatcher = PARAM_PATTERN_REG.matcher(subSql);
+
+                //只找一个，不找多个
+                if (paramMatcher.find()) {
+                    String paramGroup = paramMatcher.group(0);
+                    //remove #{ and }
+                    String paramName = paramGroup.trim().substring(2);
+                    paramName = paramName.substring(0, paramName.length() - 1);
+                    paramName = paramName.trim();
+                    Object value = ognlParamMap.get(paramName);
+                    //可变参数有值，输出，否则输出成空字符串
+                    if (null != value) {
+                        sql = sql.replace(group, subSql);
+                    } else {
+                        sql = sql.replace(group, "");
+                    }
+                } else {
+                    //没有参数，则全部输出
+                    sql = sql.replace(group, subSql);
+                }
+
+                nullableMatcher = NULLABLE_PARAM_PATTERN_REG.matcher(sql);
+            }
+        }
+
+        //最后处理变量
+        Matcher matcher = PARAM_PATTERN_REG.matcher(sql);
 
         List<Object> paramList = new ArrayList<>();
 
@@ -133,180 +196,26 @@ public class CorySqlBuilder {
             paramName = paramName.substring(0, paramName.length() - 1);
             paramName = paramName.trim();
             Object value = ognlParamMap.get(paramName);
-            paramList.add(value);
+            sql = sql.replace(group, parseQuestionAndAddParam(paramName, value, paramList));
+
+            matcher = PARAM_PATTERN_REG.matcher(sql);
         }
 
-        columnSql = matcher.replaceAll("?");
-
-        return CorySqlInfo.builder().sql(columnSql).params(paramList).build();
-    }
-
-    /**
-     * @param whereSql
-     * @param ognlParamMap
-     * @param wrapAnd 自定义sql的地方，不要包裹AND ()
-     * @return
-     */
-    private static CorySqlInfo parseWherePart(String whereSql, Map<String, Object> ognlParamMap, boolean wrapAnd) {
-        if (StringUtils.isBlank(whereSql)) {
-            return CorySqlInfo.builder().sql("").build();
-        }
-
-        //col_a = #{colA} and col_b like #{colB} and exists (select 1 from xx where ff in #{ss})
-        String[] conditions = whereSql.split(ADD_PATTERN);
-        List<String> whereList = new ArrayList<>();
-        List<Object> paramList = new ArrayList<>();
-
-        for (int i = 0; i < conditions.length; i++) {
-            String condition = conditions[i];
-
-            condition = buildConditionAndAddParam(condition, paramList, ognlParamMap);
-            if (StringUtils.isNotBlank(condition)) {
-                whereList.add(condition);
-            }
-        }
-
-        //处理完还是没有条件，则返回空即可
-        if (whereList.size() == 0) {
-            return CorySqlInfo.builder().sql("").build();
-        }
-
-        // AND (col_a = ? and col_b = ?)
-        String sql = StringUtils.join(whereList, " AND ");
-        if (wrapAnd) {
-            sql = " AND (" + sql + ")";
-        }
         return CorySqlInfo.builder().sql(sql).params(paramList).build();
     }
 
-    private static String buildConditionAndAddParam(String condition, List<Object> paramList, Map<String, Object> ognlParamMap) {
-        //col_a = #{colA}
-        //col_b = #!{colB}
-        //col_c = 55
-        //col_d like 'abd%'
-        //(col_e = 'abc')
-
-        //如果不包含变量，直接返回即可
-        if (!condition.matches(PARAM_PATTERN_FULL) && !condition.matches(NULLABLE_PARAM_PATTERN_FULL)) {
-            return condition;
-        }
-
-        StringBuilder builder = new StringBuilder();
-        String[] arr = condition.split(SPACE);
-
-        for (int i = 0; i < arr.length; i++) {
-            builder.append(SPACE);
-
-            String part1 = arr[i];
-            String part2 = i < arr.length - 1 ? arr[i + 1] : null;
-            String part3 = i < arr.length - 2 ? arr[i + 2] : null;
-
-            //是条件表达式。条件处理，值可能是：无变量、有变量：单个变量、列表变量
-            if (null != part2 && part2.matches(OP_PATTERN)) {
-                AssertUtils.hasText(part3, "SQL Where语法错误(" + condition + ")", ErrorCode.DB_ERROR);
-
-                //值是不是变量
-                VariableInfo variableInfo = parseVariable(part3);
-
-                //变量，处理参数sql和参数值
-                if (variableInfo.isVariable()) {
-                    //处理not
-                    boolean not = false;
-                    if (part1.equalsIgnoreCase(NOT)) {
-                        not = true;
-                        part1 = arr[i - 1];
-                    }
-
-                    Object paramValue = OgnlUtil.get(ognlParamMap, variableInfo.getVariableName());
-
-                    if (variableInfo.isNullable() && isNullOrEmpty(paramValue)) {
-                        //do nothing: 如果可空且参数值为空，则直接跳过
-                        //处理最后一个括号
-                        if (variableInfo.haveEndBracket) {
-                            builder.append(BRACKET);
-                        }
-                    } else {
-                        //添加整个条件表达式
-                        AssertUtils.notNull(paramValue,
-                                "参数" + variableInfo.getVariableName() + "的值不能为空. Where: " + condition + ", params: " + JSON.toJSONString(ognlParamMap),
-                                ErrorCode.DB_ERROR);
-                        builder.append(part1);
-                        if (not) {
-                            builder.append(SPACE);
-                            builder.append(NOT);
-                        }
-                        builder.append(SPACE);
-                        builder.append(part2);
-                        builder.append(SPACE);
-
-                        //处理是不是IN条件，如果是IN，则需要处理成IN (?, ?, ?)的格式
-                        if (part2.equalsIgnoreCase(IN)) {
-                            builder.append(parseInWhereAndAddParam(paramValue, paramList));
-                        } else {
-                            //不是IN，直接添加
-                            builder.append(QUESTION_MARK);
-                            paramList.add(paramValue);
-                        }
-                        //处理最后一个括号
-                        if (variableInfo.haveEndBracket) {
-                            builder.append(BRACKET);
-                        }
-                    }
-
-                    //只要是变量，则跳过：变量名 + 表达式 + 变量值
-                    i ++;
-                    i ++;
-                    //这里即使是not，也不用+1，因为not的处理没有多用一个，还是之前的index
-                } else {
-                    //非变量，直接添加一个即可，不用添加part2和part3
-                    builder.append(part1);
-                }
-            } else {
-                //处理not：如果下一个是not，那么不添加，因为后面处理not时会添加。
-                boolean nextNot = false;
-                if (NOT.equalsIgnoreCase(part2)) {
-                    nextNot = true;
-                }
-                if (!nextNot) {
-                    //不是条件表达式，直接添加
-                    builder.append(part1);
-                }
-            }
-
-            builder.append(SPACE);
-        }
-        return builder.toString();
-    }
-
-    private static VariableInfo parseVariable(String paramName) {
-        boolean isVariable = false;
-        boolean nullable = false;
-        int prefixLen = 0;
-        boolean bracket = paramName.endsWith(BRACKET);
-
-        if (paramName.matches(PARAM_PATTERN)) {
-            prefixLen = 2;
-            isVariable = true;
-        } else if (paramName.matches(NULLABLE_PARAM_PATTERN)) {
-            prefixLen = 3;
-            isVariable = true;
-            nullable = true;
-        }
-
-        //remove #{ or #!{ and }
-        paramName = paramName.trim().substring(prefixLen);
-        paramName = paramName.substring(0, paramName.length() - 1);
-
-        if (bracket) {
-            paramName = paramName.substring(0, paramName.length() - 1);
-        }
-
-        return VariableInfo.builder().isVariable(isVariable).variableName(paramName).isNullable(nullable).haveEndBracket(bracket).build();
-    }
-
-    private static String parseInWhereAndAddParam(Object paramValue, List<Object> paramList) {
+    /**
+     * 解析出问号sql，并且把参数值添加到参数列表里
+     * @param paramName 参数名
+     * @param paramValue 参数值
+     * @param paramList 解析后的参数列表
+     * @return 返回问号sql。如果是单个返回 ?，如果是列表返回：(?, ?, ?)
+     */
+    private static String parseQuestionAndAddParam(String paramName, Object paramValue, List<Object> paramList) {
         //(?, ?, ?)
-        if (paramValue.getClass().isArray()) {
+        if (null == paramValue) {
+            throw new CoryException(ErrorCode.DB_ERROR, paramName + "的值不能为空");
+        } else if (paramValue.getClass().isArray()) {
             int len = Array.getLength(paramValue);
             List<String> list = new ArrayList<>();
             for (int i = 0; i < len; i++) {
@@ -315,8 +224,7 @@ public class CorySqlBuilder {
                 list.add(QUESTION_MARK);
             }
             return "(" + StringUtils.join(list, COMMA) + ")";
-        }
-        if (paramValue instanceof Collection<?>) {
+        } else if (paramValue instanceof Collection<?>) {
             Collection collection = (Collection) paramValue;
             List<String> list = new ArrayList<>();
             for (Object item : collection) {
@@ -324,8 +232,10 @@ public class CorySqlBuilder {
                 list.add(QUESTION_MARK);
             }
             return "(" + StringUtils.join(list, COMMA) + ")";
+        } else {
+            paramList.add(paramValue);
+            return "?";
         }
-        throw new CoryException(ErrorCode.DB_ERROR, "IN 条件目前只支持数组、列表或Set，传入的类型(" + paramValue.getClass() + ")暂不支持");
     }
 
     private static String formatSql(String sql) {
@@ -359,10 +269,6 @@ public class CorySqlBuilder {
         private String column;
 
         private Object param;
-    }
-
-    private static boolean isNullOrEmpty(Object paramValue) {
-        return ObjectUtils.isEmpty(paramValue);
     }
 
     public static class CoryInsertSqlBuilder {
@@ -427,7 +333,7 @@ public class CorySqlBuilder {
                 if (cv.getColumn().equalsIgnoreCase(ID)) {
                     return;
                 }
-                columnList.add(cv.getColumn() + EQUAL + QUESTION_MARK);
+                columnList.add(cv.getColumn() + SPACE + EQUAL + SPACE + QUESTION_MARK);
                 paramList.add(cv.getParam());
             });
             //add id as last parameter
@@ -563,7 +469,7 @@ public class CorySqlBuilder {
                             cv.getColumn().equalsIgnoreCase(IS_DELETED)) {
                         return;
                     }
-                    whereSql.append(" AND " + cv.getColumn() + EQUAL + QUESTION_MARK);
+                    whereSql.append(" AND " + cv.getColumn() + SPACE + EQUAL + SPACE + QUESTION_MARK);
                     params.add(cv.getParam());
                 });
             }
@@ -643,22 +549,6 @@ public class CorySqlBuilder {
         }
     }
 
-    @Data
-    @Builder
-    private static class VariableInfo {
-        /** 是否时变量，用#{}或#!{}包含的参数 */
-        private boolean isVariable;
-
-        /** 是否可空：用#!{}包含的参数 */
-        private boolean isNullable;
-
-        /** 是否有括号结尾 */
-        private boolean haveEndBracket;
-
-        /** 如果是变量，解析出的变量名 */
-        private String variableName;
-    }
-
     public static void main(String[] args) {
         CorySqlInfo sqlInfo = CorySqlBuilder.createInsertBuilder("lm_device")
                 .column("id", 1)
@@ -699,7 +589,7 @@ public class CorySqlBuilder {
                 .put("sort", "code desc")
                 .build();
 
-        sqlInfo = CorySqlBuilder.createDeleteBuilder("lm_device", "code in #{codeList} and name like #!{name} and name not like #{name} and not exists (select 1 from xx where code = #{foreignCode}) and type_code = #{typeCode}", true, params).build();
+        sqlInfo = CorySqlBuilder.createDeleteBuilder("lm_device", "code in #{codeList} #![and name like #{name}] and name not like #{name} and not exists (select 1 from xx where code = #{foreignCode}) and type_code = #{typeCode}", true, params).build();
 
         System.out.println("sql: " + sqlInfo.getSql());
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));
@@ -708,11 +598,13 @@ public class CorySqlBuilder {
         System.out.println("sql: " + sqlInfo.getSql());
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));
 
-        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} and name like #!{name} and type_code = #{typeCode}", true, true, true, null, params).column("code", "123").column("type", "DEVICE").column("age", 19).buildDataSql();
+        params.remove("name");
+        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} #![and name like #{name}] and type_code = #{typeCode}", true, true, true, null, params).column("code", "123").column("type", "DEVICE").column("age", 19).buildDataSql();
         System.out.println("sql: " + sqlInfo.getSql());
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));
 
-        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} and name like #!{name} and type_code = #{typeCode}", true, true, true, null, params).column("code", "123").column("type", "DEVICE").column("age", 19).buildCountSql();
+        params.remove("name");
+        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} #![and name like #{name}] and type_code = #{typeCode}", true, true, true, null, params).column("code", "123").column("type", "DEVICE").column("age", 19).buildCountSql();
         System.out.println("sql: " + sqlInfo.getSql());
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));
     }
