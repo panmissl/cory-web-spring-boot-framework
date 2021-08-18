@@ -3,6 +3,7 @@ package com.cory.service.resource;
 import com.cory.enums.ResourceType;
 import com.cory.model.Resource;
 import com.cory.service.ResourceService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import java.util.Set;
 /**
  * Created by Cory on 2017/5/21.
  */
+@Slf4j
 @Repository
 public class ResourceToDbLoader {
 
@@ -37,7 +39,12 @@ public class ResourceToDbLoader {
                 r.setValue(url);
                 r.setCreator(1);
                 r.setModifier(1);
-                resourceService.add(r);
+                try {
+                    resourceService.add(r);
+                } catch (Throwable t) {
+                    log.error("add resource fail, url: {}", url, t);
+                    //ignore
+                }
                 count ++;
             }
         }
