@@ -1,22 +1,21 @@
 package com.cory.util.systemconfigcache;
 
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.cache.CacheManager;
 
 /**
  * Created by Cory on 2017/5/14.
  */
 public class SystemConfigCacheUtil {
 
-    private static Map<String, String> cacheMap = new ConcurrentHashMap<String, String>();
+    private static final String CACHE_NAME = "SystemConfigCacheUtil";
+
+    private static CacheManager cacheManager;
 
     private SystemConfigCacheUtil() {}
 
     public static String getCache(String key) {
-        return cacheMap.get(key);
+        return cacheManager.getCache(CACHE_NAME).get(key, String.class);
     }
 
     /**
@@ -29,7 +28,7 @@ public class SystemConfigCacheUtil {
     }
 
     public static int getIntCache(String key, int defaultVal) {
-        String val = cacheMap.get(key);
+        String val = cacheManager.getCache(CACHE_NAME).get(key, String.class);
         if (StringUtils.isEmpty(val)) {
             return defaultVal;
         }
@@ -40,11 +39,11 @@ public class SystemConfigCacheUtil {
         }
     }
 
-    public static Map<String, String> getAllCache() {
-        return Collections.unmodifiableMap(cacheMap);
+    public static void refresh(String key, String value) {
+        cacheManager.getCache(CACHE_NAME).put(key, value);
     }
 
-    public static void refresh(String key, String value) {
-        cacheMap.put(key, value);
+    public static void setCacheManager(CacheManager cacheManager) {
+        SystemConfigCacheUtil.cacheManager = cacheManager;
     }
 }

@@ -1,5 +1,6 @@
 package com.cory.web.listener;
 
+import com.cory.cache.manager.CoryCacheManager;
 import com.cory.context.CoryContext;
 import com.cory.context.CoryEnv;
 import com.cory.context.CorySystemContext;
@@ -38,6 +39,8 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
     	ServletContext context = event.getServletContext();
     	this.ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
+
+		SystemConfigCacheUtil.setCacheManager(ctx.getBean("coryCacheManager", CoryCacheManager.class));
 
     	String contextPath = event.getServletContext().getContextPath() + "/";
 		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.CONTEXT_PATH, contextPath);
