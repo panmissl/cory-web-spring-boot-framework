@@ -18,7 +18,6 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 
 import javax.servlet.Filter;
 import java.io.UnsupportedEncodingException;
@@ -82,8 +81,8 @@ public class ShiroConfig {
     }
 
     @Bean
-    protected CacheManager shiroCacheManager(JedisConnectionFactory connectionFactory) {
-        return new ShiroRedisCacheManager(connectionFactory);
+    protected CacheManager shiroCacheManager(org.springframework.cache.CacheManager cacheManager) {
+        return new CoryShiroCacheManager(cacheManager);
     }
 
     @Bean

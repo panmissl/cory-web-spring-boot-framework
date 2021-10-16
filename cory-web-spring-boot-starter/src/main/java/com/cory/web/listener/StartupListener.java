@@ -1,7 +1,5 @@
 package com.cory.web.listener;
 
-import com.cory.cache.manager.CoryCacheManager;
-import com.cory.context.CoryContext;
 import com.cory.context.CoryEnv;
 import com.cory.context.CorySystemContext;
 import com.cory.db.annotations.Dao;
@@ -14,6 +12,7 @@ import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import com.cory.web.util.CodeGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.util.AnnotatedTypeScanner;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,9 +21,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,7 +37,7 @@ public class StartupListener implements ServletContextListener {
     	ServletContext context = event.getServletContext();
     	this.ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
-		SystemConfigCacheUtil.setCacheManager(ctx.getBean("coryCacheManager", CoryCacheManager.class));
+		SystemConfigCacheUtil.setCacheManager(ctx.getBean("cacheManager", CacheManager.class));
 
     	String contextPath = event.getServletContext().getContextPath() + "/";
 		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.CONTEXT_PATH, contextPath);
