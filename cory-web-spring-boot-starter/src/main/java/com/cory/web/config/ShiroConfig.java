@@ -15,6 +15,7 @@ import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,19 +33,19 @@ public class ShiroConfig {
     private static final String USERNAME_PARAM = "logonId";
     private static final String REMEMBERME_PARAM = "rememberMe";
     private static final String LOGIN_URL = "/login";
-    private static final String SUCCESS_URL = "/";
     private static final String UNAUTHORIZED_URL = "/errorPage?type=403";
 
     @Bean
     public ShiroFilterFactoryBean shiroFilter(DefaultWebSecurityManager securityManager,
-                                                         AuthenticationFilter authcFilter,
-                                                         UserFilter userFilter,
-                                                         LogoutFilter logoutFilter,
-                                                         ShiroFilterChainDefinition shiroFilterChainDefinition) {
+                                              AuthenticationFilter authcFilter,
+                                              UserFilter userFilter,
+                                              LogoutFilter logoutFilter,
+                                              ShiroFilterChainDefinition shiroFilterChainDefinition,
+                                              @Value("${cory.shiro.success-url}") String successUrl) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
         bean.setSecurityManager(securityManager);
         bean.setLoginUrl(LOGIN_URL);
-        bean.setSuccessUrl(SUCCESS_URL);
+        bean.setSuccessUrl(successUrl);
         bean.setUnauthorizedUrl(UNAUTHORIZED_URL);
         bean.setFilters(MapBuilder.create(String.class, Filter.class).put("authc", authcFilter).put("user", userFilter).put("logout", logoutFilter).build());
         bean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
@@ -107,13 +108,13 @@ public class ShiroConfig {
     }
 
     @Bean
-    public AuthenticationFilter authcFilter() {
+    public AuthenticationFilter authcFilter(@Value("${cory.shiro.success-url}") String successUrl) {
         AuthenticationFilter filter = new AuthenticationFilter();
         filter.setLoginHandleUrl(LOGIN_HANDLE_URL);
         filter.setUsernameParam(USERNAME_PARAM);
         filter.setRememberMeParam(REMEMBERME_PARAM);
         filter.setLoginUrl(LOGIN_URL);
-        filter.setSuccessUrl(SUCCESS_URL);
+        filter.setSuccessUrl(successUrl);
         return filter;
     }
 
