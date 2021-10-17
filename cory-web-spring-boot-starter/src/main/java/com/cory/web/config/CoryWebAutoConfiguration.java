@@ -19,7 +19,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -33,7 +32,6 @@ import java.util.List;
  */
 @Configuration
 @EnableConfigurationProperties(CoryWebProperties.class)
-@EnableRedisHttpSession
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class CoryWebAutoConfiguration implements WebMvcConfigurer {
 
