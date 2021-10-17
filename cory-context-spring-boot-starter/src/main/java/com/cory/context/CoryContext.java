@@ -23,6 +23,8 @@ public class CoryContext implements Serializable {
     private String ctxWithoutSlash;
     private String referer;
     private String requestURI;
+    //登录成功后的跳转URL
+    private String successUrl;
 
     private String domainName;
     private String siteName;

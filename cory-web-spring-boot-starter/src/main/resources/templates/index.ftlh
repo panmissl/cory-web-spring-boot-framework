@@ -14,6 +14,7 @@
             window.domainName = '${domainName!""}';
             window.ctx = '${ctx!""}';
             window.ctxWithoutSlash = '${ctxWithoutSlash!""}';
+            window.successUrl = '${successUrl!""}';
             window.jsDir = '${jsDir!""}';
             window.cssDir = '${cssDir!""}';
             window.imageDir = '${imageDir!""}';
