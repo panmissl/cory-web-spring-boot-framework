@@ -9,6 +9,7 @@
 #、对代码生成的封装：只需要写Model类，其他代码都生成好（dao、service、controller、js等）
 
 #、具体用法请参考demo工程：git@github.com:panmissl/cory-web-spring-boot-demo.git
+#、有问题请联系微信：cory275165359
 
 -------------------------
 
