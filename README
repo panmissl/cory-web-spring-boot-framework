@@ -1,3 +1,17 @@
+对spring boot的集成。集成了这些能力：
+#、对缓存的封装，支持内存缓存，redis缓存，edcd缓存
+#、对数据库的封装
+#、对定时器的封装
+#、对swagger文档的封装
+#、对整个代码框架的封装：
+    使用shiro作权限管理
+    封装了基础模：用户、角色、权限、系统配置、数据字典、反馈、sql执行等基础模块
+#、对代码生成的封装：只需要写Model类，其他代码都生成好（dao、service、controller、js等）
+
+#、具体用法请参考demo工程：git@github.com:panmissl/cory-web-spring-boot-demo.git
+
+-------------------------
+
 DB:
     sql兼容mybatis，但是参数必须带Param注解。
 
