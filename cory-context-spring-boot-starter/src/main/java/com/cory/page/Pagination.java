@@ -1,13 +1,11 @@
 package com.cory.page;
 
-import com.cory.model.BaseModel;
-
 import java.util.List;
 
 /**
  * 列表分页。包含list属性。
  */
-public class Pagination<T extends BaseModel> implements java.io.Serializable {
+public class Pagination<T> implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1870874231783497584L;
 
