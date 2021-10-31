@@ -95,6 +95,7 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/doLogin*", "authc");
         chainDefinition.addPathDefinition("/logout*", "logout");
 
+        chainDefinition.addPathDefinition("/register*", "anon");
         chainDefinition.addPathDefinition("/doRegister*", "anon");
         chainDefinition.addPathDefinition("/login*", "anon");
         chainDefinition.addPathDefinition("/error*", "anon");
