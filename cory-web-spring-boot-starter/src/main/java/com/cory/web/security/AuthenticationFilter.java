@@ -47,6 +47,8 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	private UserService userService;
 	@Autowired
 	private GenericManageableCaptchaService captchaService;
+	@Autowired
+	private CaptchaValidation captchaValidation;
 
 	//登录处理url
 	private String loginHandleUrl;
@@ -62,7 +64,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	public void processLogin(HttpServletRequest request, HttpServletResponse response, AuthenticationToken token) throws Exception {
 		String username = (String) token.getPrincipal();
 		//先验证码校验,防止一直查询数据库
-		if (isCaptchaRequired(username, request, response) && !CaptchaValidation.valid(request, captchaService)) {
+		if (isCaptchaRequired(username, request, response) && !captchaValidation.valid(request, captchaService)) {
 			throw new CaptchaRequiredException();
 		}
 		//do process -- 登录

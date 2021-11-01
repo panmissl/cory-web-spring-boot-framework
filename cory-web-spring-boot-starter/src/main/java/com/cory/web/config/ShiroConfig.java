@@ -96,13 +96,14 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/logout*", "logout");
 
         chainDefinition.addPathDefinition("/register*", "anon");
-        chainDefinition.addPathDefinition("/doRegister*", "anon");
         chainDefinition.addPathDefinition("/login*", "anon");
+        chainDefinition.addPathDefinition("/doRegister*", "anon");
         chainDefinition.addPathDefinition("/error*", "anon");
         chainDefinition.addPathDefinition("/currentUser", "anon");
         chainDefinition.addPathDefinition("/generateCsrfToken", "anon");
         chainDefinition.addPathDefinition("/generateFormToken", "anon");
         chainDefinition.addPathDefinition("/openapi/**", "anon");
+        chainDefinition.addPathDefinition("/captcha.svl*", "anon");
 
         chainDefinition.addPathDefinition("/**", "user");
         return chainDefinition;

@@ -14,6 +14,7 @@ public enum ErrorCode {
     AUTH_ERROR(1005, "鉴权失败"),
     DB_ERROR(1006, "DB处理失败"),
     HTTP_STATUS_ERROR(1007, "Http状态错误"),
+    CAPTCHA_ERROR(1008, "验证码错误"),
 
     ;
 

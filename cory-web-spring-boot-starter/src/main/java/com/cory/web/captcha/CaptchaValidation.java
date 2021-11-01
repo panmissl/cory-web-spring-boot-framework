@@ -3,16 +3,22 @@ package com.cory.web.captcha;
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.image.ImageCaptchaService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
+@Component
 public class CaptchaValidation {
+
+	private static final String CAPTCHA_CACHE_NAME = "__captcha_cache__";
 	
 	/** 校验时间范围：30秒。如果在此时间范围内重复提交，认为是需要验证码，否则不需要 */
-	//private static final long VALIDATION_INTERVAL = 30 * 1000;
-	private static final long VALIDATION_INTERVAL = 60 * 1000;
+	private static final long VALIDATION_INTERVAL = 30 * 1000;
+	//private static final long VALIDATION_INTERVAL = 60 * 1000;
+
 	/** 允许重复提交次数：2次。在此次数范围内重复提交，不需要验证码，超过则需要 -- 实际用户可以提交3次 */
 	private static final int MAX_TIME = 2;
 	
@@ -23,14 +29,24 @@ public class CaptchaValidation {
 	/** reqeust属性，标志是否验证码输入错误，对于ajax，设置到response里 */
 	public static final String CAPTCHA_ERR = "captchaErr";
 
-	private static Map<String, CaptchaItem> map = new HashMap<String, CaptchaItem>();
-	
-	public static boolean valid(HttpServletRequest request, ImageCaptchaService imageCaptchaService) {
+	@Autowired
+	private CacheManager cacheManager;
+
+	private CaptchaItem getFromCache(String key) {
+		return cacheManager.getCache(CAPTCHA_CACHE_NAME).get(key, CaptchaItem.class);
+	}
+
+	private void putCache(String key, CaptchaItem item) {
+		cacheManager.getCache(CAPTCHA_CACHE_NAME).put(key, item);
+	}
+
+	public boolean valid(HttpServletRequest request, ImageCaptchaService imageCaptchaService) {
+		/*老版实现，考虑过期时间等，不需要这么多了
 		String sessionId = request.getSession().getId();
 		String uri = request.getRequestURI();
 		
 		String key = sessionId + "-" + uri;
-		CaptchaItem item = map.get(key);
+		CaptchaItem item = getFromCache(key);
 		
 		long now = System.currentTimeMillis();
 		
@@ -39,7 +55,7 @@ public class CaptchaValidation {
 		//如果为空，证明上次没访问过，那么是第一次，不用验证码，此时需要设置最后一次访问时间
 		if (null == item) {
 			item = new CaptchaItem(now, 1);
-			map.put(key, item);
+			putCache(key, item);
 			
 			result = true;
 		} else {
@@ -82,9 +98,34 @@ public class CaptchaValidation {
 		request.setAttribute(NEED_CAPTCHA_ATTR, !result);
 		
 		return result;
+		*/
+
+		String sessionId = request.getSession().getId();
+
+		boolean result;
+
+		//需要校验输入的校验码
+		String captcha = request.getParameter(CAPTCHA_PARAM);
+		if (StringUtils.isNotEmpty(captcha)) {
+			try {
+				result = imageCaptchaService.validateResponseForID(sessionId, captcha);
+			} catch (CaptchaServiceException e) {
+				result = false;
+			}
+			//如果验证码校验失败,那么设置失败信息
+			request.setAttribute(CAPTCHA_ERR, !result);
+		} else {
+			//如果没有验证码,那么验证码校验错误信息不用设置,只需要设置"需要验证码"标志
+			result = false;
+		}
+
+		//如果校验为true，那么就不需要验证码，否则，需要验证码
+		request.setAttribute(NEED_CAPTCHA_ATTR, !result);
+
+		return result;
 	}
-	
-	private static class CaptchaItem {
+
+	private static class CaptchaItem implements Serializable {
 		public long lastVisit;
 		public int accessTime;
 		

@@ -26,6 +26,8 @@ public class LoginController extends BaseController {
     private UserService userService;
     @Autowired
     private CurrentUserService currentUserService;
+    @Autowired
+    private CaptchaValidation captchaValidation;
 
     /* 会访问到PortalController里的/**，不用单独定义
     @GetMapping("/login")
@@ -44,7 +46,7 @@ public class LoginController extends BaseController {
     @PostMapping("/doRegister")
     public boolean doRegister(HttpServletRequest request, String phone, String password, String passwordConfirm, String captcha) {
         //这里是验证手机验证码，不是普通验证码
-        AssertUtils.isTrue(CaptchaValidation.valid(request, captchaService), "验证码输入错误", ErrorCode.LOGIN_ERROR);
+        AssertUtils.isTrue(captchaValidation.valid(request, captchaService), "验证码输入错误", ErrorCode.LOGIN_ERROR);
         AssertUtils.isTrue(password.equals(passwordConfirm), "两次输入密码不一致", ErrorCode.LOGIN_ERROR);
 
         userService.register(phone, password);

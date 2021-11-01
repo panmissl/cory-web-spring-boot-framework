@@ -1,5 +1,6 @@
 package com.cory.web.config;
 
+import com.cory.web.captcha.JcaptchaServlet;
 import com.octo.captcha.component.image.backgroundgenerator.UniColorBackgroundGenerator;
 import com.octo.captcha.component.image.color.SingleColorGenerator;
 import com.octo.captcha.component.image.fontgenerator.RandomFontGenerator;
@@ -10,14 +11,19 @@ import com.octo.captcha.component.word.wordgenerator.RandomWordGenerator;
 import com.octo.captcha.engine.GenericCaptchaEngine;
 import com.octo.captcha.image.gimpy.GimpyFactory;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.awt.*;
 
+import static com.cory.web.config.Constant.CAPTCHA_URL;
+
 /**
  * Created by Cory on 2021/2/9.
  */
+@EnableConfigurationProperties(CaptchaProperties.class)
 @Configuration
 public class CaptchaConfig {
 
@@ -80,6 +86,12 @@ public class CaptchaConfig {
     @Bean
     public GenericManageableCaptchaService captchaService(GenericCaptchaEngine imageEngine) {
         return new GenericManageableCaptchaService(imageEngine, 180, 100000, 75000);
+    }
+
+    //注册Servlet
+    @Bean
+    public ServletRegistrationBean myServlet(){
+        return new ServletRegistrationBean(new JcaptchaServlet(), CAPTCHA_URL);
     }
 
 }
