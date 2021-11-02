@@ -7,10 +7,7 @@ import com.cory.context.CurrentUser;
 import com.cory.context.GenericResult;
 import com.cory.model.User;
 import com.cory.service.UserService;
-import com.cory.web.captcha.CaptchaValidation;
 import com.cory.web.util.CookieUtils;
-import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -45,10 +42,6 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private GenericManageableCaptchaService captchaService;
-	@Autowired
-	private CaptchaValidation captchaValidation;
 
 	//登录处理url
 	private String loginHandleUrl;
@@ -63,10 +56,12 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	 */
 	public void processLogin(HttpServletRequest request, HttpServletResponse response, AuthenticationToken token) throws Exception {
 		String username = (String) token.getPrincipal();
+		/* CaptchaFilter处理了
 		//先验证码校验,防止一直查询数据库
 		if (isCaptchaRequired(username, request, response) && !captchaValidation.valid(request, captchaService)) {
 			throw new CaptchaRequiredException();
 		}
+		*/
 		//do process -- 登录
 		if (isDisabled(username)) {
 			throw new DisabledAccountException();
@@ -178,6 +173,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	}
 
 	private boolean isCaptchaRequired(String username, HttpServletRequest request, HttpServletResponse response) {
+		/*
 		//应该是如果登录错误次数大于3次，那么就需要输入
 		String captcha = request.getParameter(CaptchaValidation.CAPTCHA_PARAM);
 		int errorRemaining = getCookieErrorRemaining(request, response);
@@ -185,6 +181,9 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		if (!StringUtils.isBlank(captcha) || errorRemaining < 0) {
 			return true;
 		}
+		return false;
+		*/
+		//已经由Filter来检查了，不用检查了
 		return false;
 	}
 
