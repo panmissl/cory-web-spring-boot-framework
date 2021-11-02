@@ -1,6 +1,7 @@
 package com.cory.web.config;
 
 import com.cory.web.captcha.JcaptchaServlet;
+import com.cory.web.filter.CaptchaFilter;
 import com.octo.captcha.component.image.backgroundgenerator.UniColorBackgroundGenerator;
 import com.octo.captcha.component.image.color.SingleColorGenerator;
 import com.octo.captcha.component.image.fontgenerator.RandomFontGenerator;
@@ -12,10 +13,12 @@ import com.octo.captcha.engine.GenericCaptchaEngine;
 import com.octo.captcha.image.gimpy.GimpyFactory;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
 import java.awt.*;
 
 import static com.cory.web.config.Constant.CAPTCHA_URL;
@@ -94,4 +97,15 @@ public class CaptchaConfig {
         return new ServletRegistrationBean(new JcaptchaServlet(), CAPTCHA_URL);
     }
 
+    //注册Filter
+    @Bean
+    public FilterRegistrationBean captchaFilterRegistration(CaptchaFilter captchaFilter) {
+        FilterRegistrationBean registration = new FilterRegistrationBean(captchaFilter);
+        //registration.addUrlPatterns("/*");
+        // 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理
+        //registration.setEnabled(false);
+        registration.setName("captchaFilter");
+        registration.setOrder(1);
+        return registration;
+    }
 }

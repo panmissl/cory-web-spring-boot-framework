@@ -1,4 +1,4 @@
-package com.cory.web.interceptor;
+package com.cory.web.filter;
 
 import com.cory.constant.Constants;
 import com.cory.constant.ErrorCode;
@@ -11,17 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Component
 @Slf4j
-public class CaptchaInterceptor implements HandlerInterceptor {
+public class CaptchaFilter implements Filter {
 
 	@Autowired
 	private GenericManageableCaptchaService captchaService;
@@ -31,19 +30,20 @@ public class CaptchaInterceptor implements HandlerInterceptor {
 	private CaptchaValidation captchaValidation;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler)
-			throws ServletException {
-		if (captchaEnabled() && urlMatch(request) && !captchaValidation.valid(request, captchaService)) {
-			log.error("invalid captcha, uri: {}, pattern: {}", request.getRequestURI(), captchaProperties.getUrlPattern());
-			responseError(response);
-			return false;
-		}
-		return true;
-	}
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+		if (servletRequest instanceof HttpServletRequest && servletResponse instanceof HttpServletResponse) {
+			HttpServletRequest request = (HttpServletRequest) servletRequest;
+			HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+			if (captchaEnabled() && urlMatch(request) && !captchaValidation.valid(request, captchaService)) {
+				log.error("invalid captcha, uri: {}, pattern: {}", request.getRequestURI(), captchaProperties.getUrlPattern());
+				responseError(response);
+				return;
+			}
+			filterChain.doFilter(servletRequest, servletResponse);
+		} else {
+			filterChain.doFilter(servletRequest, servletResponse);
+		}
 	}
 
 	private boolean urlMatch(HttpServletRequest request) {

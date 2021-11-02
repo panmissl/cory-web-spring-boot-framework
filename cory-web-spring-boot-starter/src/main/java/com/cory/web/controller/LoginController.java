@@ -5,8 +5,6 @@ import com.cory.service.CurrentUserService;
 import com.cory.service.UserService;
 import com.cory.util.AssertUtils;
 import com.cory.vo.UserVO;
-import com.cory.web.captcha.CaptchaValidation;
-import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,13 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginController extends BaseController {
 
     @Autowired
-    private GenericManageableCaptchaService captchaService;
-    @Autowired
     private UserService userService;
     @Autowired
     private CurrentUserService currentUserService;
-    @Autowired
-    private CaptchaValidation captchaValidation;
 
     /* 会访问到PortalController里的/**，不用单独定义
     @GetMapping("/login")
@@ -46,7 +40,8 @@ public class LoginController extends BaseController {
     @PostMapping("/doRegister")
     public boolean doRegister(HttpServletRequest request, String phone, String password, String passwordConfirm, String captcha) {
         //这里是验证手机验证码，不是普通验证码
-        AssertUtils.isTrue(captchaValidation.valid(request, captchaService), "验证码输入错误", ErrorCode.LOGIN_ERROR);
+        //验证码由Filter统一验证，不用专门验证了
+        //AssertUtils.isTrue(captchaValidation.valid(request, captchaService), "验证码输入错误", ErrorCode.LOGIN_ERROR);
         AssertUtils.isTrue(password.equals(passwordConfirm), "两次输入密码不一致", ErrorCode.LOGIN_ERROR);
 
         userService.register(phone, password);
