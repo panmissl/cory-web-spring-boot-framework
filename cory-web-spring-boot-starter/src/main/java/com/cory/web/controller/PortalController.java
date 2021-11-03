@@ -15,29 +15,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PortalController extends BaseController {
 
+    private static final String INDEX = "index";
+
     @Autowired
     private CurrentUserService currentUserService;
 
     @GetMapping({"/", "/admin", "/**"})
     public String index(Model model) {
-        initContext(model);
-        return "index";
+        return initContext(model);
     }
 
     @GetMapping("/errorPage")
     public String errorPage(Model model, @RequestParam(required = false) String type) {
-        initContext(model);
+        String page = initContext(model);
 
         model.addAttribute("errorType", type);
         model.addAttribute("errorPage", "true");
-        return "index";
+
+        return page;
     }
 
-    private void initContext(Model model) {
+    protected String initContext(Model model) {
         UserVO userVO = currentUserService.getCurrentUserVO();
-        if (null == userVO) {
-            return;
+        if (null != userVO) {
+            model.addAttribute("user", JSON.toJSONString(userVO));
         }
-        model.addAttribute("user", JSON.toJSONString(userVO));
+        return INDEX;
     }
 }
