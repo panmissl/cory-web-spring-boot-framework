@@ -18,7 +18,7 @@ public class PortalController extends BaseController {
     @Autowired
     private CurrentUserService currentUserService;
 
-    @GetMapping({"/", "/**"})
+    @GetMapping({"/", "/admin", "/**"})
     public String index(Model model) {
         initContext(model);
         return "index";
