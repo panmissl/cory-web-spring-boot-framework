@@ -106,7 +106,7 @@ public class UserService extends BaseService<User> {
      */
     public String register(String phone, String password) {
         if (null != userDao.findByLogonId(phone)) {
-            return "手机号：" + phone + "已经注册，请直接登录或者输入新的手机号.";
+            return phone + "已经注册，请直接登录或者重新输入.";
         }
         int admin = 1;
         User user = newUser(phone, password, admin);

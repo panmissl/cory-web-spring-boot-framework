@@ -99,6 +99,7 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/login*", "anon");
         chainDefinition.addPathDefinition("/doRegister*", "anon");
         chainDefinition.addPathDefinition("/error*", "anon");
+        chainDefinition.addPathDefinition("/errorPage*", "anon");
         chainDefinition.addPathDefinition("/currentUser", "anon");
         chainDefinition.addPathDefinition("/generateCsrfToken", "anon");
         chainDefinition.addPathDefinition("/generateFormToken", "anon");

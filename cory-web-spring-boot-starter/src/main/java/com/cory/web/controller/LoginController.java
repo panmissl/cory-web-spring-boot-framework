@@ -44,7 +44,8 @@ public class LoginController extends BaseController {
         //AssertUtils.isTrue(captchaValidation.valid(request, captchaService), "验证码输入错误", ErrorCode.LOGIN_ERROR);
         AssertUtils.isTrue(password.equals(passwordConfirm), "两次输入密码不一致", ErrorCode.LOGIN_ERROR);
 
-        userService.register(phone, password);
+        String msg = userService.register(phone, password);
+        AssertUtils.isNull(msg, msg);
         return true;
     }
 
