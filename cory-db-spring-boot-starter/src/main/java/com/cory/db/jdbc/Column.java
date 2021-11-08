@@ -28,7 +28,7 @@ public class Column {
                 StringUtils.equals(tableName.toUpperCase(), c.tableName.toUpperCase()) &&
                 StringUtils.equals(defaultValue, c.defaultValue) &&
                 nullable == c.nullable &&
-                StringUtils.equals(columnType.toUpperCase(), c.columnType.toUpperCase());
+                StringUtils.equals(columnType.toUpperCase().replaceAll("\\(.*?\\)", ""), c.columnType.toUpperCase().replaceAll("\\(.*?\\)", ""));
     }
 
     @Override
