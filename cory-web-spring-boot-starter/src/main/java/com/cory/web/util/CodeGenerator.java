@@ -133,6 +133,10 @@ public class CodeGenerator {
 			if (javaRoot.getName().equals("target")) {
 				javaRoot = javaRoot.getParentFile();
 			}
+			//新版：分module后，这里是web目录，需要上一层
+			if (javaRoot.getName().equals("web")) {
+				javaRoot = javaRoot.getParentFile();
+			}
 
 			System.out.println("自动检测到工程根目录为：" + javaRoot.getAbsolutePath() + "，如果正确请按回车，如果不正确请输入正确的根目录(绝对路径)然后回车。");
 			try {
@@ -150,9 +154,9 @@ public class CodeGenerator {
 			jsRoot = new File(jsRoot, "src/pages/" + model.module());
 			jsRoot.mkdirs();
 
-			controllerRoot = new File(javaRoot, "src/main/java/com/cory/controller");
-			serviceRoot = new File(javaRoot, "src/main/java/com/cory/service");
-			daoRoot = new File(javaRoot, "src/main/java/com/cory/dao");
+			controllerRoot = new File(javaRoot, "web/src/main/java/com/cory/controller");
+			serviceRoot = new File(javaRoot, "biz/src/main/java/com/cory/service");
+			daoRoot = new File(javaRoot, "dal/src/main/java/com/cory/dao");
 			controllerRoot.mkdirs();
 			serviceRoot.mkdirs();
 			daoRoot.mkdirs();
@@ -171,7 +175,7 @@ public class CodeGenerator {
 	}
 
 	public void generateController() {
-		generateFile(controllerRoot, modelName + "Controller.java", CONTROLLER_TPL);
+		generateFile(controllerRoot, modelName + "AjaxController.java", CONTROLLER_TPL);
 	}
 
 	public void generateJs() {
