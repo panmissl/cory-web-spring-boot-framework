@@ -79,7 +79,7 @@ public class CodeGenerator {
 			" */\n" +
 			"@RestController\n" +
 			"@RequestMapping(\"/ajax/#module#/#modelSmall#/\")\n" +
-			"public class #MODEL#Controller extends BaseAjaxController<#MODEL#> {\n" +
+			"public class #MODEL#AjaxController extends BaseAjaxController<#MODEL#> {\n" +
 			"\n" +
 			"\t@Autowired\n" +
 			"\tprivate #MODEL#Service #model#Service;\n" +
