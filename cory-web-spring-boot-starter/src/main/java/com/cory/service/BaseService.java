@@ -7,14 +7,18 @@ import com.cory.page.Pagination;
 import com.cory.web.util.ActionLogUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * Created by Cory on 2017/5/13.
+ * @author corypan
+ * @date 2017/5/13
  */
 public abstract class BaseService<T extends BaseModel> {
 
+    @Transactional(rollbackFor = Throwable.class)
     public void add(T model) {
         getDao().add(model);
         if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
@@ -22,6 +26,7 @@ public abstract class BaseService<T extends BaseModel> {
         }
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void delete(T model) {
         getDao().delete(model);
         if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
@@ -29,6 +34,7 @@ public abstract class BaseService<T extends BaseModel> {
         }
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void delete(int id) {
         getDao().deleteById(id);
         if (actionLogEnable()) {
@@ -36,6 +42,7 @@ public abstract class BaseService<T extends BaseModel> {
         }
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void update(T model) {
         getDao().updateModel(model);
         if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
