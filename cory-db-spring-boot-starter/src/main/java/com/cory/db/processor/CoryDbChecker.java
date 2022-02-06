@@ -72,6 +72,10 @@ public class CoryDbChecker implements InitializingBean {
 
         Map<String, Table> dbTableMap = queryNotNullDbTables();
 
+        if (CoryEnv.IS_DEV) {
+            log.info("check and sync db tables and columns from code to db.");
+        }
+
         boolean same = true;
         StringBuilder msgBuilder = new StringBuilder();
 

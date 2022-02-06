@@ -4,6 +4,7 @@ import com.cory.context.CoryEnv;
 import com.cory.context.CorySystemContext;
 import com.cory.db.annotations.Dao;
 import com.cory.db.annotations.Model;
+import com.cory.db.processor.CoryDbChecker;
 import com.cory.enums.CoryEnum;
 import com.cory.service.ResourceService;
 import com.cory.service.SystemConfigService;
@@ -48,6 +49,10 @@ public class StartupListener implements ServletContextListener {
 		//先生成代码，否则加载系统参数出错
 		generateCode(ctx);
 		initForEnum();
+
+		//在使用db前先同步一下表，否则开发环境一开始启动时会有问题：直接取CoryDbChecker即可，初始化Bean会自动检查
+		ctx.getBean(CoryDbChecker.class);
+
     	initSystemConfigCache(ctx);
 		scanResourceAndLoadToDb(ctx);
     }
