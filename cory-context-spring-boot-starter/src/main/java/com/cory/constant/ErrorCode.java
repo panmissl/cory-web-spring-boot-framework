@@ -19,6 +19,7 @@ public enum ErrorCode {
     DB_ERROR(1006, "DB处理失败"),
     HTTP_STATUS_ERROR(1007, "Http状态错误"),
     CAPTCHA_ERROR(1008, "验证码错误"),
+    ENCODING_ERROR(1009, "字符集错误：不支持的字符集"),
 
     ;
 
