@@ -13,6 +13,7 @@ public class DateFormatUtils extends org.apache.commons.lang3.time.DateFormatUti
 	public static final String HOUR_FORMAT = "yyyy-MM-dd HH";
 	public static final String MINUTE_FORMAT = "yyyy-MM-dd HH:mm";
 	public static final String SECOND_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String SECOND_FORMAT_WITHOUT_DASH = "yyyyMMddHHmmss";
 
 	private DateFormatUtils(){}
 
@@ -46,6 +47,11 @@ public class DateFormatUtils extends org.apache.commons.lang3.time.DateFormatUti
 		return DateFormatUtils.format(date, SECOND_FORMAT);
 	}
 
+	/** yyyyMMddHHmmss, eg: 20220523152055 */
+	public static String formatAsSecondWithoutDash(Date date) {
+		return DateFormatUtils.format(date, SECOND_FORMAT_WITHOUT_DASH);
+	}
+
 	/** yyyy, eg: 2022 */
 	public static String formatNowAsYear() {
 		return DateFormatUtils.format(new Date(), YEAR_FORMAT);
@@ -74,6 +80,11 @@ public class DateFormatUtils extends org.apache.commons.lang3.time.DateFormatUti
 	/** yyyy-MM-dd HH:mm:ss, eg: 2022-05-23 15:20:55 */
 	public static String formatNowAsSecond() {
 		return DateFormatUtils.format(new Date(), SECOND_FORMAT);
+	}
+
+	/** yyyyMMddHHmmss, eg: 20220523152055 */
+	public static String formatNowAsSecondWithoutDash() {
+		return DateFormatUtils.format(new Date(), SECOND_FORMAT_WITHOUT_DASH);
 	}
 
 	public static String formatDate(Date date){
