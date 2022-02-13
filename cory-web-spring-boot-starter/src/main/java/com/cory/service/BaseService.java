@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Cory on 2017/5/13.
@@ -102,14 +103,14 @@ public abstract class BaseService<T extends BaseModel> {
 
     public abstract <D extends BaseDao<T>> D getDao();
 
-    protected void fillOtherFields(List<T> list) {
+    protected List<T> fillOtherFields(List<T> list) {
         if (CollectionUtils.isEmpty(list)) {
-            return;
+            return list;
         }
-        list.forEach(model -> fillOtherFields(model));
+        return list.stream().map(m -> fillOtherFields(m)).collect(Collectors.toList());
     }
 
-    protected void fillOtherFields(T model) {}
+    protected T fillOtherFields(T model) {return model;}
 
     /**
      * 增删改时记录操作日志，默认记录，如果不需要可以复写返回false

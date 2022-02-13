@@ -99,9 +99,9 @@ public class DatadictService extends BaseService<DataDict> {
     }
 
     @Override
-    protected void fillOtherFields(DataDict model) {
+    protected DataDict fillOtherFields(DataDict model) {
         if (null == model) {
-            return;
+            return model;
         }
         String typeDesc = "ROOT(根类型)";
         if (null != model.getType() && model.getType() > 0) {
@@ -109,5 +109,6 @@ public class DatadictService extends BaseService<DataDict> {
             typeDesc = type.getValue() + "(" + type.getDescription() + ")";
         }
         model.getRenderFieldMap().put("typeDesc", typeDesc);
+        return model;
     }
 }
