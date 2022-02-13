@@ -1,6 +1,10 @@
 package com.cory.constant;
 
 /**
+ * 10000以下的code保留，业务层用大于10000的。
+ *
+ * <br />
+ *
  * Created by Cory on 2017/5/13.
  */
 public enum ErrorCode {

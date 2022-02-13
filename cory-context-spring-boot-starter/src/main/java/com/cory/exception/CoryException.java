@@ -1,13 +1,25 @@
 package com.cory.exception;
 
 import com.cory.constant.ErrorCode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
+ * 可以用{@link ErrorCode}构建，也可以直接用builder进行构建。
+ *
+ * <br />
+ *
  * Created by Cory on 2017/5/13.
  */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CoryException extends RuntimeException {
 
-    private int errorCode;
+    private String errorCode;
     private String errorMsg;
 
     public CoryException(ErrorCode errorCode) {
@@ -15,24 +27,8 @@ public class CoryException extends RuntimeException {
     }
 
     public CoryException(ErrorCode errorCode, Object... params) {
-        this.errorCode = errorCode.getCode();
+        this.errorCode = errorCode.getCode() + "";
         this.errorMsg = this.buildErrorMsg(errorCode.getMessage(), params);
-    }
-
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getErrorMsg() {
-        return errorMsg;
-    }
-
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
     }
 
     @Override
@@ -43,7 +39,7 @@ public class CoryException extends RuntimeException {
     @Override
     public String getLocalizedMessage() {
         //return "[errorCode: " + errorCode + "], errorMsg: " + (null == errorMsg ? "" : errorMsg);
-        return null == errorMsg ? "错误" : errorMsg;
+        return null == errorMsg ? ("Error, code: " + errorCode) : errorMsg;
     }
 
     private String buildErrorMsg(String msg, Object... params) {

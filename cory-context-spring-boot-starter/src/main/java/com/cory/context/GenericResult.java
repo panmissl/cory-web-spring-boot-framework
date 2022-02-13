@@ -15,7 +15,7 @@ public class GenericResult implements Serializable {
 
     private boolean success = true;
 
-    private int errorCode;
+    private String errorCode;
     private String errorMsg;
     private Object object;
 
@@ -39,7 +39,7 @@ public class GenericResult implements Serializable {
      * @param errorCode
      * @param errorMsg
      */
-    private GenericResult(int errorCode, String errorMsg) {
+    private GenericResult(String errorCode, String errorMsg) {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
         this.success = false;
@@ -50,7 +50,7 @@ public class GenericResult implements Serializable {
      * @param errorCode
      */
     private GenericResult(ErrorCode errorCode) {
-        this.errorCode = errorCode.getCode();
+        this.errorCode = errorCode.getCode() + "";
         this.errorMsg = errorCode.getMessage();
         this.success = false;
     }
@@ -70,6 +70,10 @@ public class GenericResult implements Serializable {
     }
 
     public static GenericResult fail(int errorCode, String errorMsg) {
+        return new GenericResult(errorCode + "", errorMsg);
+    }
+
+    public static GenericResult fail(String errorCode, String errorMsg) {
         return new GenericResult(errorCode, errorMsg);
     }
 
