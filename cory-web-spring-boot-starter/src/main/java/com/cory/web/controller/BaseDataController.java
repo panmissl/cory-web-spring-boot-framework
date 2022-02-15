@@ -2,9 +2,11 @@ package com.cory.web.controller;
 
 import com.cory.model.DataDict;
 import com.cory.service.DatadictService;
+import com.cory.util.IpUtil;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +25,8 @@ public class BaseDataController extends BaseController {
 
     @Autowired
     private DatadictService datadictService;
+    @Value("${server.port}")
+    private Integer port;
 
     @GetMapping("datadict/list")
     public List<DataDict> dataDictList(Integer type) {
@@ -32,5 +36,10 @@ public class BaseDataController extends BaseController {
     @GetMapping("systemconfig")
     public String systemConfig(String key) {
         return SystemConfigCacheUtil.getCache(key);
+    }
+
+    @GetMapping("ip_port")
+    public String ipAndPort() {
+        return IpUtil.getHostIp() + ":" + port;
     }
 }

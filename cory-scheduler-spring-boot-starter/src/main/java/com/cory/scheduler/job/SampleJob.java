@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class SampleJob extends SingleIpJob {
 
-    protected String getRunIp() {
+    @Override
+    protected String getRunIpAndPort() {
         //return SystemConfigCacheUtil.getCache(SystemConfigCacheKey.QUARTZ_IP);
-        return "192.168.1.1";
+        return "192.168.1.1:8080";
     }
 
+    @Override
     protected void doRun() {
         //do run here
     }
