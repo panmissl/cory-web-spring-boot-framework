@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  * DAO返回值类型，支持Pagination(会自动查询总数和数据列表)，BaseModel的子类，简单类型（int、long、String、Date等）、Map、List<T>、其他对象类型（自动填充数据）
  *
  * Created by Cory on 2021/2/9.
+ * @author corypan
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

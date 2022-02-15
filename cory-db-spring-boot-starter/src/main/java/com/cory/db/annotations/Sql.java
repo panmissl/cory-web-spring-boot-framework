@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  * 返回值类型：type为DDL时，返回值类型为void；type为EXECUTE时，返回值类型为int；type为QUERY时，返回值类型为List&lt;Map&lt;String, Object&gt;&gt;
  *
  * Created by Cory on 2021/2/9.
+ * @author corypan
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 /**
  * 加在Dao的方法上，参数
  * Created by Cory on 2021/2/9.
+ * @author corypan
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

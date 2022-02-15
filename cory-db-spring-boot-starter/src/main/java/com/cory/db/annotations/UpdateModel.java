@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
  * 
  * 加在Dao上
  * Created by Cory on 2021/2/9.
+ * @author corypan
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

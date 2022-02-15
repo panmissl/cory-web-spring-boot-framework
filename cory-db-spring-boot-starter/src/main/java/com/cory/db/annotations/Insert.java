@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
  * <br />
  * 会将自动生成的ID设置到model里
  * Created by Cory on 2021/2/9.
+ * @author corypan
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

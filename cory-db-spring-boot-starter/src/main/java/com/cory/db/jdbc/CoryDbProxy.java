@@ -14,6 +14,7 @@ import com.cory.model.BaseModel;
 import com.cory.page.Pagination;
 import com.cory.util.AssertUtils;
 import com.cory.util.ClassUtil;
+import com.cory.util.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -123,6 +124,9 @@ public class CoryDbProxy<T> implements InvocationHandler {
         AssertUtils.isTrue(null != args && args.length == 1 && args[0].getClass().equals(modelClass), "UpdateModel时有且只能有一个类型是：" + modelClass + "的参数", ErrorCode.DB_ERROR);
 
         Object model = args[0];
+        if (model instanceof BaseModel) {
+            ModelUtil.fillCreatorAndModifier(((BaseModel) model));
+        }
         Map<String, Object> columns = CoryModelUtil.parseModelFieldsValueWithBaseModel(model, modelClass);
 
         CorySqlBuilder.CoryUpdateModelSqlBuilder builder = CorySqlBuilder.createUpdateModelBuilder(table);
@@ -252,6 +256,9 @@ public class CoryDbProxy<T> implements InvocationHandler {
         AssertUtils.isTrue(null != args && args.length == 1 && args[0].getClass().equals(modelClass), "插入时有且只能有一个类型是：" + modelClass + "的参数", ErrorCode.DB_ERROR);
 
         Object model = args[0];
+        if (model instanceof BaseModel) {
+            ModelUtil.fillCreatorAndModifier(((BaseModel) model));
+        }
         Map<String, Object> columns = CoryModelUtil.parseModelFieldsValueWithBaseModel(model, modelClass);
 
         CoryInsertSqlBuilder builder = CorySqlBuilder.createInsertBuilder(table);

@@ -406,7 +406,7 @@ public class CorySqlBuilder {
                 params.addAll(wherePart.getParams());
             }
 
-            String sql = String.format("UPDATE %s SET %s WHERE IS_DELETED = 0 %s", table, columnPart.getSql(), wherePart.getSql());
+            String sql = String.format("UPDATE %s SET %s WHERE IS_DELETED = 0 %s", table, "MODIFY_TIME = now(), " + columnPart.getSql(), wherePart.getSql());
             return CorySqlInfo.builder().sql(formatSql(sql)).params(params).build();
         }
     }

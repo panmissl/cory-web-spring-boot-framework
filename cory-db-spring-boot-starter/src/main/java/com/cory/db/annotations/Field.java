@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  * <br />
  * 数据库定义，相当于DDL。同时兼具页面配置功能
  * Created by Cory on 2021/2/9.
+ * @author corypan
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
