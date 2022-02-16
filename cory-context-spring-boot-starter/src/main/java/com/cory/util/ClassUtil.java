@@ -3,6 +3,7 @@ package com.cory.util;
 import com.cory.constant.ErrorCode;
 import com.cory.exception.CoryException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -28,17 +29,14 @@ import java.util.jar.JarFile;
 @Slf4j
 public class ClassUtil {
 
+	/**
+	 * 判断类及其父类（递归）是否有某个注解
+	 * @param cls
+	 * @param annotation
+	 * @return
+	 */
 	public static boolean classHasAnnotationWithParent(Class cls, Class<? extends Annotation> annotation) {
-		if (cls.isAnnotationPresent(annotation)) {
-			return true;
-		}
-		Class parent = cls.getSuperclass();
-		while (null != parent && !parent.equals(Object.class)) {
-			if (parent.isAnnotationPresent(annotation)) {
-				return true;
-			}
-		}
-		return false;
+		return null != AnnotationUtils.findAnnotation(cls, annotation);
 	}
 
 	/**

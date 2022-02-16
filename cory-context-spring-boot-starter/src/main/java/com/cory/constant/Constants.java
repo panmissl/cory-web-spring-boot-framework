@@ -77,6 +77,7 @@ public class Constants {
     public static final String HEADER_ACCEPT_ENCODING = "accept-encoding";
     public static final String HEADER_CONTENT_LENGTH = "content-length";
     public static final String HEADER_CONTENT_ENCODING = "Content-Encoding";
+    public static final String REQUEST_HEADER_KEY_REAL_IP = "X-Real-IP";
 
     public static final String DATE_FORMAT_SHORT_WITH_DASH = "yyyy-MM-dd";
     public static final String DATE_FORMAT_SHORT_WITHOUT_DASH = "yyyyMMdd";
