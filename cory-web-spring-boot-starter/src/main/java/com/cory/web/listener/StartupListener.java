@@ -10,7 +10,7 @@ import com.cory.service.ResourceService;
 import com.cory.service.SystemConfigService;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
-import com.cory.web.util.CodeGenerator;
+import com.cory.web.util.CodeGeneratorHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
 import org.springframework.cache.CacheManager;
@@ -33,7 +33,8 @@ public class StartupListener implements ServletContextListener {
 	private static final String[] BASE_PACKAGES = new String[] {"com.cory"};
 
 	private WebApplicationContext ctx;
-	
+
+	@Override
     public void contextInitialized(ServletContextEvent event) {
     	ServletContext context = event.getServletContext();
     	this.ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
@@ -112,18 +113,12 @@ public class StartupListener implements ServletContextListener {
     	if (!generateAll && !generatePart) {
 			return 0;
 		}
-		CodeGenerator codeGenerator = new CodeGenerator(modelClass);
-		//service, dao
-		codeGenerator.generateDao();
-		codeGenerator.generateService();
-		//controller, js
-		if (generateAll) {
-			codeGenerator.generateController();
-			codeGenerator.generateJs();
-		}
-		System.out.println("已经为：" + modelClass.getSimpleName() + "生成" + (generateAll ? "Controller、Service、Dao及JS" : "Service及Dao"));
-		System.out.println();
-		return 1;
+		return CodeGeneratorHelper.generateCode(modelClass, CodeGeneratorHelper.GenerateCodeController.builder()
+						.dao(true)
+						.service(true)
+						.controller(generateAll ? true : false)
+						.js(generateAll ? true : false)
+						.build());
 	}
 
 	private boolean hasDao(Class<?> m, Set<Class<?>> daoSet) {
