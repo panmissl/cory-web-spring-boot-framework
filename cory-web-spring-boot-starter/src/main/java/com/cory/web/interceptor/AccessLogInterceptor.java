@@ -19,6 +19,9 @@ public class AccessLogInterceptor implements HandlerInterceptor {
 
 	private static final TransmittableThreadLocal<Long> TIME = new TransmittableThreadLocal<>();
 
+	/** Y/N|status|method|uri|duration(ms)|remoteAddr|realIp|queryString */
+	public static final String FORMAT = "%s|%s|%s|%s|%sms|%s|%s|%s";
+
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler)
@@ -29,15 +32,17 @@ public class AccessLogInterceptor implements HandlerInterceptor {
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-		long start = TIME.get();
 		Object exAttr = request.getAttribute(Constants.EXCEPTION_ATTR);
 		boolean hasException = null != exAttr && (Boolean) exAttr;
 		String method = request.getMethod();
 		String realIp = request.getHeader(Constants.REQUEST_HEADER_KEY_REAL_IP);
 		String remoteAddr = request.getRemoteAddr();
+		int status = response.getStatus();
+		String uri = request.getRequestURI();
+		long start = TIME.get();
+		long duration = System.currentTimeMillis() - start;
+		String query = request.getQueryString();
 
-		log.info("remoteAddr={}, realIp={}, uri={}, method={}, queryString={}, status={}, hasException={}, duration={}ms",
-				remoteAddr, realIp, request.getRequestURI(), method, request.getQueryString(), response.getStatus(), hasException,
-				System.currentTimeMillis() - start);
+		log.info(String.format(FORMAT, !hasException, status, method, uri, duration, remoteAddr, realIp, query));
 	}
 }
