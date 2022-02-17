@@ -8,6 +8,7 @@ import com.cory.web.eagleeye.EagleEyeFilter;
 import com.cory.web.interceptor.AccessTokenInterceptor;
 import com.cory.web.util.PostRequestMatcher;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -39,6 +40,8 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
     private List<HandlerInterceptor> interceptorList;
     @Autowired
     private AccessTokenInterceptor accessTokenInterceptor;
+    @Autowired
+    private CoryWebProperties coryWebProperties;
 
     @Bean
     public FilterRegistrationBean eagleEyeFilter() {
@@ -62,7 +65,11 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
 
     @Bean
     public RequestMatcher requestMatcher() {
-        return new PostRequestMatcher();
+        PostRequestMatcher matcher = new PostRequestMatcher();
+        if (StringUtils.isNotBlank(coryWebProperties.getCsrfAndFormTokenExcludeUrlPattern())) {
+            matcher.setExcludeUrlRegExp(coryWebProperties.getCsrfAndFormTokenExcludeUrlPattern());
+        }
+        return matcher;
     }
 
     @Override
