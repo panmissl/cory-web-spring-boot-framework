@@ -6,6 +6,7 @@ import com.cory.model.Role;
 import com.cory.service.RoleService;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
+import com.cory.web.config.CoryWebProperties;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.subject.Subject;
@@ -36,6 +37,8 @@ public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 
 	@Autowired
 	private RoleService roleService;
+	@Autowired
+	private CoryWebProperties coryWebProperties;
 
 	//未登录重定向到登陆页
 	protected void redirectToLogin(ServletRequest req, ServletResponse resp) throws IOException {
@@ -74,6 +77,11 @@ public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 
 		String requestUrl = this.getPathWithinApplication(request);
 		Subject subject = this.getSubject(request, response);
+
+		if (skipAuth(requestUrl)) {
+			return true;
+		}
+
 		if (!UserUtils.isLoginUser(subject)) {
 			if (isAnonUrl(requestUrl)) {
 				accessAllowed = true;
@@ -85,6 +93,20 @@ public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 		}
 
 		return accessAllowed;
+	}
+
+	private boolean skipAuth(String requestUrl) {
+		String skipAuthUrlPattern = coryWebProperties.getSkipAuthUrlPattern();
+		if (StringUtils.isBlank(skipAuthUrlPattern)) {
+			return false;
+		}
+		if (StringUtils.isBlank(requestUrl)) {
+			return false;
+		}
+		if (!requestUrl.startsWith("/")) {
+			requestUrl += "/";
+		}
+		return requestUrl.matches(skipAuthUrlPattern);
 	}
 
 	/**

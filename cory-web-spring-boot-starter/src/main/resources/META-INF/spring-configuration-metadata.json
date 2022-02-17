@@ -8,5 +8,11 @@
     }
   ],
   "properties": [
+    {
+      "sourceType": "com.cory.web.config.CoryWebProperties",
+      "name": "cory.web.skipAuthUrlPattern",
+      "description": "跳过校验权限url正则表达式，url要以/开头，比如：/pay/callback.*，多个：/pay/callback.*|/bpms/callback.*",
+      "type": "java.lang.String"
+    }
   ]
 }
