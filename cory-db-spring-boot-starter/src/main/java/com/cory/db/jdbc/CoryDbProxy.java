@@ -1,6 +1,7 @@
 package com.cory.db.jdbc;
 
 import com.cory.constant.ErrorCode;
+import com.cory.context.CurrentUser;
 import com.cory.db.annotations.*;
 import com.cory.db.enums.CustomSqlType;
 import com.cory.db.jdbc.CorySqlBuilder.CoryInsertSqlBuilder;
@@ -14,7 +15,6 @@ import com.cory.model.BaseModel;
 import com.cory.page.Pagination;
 import com.cory.util.AssertUtils;
 import com.cory.util.ClassUtil;
-import com.cory.util.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
         Object model = args[0];
         if (model instanceof BaseModel) {
-            ModelUtil.fillCreatorAndModifier(((BaseModel) model));
+            resetDateAndOperator((BaseModel) model);
         }
         Map<String, Object> columns = CoryModelUtil.parseModelFieldsValueWithBaseModel(model, modelClass);
 
@@ -257,7 +258,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
         Object model = args[0];
         if (model instanceof BaseModel) {
-            ModelUtil.fillCreatorAndModifier(((BaseModel) model));
+            resetDateAndOperator((BaseModel) model);
         }
         Map<String, Object> columns = CoryModelUtil.parseModelFieldsValueWithBaseModel(model, modelClass);
 
@@ -280,6 +281,23 @@ public class CoryDbProxy<T> implements InvocationHandler {
         }
 
         return Void.TYPE;
+    }
+
+    private void resetDateAndOperator(BaseModel model) {
+        CurrentUser user = CurrentUser.get();
+
+        if (null == model.getCreator()) {
+            model.setCreator(null == user ? 1 : user.getId());
+        }
+        if (null == model.getModifier()) {
+            model.setModifier(null == user ? 1 : user.getId());
+        }
+        if (null == model.getCreateTime()) {
+            model.setCreateTime(new Date());
+        }
+        if (null == model.getModifyTime()) {
+            model.setModifyTime(new Date());
+        }
     }
 
     public static <T> T newMapperProxy(Class<T> daoClass, CoryDb coryDb, boolean logEnable) {
