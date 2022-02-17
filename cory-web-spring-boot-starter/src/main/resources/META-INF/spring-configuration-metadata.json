@@ -17,7 +17,7 @@
     {
       "sourceType": "com.cory.web.config.CoryWebProperties",
       "name": "cory.web.csrfAndFormTokenExcludeUrlPattern",
-      "description": "POST提交时，会校验CSRF TOKEN和FORM TOKEN，如果想要跳过，可以配置此参数。它是URL的正则表达式，比如：.*?/openapi/.*，多个：.*?/openapi/.*|.*callback.*。如果不配置，默认值为：.*?/openapi/.*，即对带有openapi的url跳过",
+      "description": "POST提交时，会校验CSRF TOKEN和FORM TOKEN，如果想要跳过，可以配置此参数。它是URL的正则表达式，url以/开头，比如：.*?/openapi/.*，多个：.*?/openapi/.*|.*callback.*。如果不配置，默认值为：.*?/openapi/.*，即对带有openapi的url跳过",
       "type": "java.lang.String"
     }
   ]
