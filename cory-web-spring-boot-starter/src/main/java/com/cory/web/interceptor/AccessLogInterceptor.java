@@ -34,15 +34,16 @@ public class AccessLogInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
 		Object exAttr = request.getAttribute(Constants.EXCEPTION_ATTR);
 		boolean hasException = null != exAttr && (Boolean) exAttr;
-		String method = request.getMethod();
-		String realIp = request.getHeader(Constants.REQUEST_HEADER_KEY_REAL_IP);
-		String remoteAddr = request.getRemoteAddr();
+		String flag = hasException ? "N" : "Y";
 		int status = response.getStatus();
+		String method = request.getMethod();
 		String uri = request.getRequestURI();
 		long start = TIME.get();
 		long duration = System.currentTimeMillis() - start;
+		String remoteAddr = request.getRemoteAddr();
+		String realIp = request.getHeader(Constants.REQUEST_HEADER_KEY_REAL_IP);
 		String query = request.getQueryString();
 
-		log.info(String.format(FORMAT, !hasException, status, method, uri, duration, remoteAddr, realIp, query));
+		log.info(String.format(FORMAT, flag, status, method, uri, duration, remoteAddr, realIp, query));
 	}
 }
