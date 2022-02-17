@@ -31,7 +31,10 @@ public class PostRequestMatcher implements RequestMatcher {
 
     private boolean isExcludeUrl(HttpServletRequest request) {
         String uri = request.getRequestURI().substring(request.getContextPath().length());
-        return null != uri && StringUtils.isNotBlank(excludeUrlRegExp) && uri.matches(excludeUrlRegExp);
+        if (StringUtils.isBlank(uri) || !uri.startsWith("/")) {
+            uri = "/" + uri;
+        }
+        return StringUtils.isNotBlank(excludeUrlRegExp) && uri.matches(excludeUrlRegExp);
     }
 
     public void setExcludeUrlRegExp(String excludeUrlRegExp) {

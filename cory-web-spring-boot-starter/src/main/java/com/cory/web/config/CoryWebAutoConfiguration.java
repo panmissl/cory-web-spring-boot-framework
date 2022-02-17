@@ -40,8 +40,6 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
     private List<HandlerInterceptor> interceptorList;
     @Autowired
     private AccessTokenInterceptor accessTokenInterceptor;
-    @Autowired
-    private CoryWebProperties coryWebProperties;
 
     @Bean
     public FilterRegistrationBean eagleEyeFilter() {
@@ -64,7 +62,7 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public RequestMatcher requestMatcher() {
+    public RequestMatcher requestMatcher(CoryWebProperties coryWebProperties) {
         PostRequestMatcher matcher = new PostRequestMatcher();
         if (StringUtils.isNotBlank(coryWebProperties.getCsrfAndFormTokenExcludeUrlPattern())) {
             matcher.setExcludeUrlRegExp(coryWebProperties.getCsrfAndFormTokenExcludeUrlPattern());
