@@ -1,11 +1,9 @@
 package com.cory.scheduler.job;
 
-import org.springframework.stereotype.Service;
-
 /**
  * Created by Cory on 2017/5/29.
  */
-@Service
+//@Service
 public class SampleJob extends SingleIpJob {
 
     @Override
