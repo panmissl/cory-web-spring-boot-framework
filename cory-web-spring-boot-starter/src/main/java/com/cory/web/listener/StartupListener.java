@@ -95,7 +95,7 @@ public class StartupListener implements ServletContextListener {
 				boolean generateNone = null != line && "3".equals(line.trim());
 				boolean generateAll = !generatePart && !generateNone;
 
-				System.out.println("代码生成模块，您选择了：" + (generateAll ? "生成所有代码" : generatePart ? "生成Service代码" : "不生成"));
+				System.out.println("代码生成模块，您选择了：" + (generateAll ? "生成所有代码" : generatePart ? "生成Service&Dao代码" : "不生成"));
 
 				count += doGenerate(modelClass, generateAll, generatePart);
 			} catch (Throwable t) {
@@ -113,12 +113,7 @@ public class StartupListener implements ServletContextListener {
     	if (!generateAll && !generatePart) {
 			return 0;
 		}
-		return CodeGeneratorHelper.generateCode(modelClass, CodeGeneratorHelper.GenerateCodeController.builder()
-						.dao(true)
-						.service(true)
-						.controller(generateAll ? true : false)
-						.js(generateAll ? true : false)
-						.build());
+		return CodeGeneratorHelper.generateCode(modelClass, generateAll ? CodeGeneratorHelper.GenerateCodeController.all() : CodeGeneratorHelper.GenerateCodeController.serviceAndDaoOnly());
 	}
 
 	private boolean hasDao(Class<?> m, Set<Class<?>> daoSet) {

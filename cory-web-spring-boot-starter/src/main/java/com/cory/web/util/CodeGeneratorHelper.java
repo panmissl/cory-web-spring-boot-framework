@@ -3,22 +3,45 @@ package com.cory.web.util;
 import com.cory.context.CoryEnv;
 import com.cory.db.annotations.Model;
 import com.cory.util.AssertUtils;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 public class CodeGeneratorHelper {
 
-	@Data
-	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
 	public static class GenerateCodeController {
-		private Boolean controller;
-		private Boolean service;
-		private Boolean dao;
-		private Boolean js;
+		public boolean controller;
+		public boolean service;
+		public boolean dao;
+		public boolean js;
+
+		private GenerateCodeController(boolean controller, boolean service, boolean dao, boolean js) {
+			this.controller = controller;
+			this.service = service;
+			this.dao = dao;
+			this.js = js;
+		}
+
+		public static GenerateCodeController all() {
+			return new GenerateCodeController(true, true, true, true);
+		}
+
+		public static GenerateCodeController serviceAndDaoOnly() {
+			return new GenerateCodeController(false, true, true, false);
+		}
+
+		public static GenerateCodeController controllerOnly() {
+			return new GenerateCodeController(true, false, false, false);
+		}
+
+		public static GenerateCodeController serviceOnly() {
+			return new GenerateCodeController(false, true, false, false);
+		}
+
+		public static GenerateCodeController daoOnly() {
+			return new GenerateCodeController(false, false, true, false);
+		}
+
+		public static GenerateCodeController jsOnly() {
+			return new GenerateCodeController(false, false, false, true);
+		}
 	}
 
 	/**
