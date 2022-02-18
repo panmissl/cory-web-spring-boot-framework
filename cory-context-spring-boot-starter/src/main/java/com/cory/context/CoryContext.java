@@ -39,6 +39,8 @@ public class CoryContext implements Serializable {
 
     //true/false
     private String debugMode;
+    //true/false
+    private String registerEnable;
 
     private String adminSkin;
 

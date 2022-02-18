@@ -20,6 +20,7 @@ public enum ErrorCode {
     HTTP_STATUS_ERROR(1007, "Http状态错误"),
     CAPTCHA_ERROR(1008, "验证码错误"),
     ENCODING_ERROR(1009, "字符集错误：不支持的字符集"),
+    ILLEGAL_ACCESS(1010, "非法访问"),
 
     ;
 

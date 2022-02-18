@@ -12,6 +12,9 @@
 #、具体用法请参考demo工程：git@github.com:panmissl/cory-web-spring-boot-demo.git
 #、有问题请联系微信：cory275165359
 
+TODO
+#、登录需要验证码：打开，注册也需要 -- 暂时不，后面再说
+
 -------------------------
 
 DB:

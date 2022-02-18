@@ -30,6 +30,8 @@ public class SystemConfigCacheKey {
     public static final String ADMIN_SKIN = "admin-skin";
     /** login skin: default/simple */
     public static final String LOGIN_SKIN = "login-skin";
+    /** 是否开启注册功能 */
+    public static final String REGISTER_ENABLE = "register_enable";
 
     /** root role name */
     public static final String ROOT_ROLE_NAME = "root_role_name";

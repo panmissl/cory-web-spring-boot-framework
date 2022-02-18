@@ -54,6 +54,7 @@ public class ContextInterceptor implements HandlerInterceptor {
 			adminSkin = "blue";
 		}
 		builder.adminSkin(adminSkin);
+		builder.registerEnable(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.REGISTER_ENABLE));
 
 		CoryContext ctx = builder.build();
 		CoryContext.set(ctx);
