@@ -5,6 +5,11 @@
       "sourceType": "com.cory.web.config.CoryWebProperties",
       "name": "cory.web",
       "type": "com.cory.web.config.CoryWebProperties"
+    },
+    {
+      "sourceType": "com.cory.web.config.CaptchaProperties",
+      "name": "cory.web.captcha",
+      "type": "com.cory.web.config.CaptchaProperties"
     }
   ],
   "properties": [
@@ -18,6 +23,18 @@
       "sourceType": "com.cory.web.config.CoryWebProperties",
       "name": "cory.web.csrfAndFormTokenExcludeUrlPattern",
       "description": "POST提交时，会校验CSRF TOKEN和FORM TOKEN，如果想要跳过，可以配置此参数。它是URL的正则表达式，url以/开头，比如：.*?/openapi/.*，多个：.*?/openapi/.*|.*callback.*。如果不配置，默认值为：.*?/openapi/.*，即对带有openapi的url跳过",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.cory.web.config.CaptchaProperties",
+      "name": "cory.web.captcha.enable",
+      "description": "是否开启验证码，默认false",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.cory.web.config.CaptchaProperties",
+      "name": "cory.web.captcha.urlPattern",
+      "description": "正则表达式，符合表达式的才校验，否则不校验。以斜杠开头",
       "type": "java.lang.String"
     }
   ]
