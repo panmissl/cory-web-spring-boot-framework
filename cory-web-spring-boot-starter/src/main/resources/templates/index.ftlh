@@ -25,6 +25,7 @@
             window.routerBase = '${ctxWithoutSlash!""}' + "/";
             window.publicPath = window.jsDir;
             window.DEBUG_MODE = ${debugMode!"false"};
+            window.registerEnable = ${registerEnable!"false"};
         </script>
 
         <title>${siteName!""}</title>
