@@ -104,4 +104,10 @@ public @interface Field {
      * @return
      */
     String comment() default "";
+
+    /**
+     * 是否富文本类型，如果是，前端在渲染编辑框时渲染成富文本编辑器（需要自己实现文件上传能力，前端工程里会有说明）
+     * @return
+     */
+    boolean richText() default false;
 }

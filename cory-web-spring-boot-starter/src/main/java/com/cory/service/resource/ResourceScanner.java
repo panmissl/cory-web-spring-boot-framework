@@ -115,6 +115,7 @@ public class ResourceScanner {
                                 .filtered(fieldAnno.filtered())
                                 .editable(fieldAnno.editable())
                                 .desc(fieldAnno.desc())
+                                .richText(fieldAnno.richText())
                                 .build();
                         fieldMetaList.add(fieldMeta);
                     }

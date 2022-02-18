@@ -58,6 +58,7 @@ public class ResourceService extends BaseService<Resource> {
         return super.get(id);
     }
 
+    @Override
     public ResourceDao getDao() {
         return resourceDao;
     }
