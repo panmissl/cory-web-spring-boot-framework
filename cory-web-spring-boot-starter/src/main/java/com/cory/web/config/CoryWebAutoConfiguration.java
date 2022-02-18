@@ -4,6 +4,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.cory.constant.Constants;
+import com.cory.web.converter.CoryWebFastJsonHttpMessageConverter;
 import com.cory.web.eagleeye.EagleEyeFilter;
 import com.cory.web.interceptor.AccessTokenInterceptor;
 import com.cory.web.util.PostRequestMatcher;
@@ -90,7 +91,7 @@ public class CoryWebAutoConfiguration implements WebMvcConfigurer {
         config.setDateFormat(Constants.DATE_FORMAT_FULL_WITH_DASH);
         config.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect);
 
-        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
+        CoryWebFastJsonHttpMessageConverter converter = new CoryWebFastJsonHttpMessageConverter();
         converter.setFastJsonConfig(config);
 
         converters.add(0, converter);
