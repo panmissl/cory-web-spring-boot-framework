@@ -5,6 +5,7 @@ import com.cory.service.DatadictService;
 import com.cory.util.IpUtil;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +29,18 @@ public class BaseDataController extends BaseController {
     @Value("${server.port}")
     private Integer port;
 
-    @GetMapping("datadict/list")
-    public List<DataDict> dataDictList(Integer type) {
-        return datadictService.getByType(type);
+    @GetMapping("datadict/listByTypeId")
+    public List<DataDict> dataDictList(Integer typeId) {
+        return datadictService.getByType(typeId);
+    }
+
+    @GetMapping("datadict/listByTypeValue")
+    public List<DataDict> dataDictList(String typeValue) {
+        DataDict type = datadictService.getByValue(typeValue);
+        if (null == type) {
+            return Lists.newArrayList();
+        }
+        return datadictService.getByType(type.getId());
     }
 
     @GetMapping("systemconfig")
