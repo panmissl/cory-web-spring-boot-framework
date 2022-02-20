@@ -107,6 +107,8 @@ public class CorySystemContext implements Serializable {
         private boolean nullable;
         //default false
         private boolean richText;
+        //default null
+        private String datadictTypeValue;
 
         @Override
         public int hashCode() {
