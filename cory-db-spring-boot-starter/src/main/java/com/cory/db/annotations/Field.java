@@ -34,6 +34,13 @@ public @interface Field {
     CoryDbType type();
 
     /**
+     * 数据字典类型值，可选。
+     * 如果设置了，则前端在渲染时自动渲染成下拉框，自动去数据库拉数据字典。
+     * @return 数字字典类型的值，不要用ID，因为ID在开发时不确定
+     */
+    String datadictTypeValue() default "";
+
+    /**
      * 页面显示说明。比如一些字段的备注。默认为空
      * @return
      */
