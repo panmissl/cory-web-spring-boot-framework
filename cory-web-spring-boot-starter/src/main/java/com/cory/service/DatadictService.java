@@ -35,7 +35,7 @@ public class DatadictService extends BaseService<DataDict> {
 
     @Override
     public Pagination<DataDict> list(Pagination<DataDict> pagination, DataDict model, String sort) {
-        return super.list(pagination, model, "SN DESC");
+        return super.list(pagination, model, "SN");
     }
 
     @Override
@@ -86,14 +86,14 @@ public class DatadictService extends BaseService<DataDict> {
 
     @Cacheable(value = CacheConstants.Datadict, key = "'all-types'")
     public List<DataDict> getAllTypes() {
-        List<DataDict> list = this.getDao().getAllTypes("SN DESC");
+        List<DataDict> list = this.getDao().getAllTypes("SN");
         fillOtherFields(list);
         return list;
     }
 
     @Cacheable(value = CacheConstants.Datadict, key = "'type-'.concat(#type)")
     public List<DataDict> getByType(Integer type) {
-        List<DataDict> list = this.getDao().getByType(type, "SN DESC");
+        List<DataDict> list = this.getDao().getByType(type, "SN");
         fillOtherFields(list);
         return list;
     }
