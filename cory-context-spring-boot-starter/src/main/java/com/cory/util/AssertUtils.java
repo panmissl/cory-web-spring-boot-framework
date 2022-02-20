@@ -16,33 +16,33 @@ import java.util.Map;
  */
 public class AssertUtils {
 
-    public static void isTrue(boolean expression, String errorCode, String message) {
+    public static void isTrue(boolean expression, String errorCode, String message) throws CoryException {
         if (!expression) {
             error(errorCode, message);
         }
     }
 
-    public static void isNull(Object object, String errorCode, String message) {
+    public static void isNull(Object object, String errorCode, String message) throws CoryException {
         isTrue(null == object, errorCode, message);
     }
 
-    public static void notNull(Object object, String errorCode, String message) {
+    public static void notNull(Object object, String errorCode, String message) throws CoryException {
         isTrue(null != object, errorCode, message);
     }
 
-    public static void hasText(String text, String errorCode, String message) {
+    public static void hasText(String text, String errorCode, String message) throws CoryException {
         isTrue(StringUtils.isNoneBlank(text), errorCode, message);
     }
 
-    public static void notEmpty(Object[] array, String errorCode, String message) {
+    public static void notEmpty(Object[] array, String errorCode, String message) throws CoryException {
         isTrue(ObjectUtils.isNotEmpty(array), errorCode, message);
     }
 
-    public static void notEmpty(Collection<?> collection, String errorCode, String message) {
+    public static void notEmpty(Collection<?> collection, String errorCode, String message) throws CoryException {
         isTrue(CollectionUtils.isNotEmpty(collection), errorCode, message);
     }
 
-    public static void notEmpty(Map<?, ?> map, String errorCode, String message) {
+    public static void notEmpty(Map<?, ?> map, String errorCode, String message) throws CoryException {
         isTrue(MapUtils.isNotEmpty(map), errorCode, message);
     }
 
@@ -51,7 +51,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void isTrue(boolean expression, String message) {
+    public static void isTrue(boolean expression, String message) throws CoryException {
         isTrue(expression, message, ErrorCode.GENERIC_ERROR);
     }
 
@@ -60,7 +60,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void isTrue(boolean expression, String message, ErrorCode errorCode) {
+    public static void isTrue(boolean expression, String message, ErrorCode errorCode) throws CoryException {
         if (!expression) {
             error(message, errorCode);
         }
@@ -71,7 +71,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void isNull(Object object, String message) {
+    public static void isNull(Object object, String message) throws CoryException {
         isNull(object, message, ErrorCode.GENERIC_ERROR);
     }
 
@@ -80,7 +80,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void isNull(Object object, String message, ErrorCode errorCode) {
+    public static void isNull(Object object, String message, ErrorCode errorCode) throws CoryException {
         isTrue(null == object, message, errorCode);
     }
 
@@ -89,7 +89,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notNull(Object object, String message) {
+    public static void notNull(Object object, String message) throws CoryException {
         notNull(object, message, ErrorCode.GENERIC_ERROR);
     }
 
@@ -98,7 +98,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notNull(Object object, String message, ErrorCode errorCode) {
+    public static void notNull(Object object, String message, ErrorCode errorCode) throws CoryException {
         isTrue(null != object, message, errorCode);
     }
 
@@ -107,7 +107,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void hasText(String text, String message) {
+    public static void hasText(String text, String message) throws CoryException {
         hasText(text, message, ErrorCode.GENERIC_ERROR);
     }
 
@@ -116,7 +116,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void hasText(String text, String message, ErrorCode errorCode) {
+    public static void hasText(String text, String message, ErrorCode errorCode) throws CoryException {
         isTrue(StringUtils.isNoneBlank(text), message, errorCode);
     }
 
@@ -125,7 +125,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notEmpty(Object[] array, String message) {
+    public static void notEmpty(Object[] array, String message) throws CoryException {
         notEmpty(array, message, ErrorCode.GENERIC_ERROR);
     }
 
@@ -134,7 +134,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notEmpty(Object[] array, String message, ErrorCode errorCode) {
+    public static void notEmpty(Object[] array, String message, ErrorCode errorCode) throws CoryException {
         isTrue(ObjectUtils.isNotEmpty(array), message, errorCode);
     }
 
@@ -143,7 +143,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notEmpty(Collection<?> collection, String message) {
+    public static void notEmpty(Collection<?> collection, String message) throws CoryException {
         notEmpty(collection, message, ErrorCode.GENERIC_ERROR);
     }
 
@@ -152,7 +152,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notEmpty(Collection<?> collection, String message, ErrorCode errorCode) {
+    public static void notEmpty(Collection<?> collection, String message, ErrorCode errorCode) throws CoryException {
         isTrue(CollectionUtils.isNotEmpty(collection), message, errorCode);
     }
 
@@ -161,7 +161,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notEmpty(Map<?, ?> map, String message) {
+    public static void notEmpty(Map<?, ?> map, String message) throws CoryException {
         notEmpty(map, message, ErrorCode.GENERIC_ERROR);
     }
 
@@ -170,7 +170,7 @@ public class AssertUtils {
      * @deprecated 请使用带字符型errorCode的参数代替
      */
     @Deprecated
-    public static void notEmpty(Map<?, ?> map, String message, ErrorCode errorCode) {
+    public static void notEmpty(Map<?, ?> map, String message, ErrorCode errorCode) throws CoryException {
         isTrue(MapUtils.isNotEmpty(map), message, errorCode);
     }
 
