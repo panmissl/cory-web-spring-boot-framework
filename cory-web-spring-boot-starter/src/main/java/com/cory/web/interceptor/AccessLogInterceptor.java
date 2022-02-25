@@ -101,7 +101,7 @@ public class AccessLogInterceptor implements HandlerInterceptor {
 
 	private void doFlushCount(String hour) {
 		POOL.submit(() -> {
-			String day = hour.substring(0, 4);
+			String day = hour.substring(0, 8);
 			Map<String, Integer> row = ACCESS_COUNT_TABLE.get(hour);
 			row.entrySet().forEach(entry -> accessCountService.add(AccessCount.builder()
 					.day(day)
