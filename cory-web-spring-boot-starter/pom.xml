@@ -94,6 +94,10 @@
             <artifactId>aliyun-log-logback-appender</artifactId>
         </dependency>
         <!-- SLS Appender END -->
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
