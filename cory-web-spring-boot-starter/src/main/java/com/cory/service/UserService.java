@@ -75,6 +75,9 @@ public class UserService extends BaseService<User> {
     public void update(User model) {
         User db = userDao.get(model.getId());
         model.setPassword(db.getPassword());
+        model.setLastLogonTime(db.getLastLogonTime());
+        model.setLastLogonIp(db.getLastLogonIp());
+        model.setLastLogonSuccess(db.getLastLogonSuccess());
         super.update(model);
     }
 

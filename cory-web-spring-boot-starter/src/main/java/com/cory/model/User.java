@@ -27,7 +27,7 @@ public class User extends BaseModel {
     private String email;
 
     @NotEmpty
-    @Field(label = "密码", type = CoryDbType.VARCHAR, desc = "密码不能更新（因为是加密的），必须由登录用户自己修改密码，添加用户时默认密码为：123456")
+    @Field(label = "密码", type = CoryDbType.VARCHAR, desc = "密码不能更新（因为是加密的），必须由登录用户自己修改密码，添加用户时默认密码为：123456", showable = false)
     private String password;
 
     @Field(label = "第三方账号ID", type = CoryDbType.VARCHAR, len = 200, nullable = true, desc = "没有可以留空")
