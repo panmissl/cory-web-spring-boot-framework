@@ -113,8 +113,8 @@ public abstract class BaseService<T extends BaseModel> {
     protected T fillOtherFields(T model) {return model;}
 
     /**
-     * 增删改时记录操作日志，默认记录，如果不需要可以复写返回false
+     * 增删改时记录操作日志，默认不记录，如果需要可以复写返回true。其它方法可以自己写操作日志
      * @return
      */
-    protected boolean actionLogEnable() {return true;}
+    protected boolean actionLogEnable() {return false;}
 }

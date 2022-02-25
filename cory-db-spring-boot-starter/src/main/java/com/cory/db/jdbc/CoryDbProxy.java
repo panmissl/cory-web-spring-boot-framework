@@ -290,10 +290,10 @@ public class CoryDbProxy<T> implements InvocationHandler {
         CurrentUser user = CurrentUser.get();
 
         if (null == model.getCreator()) {
-            model.setCreator(null == user ? 1 : user.getId());
+            model.setCreator(null == user || null == user.getId() ? 1 : user.getId());
         }
         if (null == model.getModifier()) {
-            model.setModifier(null == user ? 1 : user.getId());
+            model.setModifier(null == user || null == user.getId() ? 1 : user.getId());
         }
         if (null == model.getCreateTime()) {
             model.setCreateTime(new Date());
