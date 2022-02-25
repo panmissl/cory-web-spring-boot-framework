@@ -47,7 +47,7 @@
         </rollingPolicy>
     </appender>
 
-    <if condition='property("logging.sls.enable").equalIgnoreCase("true")'>
+    <if condition='property("logging.sls.enable").equalsIgnoreCase("true")'>
         <then>
             <appender name="SLS" class="com.aliyun.openservices.log.logback.LoghubAppender">
                 <!-- 必选项 -->
@@ -71,18 +71,18 @@
                 <maxBlockMs>0</maxBlockMs>
                 <ioThreadCount>0</ioThreadCount>
                 <batchSizeThresholdInBytes>524288</batchSizeThresholdInBytes>
-                <batchCountThreashold>4096</batchCountThreashold>
-                <LingerMs>2000</LingerMs>
+                <batchCountThreshold>4096</batchCountThreshold>
+                <lingerMs>2000</lingerMs>
                 <retries>10</retries>
                 <baseRetryBackoffMs>100</baseRetryBackoffMs>
-                <masRetryBackoffMs>50000</masRetryBackoffMs>
+                <maxRetryBackoffMs>50000</maxRetryBackoffMs>
 
                 <encoder>
                     <pattern>${COMMON_PATTERN}</pattern>
                 </encoder>
 
                 <timeFormat>yyyy-MM-dd HH:mm:ss:SSS</timeFormat>
-                <timeZone>xxx</timeZone>
+                <timeZone>Asia/Shanghai</timeZone>
             </appender>
         </then>
     </if>
@@ -104,7 +104,7 @@
         <level value="DEBUG" />
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
-        <if condition='property("logging.sls.enable").equalIgnoreCase("true")'>
+        <if condition='property("logging.sls.enable").equalsIgnoreCase("true")'>
             <then>
                 <appender-ref ref="SLS" />
             </then>
