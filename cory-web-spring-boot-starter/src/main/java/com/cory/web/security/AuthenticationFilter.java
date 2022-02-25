@@ -8,6 +8,7 @@ import com.cory.context.GenericResult;
 import com.cory.model.User;
 import com.cory.service.UserService;
 import com.cory.web.util.CookieUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -18,7 +19,9 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
@@ -27,6 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * AuthenticationFilter自定义登录认证filter
@@ -41,6 +47,13 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	public static final int MAX_ERROR_TIMES = 3;
 	/** 错误存在最长时间：5分钟 */
 	public static final int ERROR_INTERVAL = 5 * 60;
+
+	private static final String SUCCESS_URL_SIMPLE_PREFIX = "SIMPLE:";
+	private static final String SUCCESS_URL_ROLE_PREFIX = "ROLE:";
+	private static final SuccessUrl SUCCESS_URL = new SuccessUrl();
+
+	@Value("${cory.shiro.success-url}")
+	private String successUrl;
 
 	@Autowired
 	private UserService userService;
@@ -153,6 +166,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		String principal = token.getPrincipal().toString();
 		User user = userService.findByLogonId(principal);
 		CurrentUser currentUser = convert2UserVO(principal, user);
+		CurrentUser.set(currentUser);
 		((HttpServletRequest) request).getSession(true).setAttribute(Constants.CURRENT_USER, currentUser);
 		updateLastLogonInfo(principal, req, true);
 
@@ -182,6 +196,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 				.id(user.getId())
 				.isAdmin(UserUtils.isAdmin())
 				.isRoot(UserUtils.isRoot())
+				.roles(CollectionUtils.isEmpty(user.getRoles()) ? null : user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toList()))
 				.build();
 	}
 
@@ -273,4 +288,67 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		this.loginHandleUrl = loginHandleUrl;
 	}
 
+	@Override
+	public String getSuccessUrl() {
+		if (SUCCESS_URL.isSimpleType) {
+			return SUCCESS_URL.simpleSuccessUrl;
+		}
+		if (SUCCESS_URL.isRoleType) {
+			return SUCCESS_URL.getRoleSuccessUrl();
+		}
+		return super.getSuccessUrl();
+	}
+
+	@PostConstruct
+	public void init() {
+		initSuccessUrl();
+	}
+
+	private void initSuccessUrl() {
+		//SIMPLE:/, SIMPLE:/admin, ROLE:roleName1=/admin,roleName2=/test,roleName3=/haha,/defaultPage
+		if (StringUtils.isBlank(successUrl)) {
+			return;
+		}
+		if (successUrl.startsWith(SUCCESS_URL_SIMPLE_PREFIX)) {
+			SUCCESS_URL.isSimpleType = true;
+			SUCCESS_URL.simpleSuccessUrl = successUrl.substring(SUCCESS_URL_SIMPLE_PREFIX.length());
+			return;
+		}
+		if (successUrl.startsWith(SUCCESS_URL_ROLE_PREFIX)) {
+			String[] arr = successUrl.substring(SUCCESS_URL_ROLE_PREFIX.length()).split(",");
+			for (String item : arr) {
+				if (item.contains("=")) {
+					String[] itemArr = item.split("=");
+					SUCCESS_URL.roleMap.put(itemArr[0].trim(), itemArr[1].trim());
+				} else {
+					SUCCESS_URL.roleDefaultSuccessUrl = item.trim();
+				}
+			}
+		}
+	}
+
+	private static class SuccessUrl {
+
+		public boolean isSimpleType = false;
+		public boolean isRoleType = false;
+
+		public String simpleSuccessUrl;
+
+		//key: roleName, value: successUrl
+		public Map<String, String> roleMap = new HashMap<>();
+		public String roleDefaultSuccessUrl;
+
+		public String getRoleSuccessUrl() {
+			//ROLE:roleName1=/admin,roleName2=/test,roleName3=/haha,/defaultPage
+			CurrentUser user = CurrentUser.get();
+			if (null == user || CollectionUtils.isEmpty(user.getRoles())) {
+				return null;
+			}
+			String url = roleMap.get(user.getRoles().get(0));
+			if (StringUtils.isNotBlank(url)) {
+				return url;
+			}
+			return roleDefaultSuccessUrl;
+		}
+	}
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Cory on 2017/5/20.
@@ -25,6 +26,7 @@ public class CurrentUser implements Serializable {
 
     private Integer id = 0;
     private String principal;
+    private List<String> roles;
     private boolean isAdmin = false;
     private boolean isRoot = false;
 
