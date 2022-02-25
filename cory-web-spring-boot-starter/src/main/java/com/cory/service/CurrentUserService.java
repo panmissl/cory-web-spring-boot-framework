@@ -85,6 +85,7 @@ public class CurrentUserService {
         return UserVO.builder()
                 .id(user.getId())
                 .logonId(user.getLogonId())
+                .role(CollectionUtils.isNotEmpty(user.getRoles()) ? user.getRoles().get(0).getName() : null)
                 .avatar("https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png")
                 .modelMetaList(modelMetaList)
                 .enumMetaSet(enumMetaSet)

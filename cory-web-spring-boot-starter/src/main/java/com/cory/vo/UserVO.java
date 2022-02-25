@@ -18,6 +18,7 @@ public class UserVO implements Serializable {
 
     private Integer id;
     private String logonId;
+    private String role;
     private String avatar;
     private Set<String> resources;
     private List<CorySystemContext.ModelMeta> modelMetaList;
