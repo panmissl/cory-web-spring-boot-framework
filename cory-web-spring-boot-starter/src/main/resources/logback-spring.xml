@@ -47,41 +47,45 @@
         </rollingPolicy>
     </appender>
 
-    <appender name="SLS" class="com.aliyun.openservices.log.logback.LoghubAppender">
-        <!-- 必选项 -->
-        <!-- 账号及网络配置 -->
-        <endpoint>${logging.sls.endpoint}</endpoint>
-        <accessKeyId>${logging.sls.ak}</accessKeyId>
-        <accessKeySecret>${logging.sls.sk}</accessKeySecret>
+    <if condition='property("logging.sls.enable").equalIgnoreCase("true")'>
+        <then>
+            <appender name="SLS" class="com.aliyun.openservices.log.logback.LoghubAppender">
+                <!-- 必选项 -->
+                <!-- 账号及网络配置 -->
+                <endpoint>${logging.sls.endpoint}</endpoint>
+                <accessKeyId>${logging.sls.ak}</accessKeyId>
+                <accessKeySecret>${logging.sls.sk}</accessKeySecret>
 
-        <!-- sls项目配置 -->
-        <project>${logging.sls.project}</project>
-        <logStore>${logging.sls.logStore}</logStore>
-        <!-- 必选项 end -->
+                <!-- sls项目配置 -->
+                <project>${logging.sls.project}</project>
+                <logStore>${logging.sls.logStore}</logStore>
+                <!-- 必选项 end -->
 
-        <!-- 可选项 -->
-        <topic>${logging.sls.topic}</topic>
-        <!-- source不要写，默认的是IP
-        <source></source>
-        -->
+                <!-- 可选项 -->
+                <topic>${logging.sls.topic}</topic>
+                <!-- source不要写，默认的是IP
+                <source></source>
+                -->
 
-        <totalSizeInBytes>104857600</totalSizeInBytes>
-        <maxBlockMs>0</maxBlockMs>
-        <ioThreadCount>0</ioThreadCount>
-        <batchSizeThresholdInBytes>524288</batchSizeThresholdInBytes>
-        <batchCountThreashold>4096</batchCountThreashold>
-        <LingerMs>2000</LingerMs>
-        <retries>10</retries>
-        <baseRetryBackoffMs>100</baseRetryBackoffMs>
-        <masRetryBackoffMs>50000</masRetryBackoffMs>
+                <totalSizeInBytes>104857600</totalSizeInBytes>
+                <maxBlockMs>0</maxBlockMs>
+                <ioThreadCount>0</ioThreadCount>
+                <batchSizeThresholdInBytes>524288</batchSizeThresholdInBytes>
+                <batchCountThreashold>4096</batchCountThreashold>
+                <LingerMs>2000</LingerMs>
+                <retries>10</retries>
+                <baseRetryBackoffMs>100</baseRetryBackoffMs>
+                <masRetryBackoffMs>50000</masRetryBackoffMs>
 
-        <encoder>
-            <pattern>${COMMON_PATTERN}</pattern>
-        </encoder>
+                <encoder>
+                    <pattern>${COMMON_PATTERN}</pattern>
+                </encoder>
 
-        <timeFormat>yyyy-MM-dd HH:mm:ss:SSS</timeFormat>
-        <timeZone>xxx</timeZone>
-    </appender>
+                <timeFormat>yyyy-MM-dd HH:mm:ss:SSS</timeFormat>
+                <timeZone>xxx</timeZone>
+            </appender>
+        </then>
+    </if>
 
     <logger name="com.cory">
         <level value="DEBUG" />
@@ -100,6 +104,10 @@
         <level value="DEBUG" />
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
-        <appender-ref ref="SLS" />
+        <if condition='property("logging.sls.enable").equalIgnoreCase("true")'>
+            <then>
+                <appender-ref ref="SLS" />
+            </then>
+        </if>
     </root>
 </configuration>

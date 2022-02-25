@@ -170,9 +170,6 @@ public class CoryDbProxy<T> implements InvocationHandler {
             log.info(dataSqlInfo.toString());
         }
 
-        Class selectReturnType = select.returnType();
-        List<Map<String, Object>> listData = coryDb.select(dataSqlInfo);
-
         if (select.count()) {
             CorySqlInfo countSqlInfo = builder.buildCountSql();
 
@@ -183,6 +180,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
             return coryDb.selectCount(countSqlInfo);
         }
 
+        Class selectReturnType = select.returnType();
         Class<?> returnType = method.getReturnType();
         if (returnType.equals(Pagination.class)) {
             CorySqlInfo countSqlInfo = builder.buildCountSql();
@@ -199,11 +197,16 @@ public class CoryDbProxy<T> implements InvocationHandler {
                 //支持自定义返回类型
                 cls = null != selectReturnType && !Void.class.equals(selectReturnType) ? selectReturnType : modelClass;
             }
-            p.setList((List) ResultMapperFactory.parseMapper(List.class, modelClass, selectReturnType).getLeft().map(listData, cls));
             p.setTotalCount(count);
+
+            if (count > 0) {
+                List<Map<String, Object>> listData = coryDb.select(dataSqlInfo);
+                p.setList((List) ResultMapperFactory.parseMapper(List.class, modelClass, selectReturnType).getLeft().map(listData, cls));
+            }
 
             return p;
         } else {
+            List<Map<String, Object>> listData = coryDb.select(dataSqlInfo);
             Pair<ResultMapper, Class<?>> pair = ResultMapperFactory.parseMapper(returnType, modelClass, selectReturnType);
             return pair.getLeft().map(listData, pair.getRight());
         }

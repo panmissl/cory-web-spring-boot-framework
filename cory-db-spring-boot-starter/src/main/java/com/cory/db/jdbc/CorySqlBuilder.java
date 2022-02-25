@@ -520,24 +520,65 @@ public class CorySqlBuilder {
 
             CorySqlInfo wherePart = buildSelectWherePart();
 
-            String sql = String.format("SELECT * FROM %s WHERE IS_DELETED = 0 %s", table, wherePart.getSql());
-            if (orderBy) {
-                String sort = (String) ognlParamMap.get(PARAM_SORT);
-                if (StringUtils.isBlank(sort)) {
-                    sort = "MODIFY_TIME DESC";
+            checkForLimit(limit, ognlParamMap);
+
+            String sql;
+            if (needOptForLimit(limit, ognlParamMap)) {
+                //分页查询时优化：先查id再联合查询。在pagestart大于阈值才优化。经实验，超过10000行即可进行优化。
+                //select id from base_action_log where object_id > '10006' and object_id < '10028' order by object_id limit 3, 5
+                //select a.* from base_action_log a right join (select id from base_action_log where object_id > '10006' and object_id < '10028' order by object_id limit 3, 5) b on a.id = b.id order by object_id;
+
+                String orderByPart = "";
+                if (orderBy) {
+                    String sort = (String) ognlParamMap.get(PARAM_SORT);
+                    if (StringUtils.isBlank(sort)) {
+                        sort = "MODIFY_TIME DESC";
+                    }
+                    orderByPart = " ORDER BY " + sort;
                 }
 
-                sql += " ORDER BY " + sort;
-            }
-            if (limit) {
                 Integer pageStart = (Integer) ognlParamMap.get(PARAM_PAGE_START);
                 Integer pageSize = (Integer) ognlParamMap.get(PARAM_PAGE_SIZE);
-                AssertUtils.notNull(pageStart, "limit需要pageStart参数，请添加", ErrorCode.DB_ERROR);
-                AssertUtils.notNull(pageStart, "limit需要pageSize参数，请添加", ErrorCode.DB_ERROR);
 
-                sql += String.format(" LIMIT %s, %s", pageStart, pageSize);
+                sql = String.format("SELECT a.* from %s a right join (select id from %s where is_deleted = 0 %s %s limit %s, %s) b on a.id = b.id %s",
+                        table, table, wherePart.getSql(), orderByPart, pageStart, pageSize, orderByPart);
+            } else {
+                sql = String.format("SELECT * FROM %s WHERE IS_DELETED = 0 %s", table, wherePart.getSql());
+                if (orderBy) {
+                    String sort = (String) ognlParamMap.get(PARAM_SORT);
+                    if (StringUtils.isBlank(sort)) {
+                        sort = "MODIFY_TIME DESC";
+                    }
+
+                    sql += " ORDER BY " + sort;
+                }
+                if (limit) {
+                    Integer pageStart = (Integer) ognlParamMap.get(PARAM_PAGE_START);
+                    Integer pageSize = (Integer) ognlParamMap.get(PARAM_PAGE_SIZE);
+                    sql += String.format(" LIMIT %s, %s", pageStart, pageSize);
+                }
             }
+
             return CorySqlInfo.builder().sql(formatSql(sql)).params(wherePart.getParams()).build();
+        }
+
+        private boolean needOptForLimit(boolean limit, Map<String, Object> ognlParamMap) {
+            //分页查询时优化：先查id再联合查询。在pagestart大于阈值才优化。经实验，超过10000行即可进行优化。
+            if (!limit) {
+                return false;
+            }
+            Integer pageStart = (Integer) ognlParamMap.get(PARAM_PAGE_START);
+            return pageStart > 10000;
+        }
+
+        private void checkForLimit(boolean limit, Map<String, Object> ognlParamMap) {
+            if (!limit) {
+                return;
+            }
+            Integer pageStart = (Integer) ognlParamMap.get(PARAM_PAGE_START);
+            Integer pageSize = (Integer) ognlParamMap.get(PARAM_PAGE_SIZE);
+            AssertUtils.notNull(pageStart, "limit需要pageStart参数，请添加", ErrorCode.DB_ERROR);
+            AssertUtils.notNull(pageSize, "limit需要pageSize参数，请添加", ErrorCode.DB_ERROR);
         }
 
         public CorySqlInfo buildCountSql() {
