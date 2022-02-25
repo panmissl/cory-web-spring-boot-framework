@@ -41,6 +41,7 @@ public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 	private CoryWebProperties coryWebProperties;
 
 	//未登录重定向到登陆页
+	@Override
 	protected void redirectToLogin(ServletRequest req, ServletResponse resp) throws IOException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;

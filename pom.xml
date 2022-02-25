@@ -208,6 +208,18 @@
 				<artifactId>reflections</artifactId>
 				<version>0.9.12</version>
 			</dependency>
+			<!-- SLS Appender START -->
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>2.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.aliyun.openservices</groupId>
+				<artifactId>aliyun-log-logback-appender</artifactId>
+				<version>0.1.18</version>
+			</dependency>
+			<!-- SLS Appender END -->
 		</dependencies>
 	</dependencyManagement>
 

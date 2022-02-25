@@ -13,6 +13,7 @@ public class AntPermission implements Permission {
 		this.permissionString = permissionString;
 	}
 
+	@Override
 	public boolean implies(Permission p) {
 		if (!(p instanceof AntPermission)) {
 			return false;

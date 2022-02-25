@@ -1,8 +1,8 @@
 package com.cory.service;
 
-import com.cory.constant.ErrorCode;
 import com.cory.constant.BaseConstants;
 import com.cory.constant.CacheConstants;
+import com.cory.constant.ErrorCode;
 import com.cory.context.CurrentUser;
 import com.cory.dao.UserDao;
 import com.cory.enums.UserLevel;
@@ -36,6 +36,8 @@ import java.util.Date;
 @Transactional
 public class UserService extends BaseService<User> {
 
+    private static final String DEFAULT_PASSWORD = "123456";
+
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -52,6 +54,7 @@ public class UserService extends BaseService<User> {
     @CachePut(value = CacheConstants.User)
     @Override
     public void add(User model) {
+        model.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
         super.add(model);
     }
 
@@ -70,6 +73,8 @@ public class UserService extends BaseService<User> {
     @CacheEvict(value = CacheConstants.User, key = "#model.id", allEntries = true)
     @Override
     public void update(User model) {
+        User db = userDao.get(model.getId());
+        model.setPassword(db.getPassword());
         super.update(model);
     }
 

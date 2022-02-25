@@ -6,11 +6,11 @@ import com.cory.db.enums.CoryDbType;
 import com.cory.enums.UserLevel;
 import com.cory.enums.UserStatus;
 import com.cory.enums.UserType;
-import com.cory.validation.UpdateGroup;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public class User extends BaseModel {
     private String email;
 
     @NotEmpty
-    @Field(label = "密码", type = CoryDbType.VARCHAR, desc = "(不会自动加密，请填写加密后的密码)[可以使用默认密码：123456，对应的加密密码为：__MTIzNDU2IUAwIyQxJV4yKigp__添加后再修改用户密码即可]")
+    @Field(label = "密码", type = CoryDbType.VARCHAR, desc = "密码不能更新（因为是加密的），必须由登录用户自己修改密码，添加用户时默认密码为：123456")
     private String password;
 
     @Field(label = "第三方账号ID", type = CoryDbType.VARCHAR, len = 200, nullable = true, desc = "没有可以留空")
@@ -48,6 +48,15 @@ public class User extends BaseModel {
 
     @Field(label = "额外信息", type = CoryDbType.VARCHAR, showable = false, len = 20480, nullable = true)
     private String extraInfo;
+
+    @Field(label = "最近登录时间", type = CoryDbType.DATETIME, nullable = true)
+    private Date lastLogonTime;
+
+    @Field(label = "最近登录IP", type = CoryDbType.VARCHAR, nullable = true, len = 100)
+    private String lastLogonIp;
+
+    @Field(label = "最近登录是否成功", type = CoryDbType.BOOLEAN, defaultValue = "1")
+    private Boolean lastLogonSuccess;
 
     private List<Role> roles;
 

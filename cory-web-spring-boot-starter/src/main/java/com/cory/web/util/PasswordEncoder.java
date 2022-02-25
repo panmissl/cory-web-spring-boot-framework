@@ -1,6 +1,6 @@
 package com.cory.web.util;
 
-import com.cory.util.encoder.SimplePwdEncoder;
+import com.cory.util.encoder.Md5Encoder;
 
 /**
  * Created by Cory on 2017/5/28.
@@ -10,7 +10,9 @@ public class PasswordEncoder {
     private String salt;
 
     public String encode(String rawPassword) {
-        return SimplePwdEncoder.encode(rawPassword, this.getSalt());
+        //用MD5加密，不用简单加密
+        //return SimplePwdEncoder.encode(rawPassword, this.getSalt());
+        return Md5Encoder.encode(rawPassword);
     }
 
     public String getSalt() {

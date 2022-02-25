@@ -24,6 +24,7 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
 	/**
 	 * 登录认证
 	 */
+	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
 		User user = userService.findByLogonId(token.getUsername());
@@ -37,6 +38,7 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
 	/**
 	 * 授权
 	 */
+	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		String logonId = (String) principals.getPrimaryPrincipal();
 		User user = userService.findByLogonId(logonId);

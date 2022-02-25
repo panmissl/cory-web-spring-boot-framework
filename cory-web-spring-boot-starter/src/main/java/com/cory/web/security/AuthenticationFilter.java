@@ -8,6 +8,7 @@ import com.cory.context.GenericResult;
 import com.cory.model.User;
 import com.cory.service.UserService;
 import com.cory.web.util.CookieUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 /**
  * AuthenticationFilter自定义登录认证filter
@@ -74,6 +76,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		}
 	}
 
+	@Override
 	protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
 		AuthenticationToken token = createToken(request, response);
 		if (token == null) {
@@ -89,6 +92,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		}
 	}
 
+	@Override
 	public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
 		boolean isAllowed = isAccessAllowed(request, response, mappedValue);
 		//已经登录的，并且是登录请求，直接返回成功，不要再登录了
@@ -116,6 +120,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		return super.onAccessDenied(request, response);
 	}
 
+	@Override
 	protected void issueSuccessRedirect(ServletRequest request, ServletResponse response) throws Exception {
 		/*
 		HttpServletRequest req = (HttpServletRequest) request;
@@ -130,6 +135,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		writeResponse(response, GenericResult.success(true));
 	}
 
+	@Override
 	protected boolean isLoginRequest(ServletRequest req, ServletResponse resp) {
 		return pathsMatch(getLoginUrl(), req);
 	}
@@ -137,6 +143,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	/**
 	 * 登录成功
 	 */
+	@Override
 	protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
@@ -147,8 +154,26 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		User user = userService.findByLogonId(principal);
 		CurrentUser currentUser = convert2UserVO(principal, user);
 		((HttpServletRequest) request).getSession(true).setAttribute(Constants.CURRENT_USER, currentUser);
+		updateLastLogonInfo(principal, req, true);
 
 		return super.onLoginSuccess(token, subject, request, response);
+	}
+
+	private void updateLastLogonInfo(String logonId, HttpServletRequest request, boolean success) {
+		User user = userService.findByLogonId(logonId);
+		if (null == user) {
+			return;
+		}
+
+		String realIp = request.getHeader(Constants.REQUEST_HEADER_KEY_REAL_IP);
+		if (StringUtils.isBlank(realIp)) {
+			realIp = request.getRemoteAddr();
+		}
+
+		user.setLastLogonIp(realIp);
+		user.setLastLogonSuccess(success);
+		user.setLastLogonTime(new Date());
+		userService.update(user);
 	}
 
 	private CurrentUser convert2UserVO(String principle, User user) {
@@ -165,6 +190,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		writeCookieErrorRemaining(req, res);
+		updateLastLogonInfo(token.getPrincipal().toString(), req, false);
 
 		//return super.onLoginFailure(token, e, request, response);
 		//不跳转、直接返回登录失败

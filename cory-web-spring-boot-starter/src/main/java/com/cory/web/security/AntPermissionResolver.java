@@ -5,6 +5,7 @@ import org.apache.shiro.authz.permission.PermissionResolver;
 
 public class AntPermissionResolver implements PermissionResolver {
 
+	@Override
 	public Permission resolvePermission(String permissionString) {
         return new AntPermission(permissionString);
 	}

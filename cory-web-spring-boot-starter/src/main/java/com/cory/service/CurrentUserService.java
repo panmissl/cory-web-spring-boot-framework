@@ -89,6 +89,9 @@ public class CurrentUserService {
                 .modelMetaList(modelMetaList)
                 .enumMetaSet(enumMetaSet)
                 .resources(resources)
+                .lastLogonTime(user.getLastLogonTime())
+                .lastLogonIp(user.getLastLogonIp())
+                .lastLogonSuccess(user.getLastLogonSuccess())
                 .build();
     }
 }

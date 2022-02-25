@@ -1,7 +1,7 @@
 package com.cory.service;
 
-import com.cory.dao.FeedbackDao;
-import com.cory.model.Feedback;
+import com.cory.dao.AccessCountDao;
+import com.cory.model.AccessCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class FeedbackService extends BaseService<Feedback> {
+public class AccessCountService extends BaseService<AccessCount> {
 
     @Autowired
-    private FeedbackDao feedbackDao;
+    private AccessCountDao accessCountDao;
 
-    public FeedbackDao getDao() {
-        return feedbackDao;
+    public AccessCountDao getDao() {
+        return accessCountDao;
     }
 }

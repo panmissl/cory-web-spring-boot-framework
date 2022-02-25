@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,4 +22,7 @@ public class UserVO implements Serializable {
     private Set<String> resources;
     private List<CorySystemContext.ModelMeta> modelMetaList;
     private Set<CorySystemContext.EnumMeta> enumMetaSet;
+    private Date lastLogonTime;
+    private String lastLogonIp;
+    private Boolean lastLogonSuccess;
 }

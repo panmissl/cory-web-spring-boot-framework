@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <configuration debug="true">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <!-- 为了防止进程退出时，内存中的数据丢失，请加上此选项 -->
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook" />
+
     <springProperty scope="context" name="LOGGING_FILE_PATH" source="logging.file.path" defaultValue="./logs" />
     <springProperty scope="context" name="LOG_FILE_NAME" source="logging.file.name" defaultValue="cory" />
+    <springProperty scope="context" name="logging.sls.enable" source="logging.sls.enable" defaultValue="false" />
+    <springProperty scope="context" name="logging.sls.endpoint" source="logging.sls.endpoint" defaultValue="not set" />
+    <springProperty scope="context" name="logging.sls.ak" source="logging.sls.ak" defaultValue="not set" />
+    <springProperty scope="context" name="logging.sls.sk" source="logging.sls.sk" defaultValue="not set" />
+    <springProperty scope="context" name="logging.sls.project" source="logging.sls.project" defaultValue="not set" />
+    <springProperty scope="context" name="logging.sls.logStore" source="logging.sls.logStore" defaultValue="not set" />
+    <springProperty scope="context" name="logging.sls.topic" source="logging.sls.topic" defaultValue="not set" />
 
     <property name="COMMON_PATTERN" value="[eagleEyeId: %X{EAGLE_EYE_ID}] - [%d{'MM-dd HH:mm:ss,SSS',GMT+8:00}] %-5p [%.10t][%X{CU}] %logger{36}{%L} - %m%n" />
     <property name="LOG_CHARSET" value="UTF-8" />
@@ -35,6 +47,42 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="SLS" class="com.aliyun.openservices.log.logback.LoghubAppender">
+        <!-- 必选项 -->
+        <!-- 账号及网络配置 -->
+        <endpoint>${logging.sls.endpoint}</endpoint>
+        <accessKeyId>${logging.sls.ak}</accessKeyId>
+        <accessKeySecret>${logging.sls.sk}</accessKeySecret>
+
+        <!-- sls项目配置 -->
+        <project>${logging.sls.project}</project>
+        <logStore>${logging.sls.logStore}</logStore>
+        <!-- 必选项 end -->
+
+        <!-- 可选项 -->
+        <topic>${logging.sls.topic}</topic>
+        <!-- source不要写，默认的是IP
+        <source></source>
+        -->
+
+        <totalSizeInBytes>104857600</totalSizeInBytes>
+        <maxBlockMs>0</maxBlockMs>
+        <ioThreadCount>0</ioThreadCount>
+        <batchSizeThresholdInBytes>524288</batchSizeThresholdInBytes>
+        <batchCountThreashold>4096</batchCountThreashold>
+        <LingerMs>2000</LingerMs>
+        <retries>10</retries>
+        <baseRetryBackoffMs>100</baseRetryBackoffMs>
+        <masRetryBackoffMs>50000</masRetryBackoffMs>
+
+        <encoder>
+            <pattern>${COMMON_PATTERN}</pattern>
+        </encoder>
+
+        <timeFormat>yyyy-MM-dd HH:mm:ss:SSS</timeFormat>
+        <timeZone>xxx</timeZone>
+    </appender>
+
     <logger name="com.cory">
         <level value="DEBUG" />
     </logger>
@@ -52,5 +100,6 @@
         <level value="DEBUG" />
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
+        <appender-ref ref="SLS" />
     </root>
 </configuration>
