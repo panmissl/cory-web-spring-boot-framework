@@ -7,6 +7,7 @@ import com.cory.enums.UserLevel;
 import com.cory.enums.UserStatus;
 import com.cory.enums.UserType;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -69,10 +70,20 @@ public class User extends BaseModel {
     public String getLogonId() {
         if (UserType.QQ.equals(this.getType())
                 || UserType.WEIBO.equals(this.getType())
+                || UserType.ALI.equals(this.getType())
                 || UserType.WEIXIN.equals(this.getType())) {
             return thirdpartyId;
         }
-        return phone;
+        if (StringUtils.isNotBlank(userName)) {
+            return userName;
+        }
+        if (StringUtils.isNotBlank(phone)) {
+            return phone;
+        }
+        if (StringUtils.isNotBlank(email)) {
+            return email;
+        }
+        return userName;
     }
 
     public boolean isDisabled() {
