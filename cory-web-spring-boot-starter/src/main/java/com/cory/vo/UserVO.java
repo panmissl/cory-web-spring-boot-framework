@@ -17,7 +17,6 @@ import java.util.Set;
 public class UserVO implements Serializable {
 
     private Integer id;
-    private String logonId;
     private String userName;
     private String nickName;
     private String phone;

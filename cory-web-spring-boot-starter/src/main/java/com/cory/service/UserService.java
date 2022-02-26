@@ -54,7 +54,7 @@ public class UserService extends BaseService<User> {
     @CachePut(value = CacheConstants.User)
     @Override
     public void add(User model) {
-        model.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+        model.setPassword(passwordEncoder.encode(model.getUserName(), DEFAULT_PASSWORD));
         super.add(model);
     }
 
@@ -89,12 +89,12 @@ public class UserService extends BaseService<User> {
         return user;
     }
 
-    @Cacheable(value = CacheConstants.User, key = "'logonId-'.concat(#logonId)")
-    public User findByLogonId(String logonId) {
-        if (StringUtils.isBlank(logonId)) {
+    @Cacheable(value = CacheConstants.User, key = "'userName-'.concat(#userName)")
+    public User findByUserName(String userName) {
+        if (StringUtils.isBlank(userName)) {
             return null;
         }
-        User user = userDao.findByLogonId(logonId);
+        User user = userDao.findByUserName(userName);
         assembleRoles(user);
         return user;
     }
@@ -113,7 +113,7 @@ public class UserService extends BaseService<User> {
      * @return 注册成功返回空，注册失败返回失败信息
      */
     public String register(String phone, String password) {
-        if (null != userDao.findByLogonId(phone)) {
+        if (null != userDao.findByUserName(phone)) {
             return phone + "已经注册，请直接登录或者重新输入.";
         }
         int admin = 1;
@@ -136,8 +136,9 @@ public class UserService extends BaseService<User> {
 
     private User newUser(String phone, String password, int admin) {
         User user = new User();
+        user.setUserName(phone);
         user.setPhone(phone);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(phone, password));
         user.setLevel(UserLevel.NORMAL);
         user.setStatus(UserStatus.NORMAL);
         user.setType(UserType.SITE);
@@ -158,7 +159,7 @@ public class UserService extends BaseService<User> {
         if (null == user) {
             throw new CoryException(ErrorCode.SAVE_ERROR, "根据用户ID(" + userId + ")找不到用户.");
         }
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(user.getUserName(), newPassword));
         user.setModifyTime(new Date());
         user.setModifier(CurrentUser.get().getId());
         this.getDao().updateModel(user);
@@ -171,7 +172,7 @@ public class UserService extends BaseService<User> {
         if (null == user) {
             throw new CoryException(ErrorCode.SAVE_ERROR, "非法操作.");
         }
-        if (!StringUtils.equals(user.getPassword(), passwordEncoder.encode(password))) {
+        if (!StringUtils.equals(user.getPassword(), passwordEncoder.encode(user.getUserName(), password))) {
             throw new CoryException(ErrorCode.SAVE_ERROR, "原密码不正确，请检查.");
         }
         newPassword = newPassword.trim();

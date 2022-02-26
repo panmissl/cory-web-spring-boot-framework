@@ -23,7 +23,7 @@ public class CredentialsMatcher extends SimpleCredentialsMatcher {
         } else {
             tokenCredentials = tokenHashedCredentials.toString();
         }
-        tokenHashedCredentials = this.getPasswordEncoder().encode(tokenCredentials);
+        tokenHashedCredentials = this.getPasswordEncoder().encode(token.getPrincipal().toString(), tokenCredentials);
         Object accountCredentials = this.getCredentials(info);
         return this.equals(tokenHashedCredentials, accountCredentials);
     }

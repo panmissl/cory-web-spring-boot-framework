@@ -14,12 +14,8 @@ import java.util.Date;
 @Dao(model = User.class)
 public interface UserDao extends BaseDao<User> {
 
-    /**
-     * @param logonId 可能是userName、phone、email、第三方id
-     * @return
-     */
-    @Select(whereSql = "(USER_NAME = #{logonId} OR PHONE = #{logonId} OR EMAIL = #{logonId} OR THIRDPARTY_ID = #{logonId})")
-    User findByLogonId(@Param("logonId") String logonId);
+    @Select(whereSql = "USER_NAME = #{userName}")
+    User findByUserName(@Param("userName") String userName);
 
     @Update(columnSql = "LAST_LOGON_TIME = #{time}, LAST_LOGON_IP = #{ip}, LAST_LOGON_SUCCESS = #{success}", whereSql = "id = #{id}")
     void updateLastLogonInfo(@Param("id") Integer id,

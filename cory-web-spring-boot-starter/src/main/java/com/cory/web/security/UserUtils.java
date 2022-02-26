@@ -15,10 +15,10 @@ import java.util.List;
 public class UserUtils {
 	
 	/**
-	 * 获取当前登录用户的logonId
+	 * 获取当前登录用户的userName
 	 * @return
 	 */
-	public static String getCurrentUserLogonId() {
+	public static String getCurrentUserUserName() {
 		return (String) SecurityUtils.getSubject().getPrincipal();
 	}
 

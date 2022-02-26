@@ -30,7 +30,7 @@ public class CurrentUserService {
         if (null == currentUser || currentUser.getId() == 0) {
             return null;
         }
-        User user = userService.findByLogonId(currentUser.getPrincipal());
+        User user = userService.findByUserName(currentUser.getPrincipal());
         if (null == user) {
             return null;
         }
@@ -84,7 +84,6 @@ public class CurrentUserService {
 
         return UserVO.builder()
                 .id(user.getId())
-                .logonId(user.getLogonId())
                 .userName(user.getUserName())
                 .nickName(user.getNickName())
                 .phone(user.getPhone())

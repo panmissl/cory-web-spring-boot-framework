@@ -196,7 +196,7 @@ public class CorySqlBuilder {
             paramName = paramName.substring(0, paramName.length() - 1);
             paramName = paramName.trim();
             Object value = ognlParamMap.get(paramName);
-            //20211017：变量可能重复，比如：name = #{logonId} or email = #{logonId}，所以要一个一个处理，不能直接全部替换
+            //20211017：变量可能重复，比如：name = #{userName} or email = #{userName}，所以要一个一个处理，不能直接全部替换
             sql = sql.replaceFirst(group.replace("{", "\\{").replace("}", "\\}"), parseQuestionAndAddParam(paramName, value, paramList));
 
             matcher = PARAM_PATTERN_REG.matcher(sql);
@@ -592,7 +592,7 @@ public class CorySqlBuilder {
     }
 
     public static void main(String[] args) {
-        String sql = "email = #{logonId} or phone = #{logonId}";
+        String sql = "email = #{userName} or phone = #{userName}";
         Matcher matcher = PARAM_PATTERN_REG.matcher(sql);
         while (matcher.find()) {
             String group = matcher.group(0);

@@ -16,6 +16,7 @@ import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,7 @@ import java.io.UnsupportedEncodingException;
 public class ShiroConfig {
 
     private static final String LOGIN_HANDLE_URL = "/doLogin";
-    private static final String USERNAME_PARAM = "logonId";
+    private static final String USERNAME_PARAM = "userName";
     private static final String REMEMBERME_PARAM = "rememberMe";
     private static final String LOGIN_URL = "/login";
     private static final String UNAUTHORIZED_URL = "/errorPage?type=403";
@@ -58,6 +59,7 @@ public class ShiroConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean(PasswordEncoder.class)
     public PasswordEncoder passwordEncoder() {
         PasswordEncoder encoder = new PasswordEncoder();
         encoder.setSalt("!@0#$1%^2*()");
@@ -155,7 +157,7 @@ public class ShiroConfig {
         return registration;
     }
 
-        @Bean
+    @Bean
     public DefaultWebSecurityManager securityManager(CacheManager cacheManager, CookieRememberMeManager rememberMeManager, Realm realm) {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         manager.setRememberMeManager(rememberMeManager);

@@ -27,9 +27,9 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
-		User user = userService.findByLogonId(token.getUsername());
+		User user = userService.findByUserName(token.getUsername());
 		if (user != null) {
-			return new SimpleAuthenticationInfo(user.getLogonId(), user.getPassword(), getName());
+			return new SimpleAuthenticationInfo(user.getUserName(), user.getPassword(), getName());
 		} else {
 			return null;
 		}
@@ -40,8 +40,8 @@ public class AuthorizingRealm extends org.apache.shiro.realm.AuthorizingRealm {
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		String logonId = (String) principals.getPrimaryPrincipal();
-		User user = userService.findByLogonId(logonId);
+		String userName = (String) principals.getPrimaryPrincipal();
+		User user = userService.findByUserName(userName);
 
 		SimpleAuthorizationInfo auth = new SimpleAuthorizationInfo();
 		if (user != null) {

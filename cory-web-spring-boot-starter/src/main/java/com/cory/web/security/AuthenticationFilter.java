@@ -164,7 +164,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		removeCookieErrorRemaining(req, res);
 
 		String principal = token.getPrincipal().toString();
-		User user = userService.findByLogonId(principal);
+		User user = userService.findByUserName(principal);
 		CurrentUser currentUser = convert2UserVO(principal, user);
 		CurrentUser.set(currentUser);
 		((HttpServletRequest) request).getSession(true).setAttribute(Constants.CURRENT_USER, currentUser);
@@ -173,8 +173,8 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		return super.onLoginSuccess(token, subject, request, response);
 	}
 
-	private void updateLastLogonInfo(String logonId, HttpServletRequest request, boolean success) {
-		User user = userService.findByLogonId(logonId);
+	private void updateLastLogonInfo(String userName, HttpServletRequest request, boolean success) {
+		User user = userService.findByUserName(userName);
 		if (null == user) {
 			return;
 		}
@@ -225,8 +225,8 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	}
 
 	// 用户禁用返回true 未查找到用户或者非禁用返回false
-	private boolean isDisabled(String logonId) {
-		User user = userService.findByLogonId(logonId);
+	private boolean isDisabled(String userName) {
+		User user = userService.findByUserName(userName);
 		if (user != null) {
 			if (user.isDisabled()) {
 				return true;

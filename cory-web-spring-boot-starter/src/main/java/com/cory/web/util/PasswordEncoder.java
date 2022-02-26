@@ -9,7 +9,7 @@ public class PasswordEncoder {
 
     private String salt;
 
-    public String encode(String rawPassword) {
+    public String encode(String userName, String rawPassword) {
         //用MD5加密，不用简单加密
         //return SimplePwdEncoder.encode(rawPassword, this.getSalt());
         return Md5Encoder.encode(rawPassword);
