@@ -188,4 +188,8 @@ public class UserService extends BaseService<User> {
             throw new CoryException(ErrorCode.SAVE_ERROR, "密码长度在6-32位之间.");
         }
     }
+
+    public void updateLastLogonInfo(Integer id, String ip, boolean success, Date time) {
+        userDao.updateLastLogonInfo(id, ip, success, time);
+    }
 }

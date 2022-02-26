@@ -18,6 +18,10 @@ public class UserVO implements Serializable {
 
     private Integer id;
     private String logonId;
+    private String userName;
+    private String nickName;
+    private String phone;
+    private String email;
     private String role;
     private String avatar;
     private Set<String> resources;

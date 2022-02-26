@@ -20,15 +20,21 @@ import java.util.List;
 @Model(name = "用户", module = "base")
 public class User extends BaseModel {
 
-    @Field(label = "电话", type = CoryDbType.VARCHAR, len = 100, nullable = true)
-    private String phone;
-
-    @Field(label = "邮箱", type = CoryDbType.VARCHAR, len = 100, nullable = true)
-    private String email;
+    @Field(label = "用户名", type = CoryDbType.VARCHAR, len = 100, nullable = true, desc = "可以用来登录系统的，是英文、数字或下划线")
+    private String userName;
 
     @NotEmpty
     @Field(label = "密码", type = CoryDbType.VARCHAR, desc = "密码不能更新（因为是加密的），必须由登录用户自己修改密码，添加用户时默认密码为：123456", showable = false)
     private String password;
+
+    @Field(label = "昵称", type = CoryDbType.VARCHAR, len = 100, nullable = true, desc = "显示用的，一般是中文")
+    private String nickName;
+
+    @Field(label = "电话", type = CoryDbType.VARCHAR, len = 100, nullable = true, desc = "也可以用来登录系统")
+    private String phone;
+
+    @Field(label = "邮箱", type = CoryDbType.VARCHAR, len = 100, nullable = true, desc = "也可以用来登录系统")
+    private String email;
 
     @Field(label = "第三方账号ID", type = CoryDbType.VARCHAR, len = 200, nullable = true, desc = "没有可以留空")
     private String thirdpartyId;

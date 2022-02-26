@@ -183,11 +183,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		if (StringUtils.isBlank(realIp)) {
 			realIp = request.getRemoteAddr();
 		}
-
-		user.setLastLogonIp(realIp);
-		user.setLastLogonSuccess(success);
-		user.setLastLogonTime(new Date());
-		userService.update(user);
+		userService.updateLastLogonInfo(user.getId(), realIp, success, new Date());
 	}
 
 	private CurrentUser convert2UserVO(String principle, User user) {
