@@ -1,6 +1,6 @@
 ${AnsiColor.BRIGHT_GREEN}============================================================================
-${AnsiColor.BRIGHT_GREEN}                     欢迎使用cory-web-framework
-${AnsiColor.BRIGHT_GREEN}             cory-web-framework基于spring boot(${spring-boot.formatted-version})
+${AnsiColor.BRIGHT_GREEN}                        欢迎使用cory-web-framework
+${AnsiColor.BRIGHT_GREEN}                cory-web-framework基于spring boot(${spring-boot.formatted-version})
 ${AnsiColor.BRIGHT_GREEN}
 ${AnsiColor.BRIGHT_YELLOW}                                _.ooOoo._
 ${AnsiColor.BRIGHT_RED}                               o888888888o
@@ -21,6 +21,6 @@ ${AnsiColor.BRIGHT_YELLOW}                  \  \ `-.   \_ ___\ /___ _/   .-` /  
 ${AnsiColor.BRIGHT_CYAN}            ========`-.____`-.____\_____/____.-`____.-'========
 ${AnsiColor.BRIGHT_MAGENTA}                                  `=---='
 ${AnsiColor.BRIGHT_YELLOW}            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-${AnsiColor.BRIGHT_GREEN}                     佛祖保佑          永无BUG         永不修改
+${AnsiColor.BRIGHT_GREEN}                  佛祖保佑          永无BUG         永不修改
 
 ${AnsiColor.BRIGHT_GREEN}============================================================================
