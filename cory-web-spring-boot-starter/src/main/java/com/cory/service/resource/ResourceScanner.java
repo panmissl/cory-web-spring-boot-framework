@@ -117,6 +117,7 @@ public class ResourceScanner {
                                 .desc(fieldAnno.desc())
                                 .richText(fieldAnno.richText())
                                 .datadictTypeValue(fieldAnno.datadictTypeValue())
+                                .updateable(fieldAnno.updateable())
                                 .build();
                         fieldMetaList.add(fieldMeta);
                     }
