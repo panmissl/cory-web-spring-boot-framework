@@ -117,4 +117,7 @@ public @interface Field {
      * @return
      */
     boolean richText() default false;
+
+    /** 是否可更新。如果设置为false，则调用默认的update方法(BaseService的update方法)时，不更新此字段 */
+    boolean updateable() default true;
 }

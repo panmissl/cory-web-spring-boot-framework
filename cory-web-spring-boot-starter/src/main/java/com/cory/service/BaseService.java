@@ -1,14 +1,20 @@
 package com.cory.service;
 
+import com.alibaba.fastjson.JSON;
+import com.cory.constant.ErrorCode;
 import com.cory.dao.BaseDao;
+import com.cory.exception.CoryException;
 import com.cory.model.ActionLog;
 import com.cory.model.BaseModel;
 import com.cory.page.Pagination;
+import com.cory.util.ModelUtil;
 import com.cory.web.util.ActionLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +23,7 @@ import java.util.stream.Collectors;
  * @author corypan
  * @date 2017/5/13
  */
+@Slf4j
 public abstract class BaseService<T extends BaseModel> {
 
     @Transactional(rollbackFor = Throwable.class)
@@ -45,11 +52,38 @@ public abstract class BaseService<T extends BaseModel> {
 
     @Transactional(rollbackFor = Throwable.class)
     public void update(T model) {
-        getDao().updateModel(model);
+        T db = getDao().get(model.getId());
+        Field[] fields = db.getClass().getDeclaredFields();
+        if (null != fields && fields.length > 0) {
+            //将需要更新的字段设置
+            for (Field field : fields) {
+                com.cory.db.annotations.Field fieldAnno = field.getAnnotation(com.cory.db.annotations.Field.class);
+                if (null == fieldAnno || !fieldAnno.updateable()) {
+                    continue;
+                }
+                field.setAccessible(true);
+                try {
+                    field.set(db, field.get(model));
+                } catch (IllegalAccessException e) {
+                    log.error("update fail, model: {}", JSON.toJSONString(model), e);
+                    throw new CoryException(ErrorCode.SAVE_ERROR, "处理保存数据时失败");
+                }
+            }
+        }
+
+        ModelUtil.fillCreatorAndModifier(db);
+        beforeUpdate(db);
+        getDao().updateModel(db);
         if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
             ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "修改数据");
         }
     }
+
+    /**
+     * 在更新前的处理扩展点。已经将要更新的字段和数据库的合并了，如果有特殊处理的，可以在这里处理
+     * @param dbModel 传入的更新字段和数据库的字段合并过的对象
+     */
+    protected void beforeUpdate(T dbModel) {}
 
     public T get(int id) {
         T t = getDao().get(id);

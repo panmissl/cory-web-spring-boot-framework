@@ -159,7 +159,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
             if (null != model) {
                 Map<String, Object> columns = ClassUtil.fetchProperties(model, modelClass, Field.class);
                 if (MapUtils.isNotEmpty(columns)) {
-                    columns.entrySet().forEach(entry -> builder.column(entry.getKey(), toValue(entry.getValue())));
+                    columns.entrySet().stream().filter(entry -> null != entry.getValue()).forEach(entry -> builder.column(entry.getKey(), toValue(entry.getValue())));
                 }
             }
         }
@@ -329,7 +329,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
     private Object toValue(Object o) {
         if (null == o) {
-            return o;
+            return null;
         }
         if (o instanceof CoryEnum) {
             return ((CoryEnum)o).name();

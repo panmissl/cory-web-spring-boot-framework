@@ -37,9 +37,11 @@ public class CoryModelUtil {
 
         for (String c : BASE_MODEL_COLUMNS) {
             Object value = baseColumns.get(c);
-            if (null != value) {
-                columns.put(c, value);
-            }
+            //不能判断空，如果为空则设置为空，否则插入或更新的时候，null值就更新不到db了
+            //if (null != value) {
+            //    columns.put(c, value);
+            //}
+            columns.put(c, value);
         }
         return columns;
     }

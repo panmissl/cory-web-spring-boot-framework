@@ -44,7 +44,7 @@ public class ClassUtil {
 	 * @param object 需要解析的对象
 	 * @param beanClass 对象的类型
 	 * @param filterAnnotationType 属性过滤，可以为空。如果传入，则过滤只有此注解的属性
-	 * @return
+	 * @return 值可能为空，调用方需要自己处理空值
 	 */
 	public static Map<String, Object> fetchProperties(Object object, Class<?> beanClass, Class<? extends Annotation> filterAnnotationType) {
 		try {
@@ -67,9 +67,11 @@ public class ClassUtil {
 					}
 				}
 				Object value = descriptor.getReadMethod().invoke(object);
-				if (null != value) {
-					map.put(name, value);
-				}
+				////不能判断空，如果为空则设置为空，否则插入或更新的时候，null值就更新不到db了
+				//if (null != value) {
+				//	map.put(name, value);
+				//}
+				map.put(name, value);
 			}
 			return map;
 		} catch (Throwable e) {
