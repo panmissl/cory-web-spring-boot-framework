@@ -10,9 +10,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.lang.Nullable;
 
 /**
@@ -43,11 +42,11 @@ public class CoryCacheAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = Constant.PREFIX, name = "type", havingValue = Constant.CACHE_TYPE_REDIS)
-    public RedisCacheManager redisCacheManager(CoryCacheProperties coryCacheProperties, RedisCacheWriter redisCacheWriter) {
+    public RedisCacheManager redisCacheManager(CoryCacheProperties coryCacheProperties, RedisConnectionFactory redisConnectionFactory) {
         if (!Constant.CACHE_TYPE_REDIS.equalsIgnoreCase(coryCacheProperties.getType())) {
             return null;
         }
-        return new RedisCacheManager(redisCacheWriter, RedisCacheConfiguration.defaultCacheConfig());
+        return RedisCacheManager.create(redisConnectionFactory);
     }
 
     @Bean
