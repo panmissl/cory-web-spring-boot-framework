@@ -1,4 +1,4 @@
-package com.cory.web.eagleeye;
+package com.cory.eagleeye;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import lombok.AllArgsConstructor;
@@ -16,6 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EagleEye implements Serializable {
+
+    public static final String EAGLE_EYE_ID = "EAGLE_EYE_ID";
 
     private static final TransmittableThreadLocal<EagleEye> THREAD_LOCAL = new TransmittableThreadLocal<>();
 

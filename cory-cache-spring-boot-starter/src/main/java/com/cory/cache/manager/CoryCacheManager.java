@@ -34,7 +34,7 @@ public class CoryCacheManager implements CacheManager {
 
     private CacheManager determinCacheManager() {
         if (StringUtils.isEmpty(cacheType)) {
-            log.info("CacheManager, cacheType=NULL");
+            log.debug("CacheManager, cacheType=NULL");
             return noOpCacheManager;
         }
         log.debug("CacheManager, cacheType={}", cacheType);
@@ -46,7 +46,7 @@ public class CoryCacheManager implements CacheManager {
         } else if (Constant.CACHE_TYPE_SIMPLE.equalsIgnoreCase(cacheType)) {
             return simpleCacheManager;
         } else {
-            throw new UnsupportedOperationException("unsupported cache type");
+            throw new UnsupportedOperationException("unsupported cache type: " + cacheType);
         }
     }
 

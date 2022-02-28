@@ -19,95 +19,215 @@
     <property name="COMMON_PATTERN" value="[eagleEyeId: %X{EAGLE_EYE_ID}] - [%d{'MM-dd HH:mm:ss,SSS',GMT+8:00}] %-5p [%.10t][%X{CU}] %logger{36}{%L} - %m%n" />
     <property name="LOG_CHARSET" value="UTF-8" />
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <charset>${LOG_CHARSET}</charset>
-            <pattern>${COMMON_PATTERN}</pattern>
-        </encoder>
-    </appender>
+    <springProfile name="!prod">
+        <property name="LOG_LEVEL" value="DEBUG" />
+        <property name="HIKARI_LOG_LEVEL" value="WARN" />
+        <property name="APACHE_LOG_LEVEL" value="WARN" />
+        <property name="SPRING_LOG_LEVEL" value="WARN" />
+        <property name="SQL_LOG_LEVEL" value="WARN" />
+        <property name="HIKARI_APPENDER" value="CONSOLE" />
+        <property name="APACHE_APPENDER" value="CONSOLE" />
+        <property name="SPRING_APPENDER" value="CONSOLE" />
+        <property name="SQL_APPENDER" value="CONSOLE" />
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}.log</file>
-        <encoder>
-            <charset>${LOG_CHARSET}</charset>
-            <pattern>${COMMON_PATTERN}</pattern>
-        </encoder>
-        <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
-        <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
-            <!-- 文件名：log/demo.2017-12-05.0.log -->
-            <fileNamePattern>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}.%d.%i.log</fileNamePattern>
-            <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
-            <maxHistory>30</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成1KB看效果 -->
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-        </rollingPolicy>
-    </appender>
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <charset>${LOG_CHARSET}</charset>
+                <pattern>${COMMON_PATTERN}</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+    <springProfile name="prod">
+        <property name="LOG_LEVEL" value="INFO" />
+        <property name="HIKARI_LOG_LEVEL" value="WARN" />
+        <property name="APACHE_LOG_LEVEL" value="WARN" />
+        <property name="SPRING_LOG_LEVEL" value="WARN" />
+        <property name="SQL_LOG_LEVEL" value="WARN" />
+        <property name="HIKARI_APPENDER" value="HIKARI" />
+        <property name="APACHE_APPENDER" value="APACHE" />
+        <property name="SPRING_APPENDER" value="SPRING" />
+        <property name="SQL_APPENDER" value="SQL" />
 
-    <if condition='property("logging.sls.enable").equalsIgnoreCase("true")'>
-        <then>
-            <appender name="SLS" class="com.aliyun.openservices.log.logback.LoghubAppender">
-                <!-- 必选项 -->
-                <!-- 账号及网络配置 -->
-                <endpoint>${logging.sls.endpoint}</endpoint>
-                <accessKeyId>${logging.sls.ak}</accessKeyId>
-                <accessKeySecret>${logging.sls.sk}</accessKeySecret>
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}.log</file>
+            <encoder>
+                <charset>${LOG_CHARSET}</charset>
+                <pattern>${COMMON_PATTERN}</pattern>
+            </encoder>
+            <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+            <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+                <!-- 文件名：log/demo.2017-12-05.0.log -->
+                <fileNamePattern>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}.%d.%i.log</fileNamePattern>
+                <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+                <maxHistory>30</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成1KB看效果 -->
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+        </appender>
 
-                <!-- sls项目配置 -->
-                <project>${logging.sls.project}</project>
-                <logStore>${logging.sls.logStore}</logStore>
-                <!-- 必选项 end -->
+        <appender name="HIKARI" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOGGING_FILE_PATH}/hikari.log</file>
+            <encoder>
+                <charset>${LOG_CHARSET}</charset>
+                <pattern>${COMMON_PATTERN}</pattern>
+            </encoder>
+            <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+            <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+                <!-- 文件名：log/demo.2017-12-05.0.log -->
+                <fileNamePattern>${LOGGING_FILE_PATH}/hikari.%d.%i.log</fileNamePattern>
+                <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+                <maxHistory>30</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成1KB看效果 -->
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+        </appender>
 
-                <!-- 可选项 -->
-                <topic>${logging.sls.topic}</topic>
-                <!-- source不要写，默认的是IP
-                <source></source>
-                -->
+        <appender name="APACHE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOGGING_FILE_PATH}/apache.log</file>
+            <encoder>
+                <charset>${LOG_CHARSET}</charset>
+                <pattern>${COMMON_PATTERN}</pattern>
+            </encoder>
+            <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+            <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+                <!-- 文件名：log/demo.2017-12-05.0.log -->
+                <fileNamePattern>${LOGGING_FILE_PATH}/apache.%d.%i.log</fileNamePattern>
+                <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+                <maxHistory>30</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成1KB看效果 -->
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+        </appender>
 
-                <totalSizeInBytes>104857600</totalSizeInBytes>
-                <maxBlockMs>0</maxBlockMs>
-                <ioThreadCount>0</ioThreadCount>
-                <batchSizeThresholdInBytes>524288</batchSizeThresholdInBytes>
-                <batchCountThreshold>4096</batchCountThreshold>
-                <lingerMs>2000</lingerMs>
-                <retries>10</retries>
-                <baseRetryBackoffMs>100</baseRetryBackoffMs>
-                <maxRetryBackoffMs>50000</maxRetryBackoffMs>
+        <appender name="SPRING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOGGING_FILE_PATH}/spring.log</file>
+            <encoder>
+                <charset>${LOG_CHARSET}</charset>
+                <pattern>${COMMON_PATTERN}</pattern>
+            </encoder>
+            <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+            <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+                <!-- 文件名：log/demo.2017-12-05.0.log -->
+                <fileNamePattern>${LOGGING_FILE_PATH}/spring.%d.%i.log</fileNamePattern>
+                <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+                <maxHistory>30</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成1KB看效果 -->
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+        </appender>
 
-                <encoder>
-                    <pattern>${COMMON_PATTERN}</pattern>
-                </encoder>
+        <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOGGING_FILE_PATH}/sql.log</file>
+            <encoder>
+                <charset>${LOG_CHARSET}</charset>
+                <pattern>${COMMON_PATTERN}</pattern>
+            </encoder>
+            <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+            <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+                <!-- 文件名：log/demo.2017-12-05.0.log -->
+                <fileNamePattern>${LOGGING_FILE_PATH}/sql.%d.%i.log</fileNamePattern>
+                <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+                <maxHistory>30</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成1KB看效果 -->
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+        </appender>
 
-                <timeFormat>yyyy-MM-dd HH:mm:ss:SSS</timeFormat>
-                <timeZone>Asia/Shanghai</timeZone>
-            </appender>
-        </then>
-    </if>
+        <if condition='property("logging.sls.enable").equalsIgnoreCase("true")'>
+            <then>
+                <appender name="SLS" class="com.aliyun.openservices.log.logback.LoghubAppender">
+                    <!-- 必选项 -->
+                    <!-- 账号及网络配置 -->
+                    <endpoint>${logging.sls.endpoint}</endpoint>
+                    <accessKeyId>${logging.sls.ak}</accessKeyId>
+                    <accessKeySecret>${logging.sls.sk}</accessKeySecret>
+
+                    <!-- sls项目配置 -->
+                    <project>${logging.sls.project}</project>
+                    <logStore>${logging.sls.logStore}</logStore>
+                    <!-- 必选项 end -->
+
+                    <!-- 可选项 -->
+                    <topic>${logging.sls.topic}</topic>
+                    <!-- source不要写，默认的是IP
+                    <source></source>
+                    -->
+
+                    <totalSizeInBytes>104857600</totalSizeInBytes>
+                    <maxBlockMs>0</maxBlockMs>
+                    <ioThreadCount>0</ioThreadCount>
+                    <batchSizeThresholdInBytes>524288</batchSizeThresholdInBytes>
+                    <batchCountThreshold>4096</batchCountThreshold>
+                    <lingerMs>2000</lingerMs>
+                    <retries>10</retries>
+                    <baseRetryBackoffMs>100</baseRetryBackoffMs>
+                    <maxRetryBackoffMs>50000</maxRetryBackoffMs>
+
+                    <encoder>
+                        <pattern>${COMMON_PATTERN}</pattern>
+                    </encoder>
+
+                    <timeFormat>yyyy-MM-dd HH:mm:ss:SSS</timeFormat>
+                    <timeZone>Asia/Shanghai</timeZone>
+                </appender>
+            </then>
+        </if>
+    </springProfile>
+
+    <logger name="com.zaxxer.hikari" additivity="false">
+        <level value="${HIKARI_LOG_LEVEL}" />
+        <appender-ref ref="${HIKARI_APPENDER}" />
+    </logger>
+    <logger name="org.apache" additivity="false">
+        <level value="${APACHE_LOG_LEVEL}" />
+        <appender-ref ref="${APACHE_APPENDER}" />
+    </logger>
+    <logger name="org.springframework" additivity="false">
+        <level value="${SPRING_LOG_LEVEL}" />
+        <appender-ref ref="${SPRING_APPENDER}" />
+    </logger>
+    <logger name="java.sql" additivity="false">
+        <level value="${SQL_LOG_LEVEL}" />
+        <appender-ref ref="${SQL_APPENDER}" />
+    </logger>
 
     <logger name="com.cory">
-        <level value="DEBUG" />
-    </logger>
-    <logger name="org.apache">
-        <level value="WARN" />
-    </logger>
-    <logger name="org.springframework">
-        <level value="WARN" />
-    </logger>
-    <logger name="java.sql">
-        <level value="WARN" />
+        <level value="${LOG_LEVEL}" />
     </logger>
 
     <root>
-        <level value="DEBUG" />
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-        <if condition='property("logging.sls.enable").equalsIgnoreCase("true")'>
-            <then>
-                <appender-ref ref="SLS" />
-            </then>
-        </if>
+        <level value="${LOG_LEVEL}" />
+
+        <springProfile name="!prod">
+            <appender-ref ref="CONSOLE" />
+        </springProfile>
+        <springProfile name="prod">
+            <appender-ref ref="FILE" />
+            <if condition='property("logging.sls.enable").equalsIgnoreCase("true")'>
+                <then>
+                    <appender-ref ref="SLS" />
+                </then>
+            </if>
+        </springProfile>
     </root>
 </configuration>
