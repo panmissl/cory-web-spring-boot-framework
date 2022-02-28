@@ -55,6 +55,7 @@ public class UserService extends BaseService<User> {
     @Override
     public void add(User model) {
         model.setPassword(passwordEncoder.encode(model.getUserName(), DEFAULT_PASSWORD));
+        model.setLastLogonSuccess(false);
         super.add(model);
     }
 
@@ -144,6 +145,7 @@ public class UserService extends BaseService<User> {
         user.setType(UserType.SITE);
         user.setCreator(BaseConstants.ADMIN_ID);
         user.setModifier(BaseConstants.ADMIN_ID);
+        user.setLastLogonSuccess(false);
 
         userDao.add(user);
         return user;
