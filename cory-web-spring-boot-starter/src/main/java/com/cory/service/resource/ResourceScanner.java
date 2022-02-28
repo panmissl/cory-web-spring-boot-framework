@@ -207,7 +207,9 @@ public class ResourceScanner {
             return null;
         }
         for (int i = 0; i < methodMapping.length; i++) {
-            methodMapping[i] = (isAjax ? AJAX : "") + (null == clsRequestMapping ? "" : clsRequestMapping) + methodMapping[i];
+            //不能加ajax的前缀了，因为现在是controller里自己写全了
+            //methodMapping[i] = (isAjax ? AJAX : "") + (null == clsRequestMapping ? "" : clsRequestMapping) + methodMapping[i];
+            methodMapping[i] = (null == clsRequestMapping ? "" : clsRequestMapping) + methodMapping[i];
         }
         return methodMapping;
     }
