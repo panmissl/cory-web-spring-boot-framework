@@ -1,12 +1,13 @@
 package com.cory.vo;
 
+import com.cory.dto.AccessCountStatDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by Cory on 2017/5/22.
@@ -17,12 +18,11 @@ import java.util.Map;
 @AllArgsConstructor
 public class AccessCountStatVO implements Serializable {
 
-    //今天访问统计
-    //昨天访问统计
-    //历史访问统计
-    //key: url, value: count
+    //今天访问统计 top10
+    //昨天访问统计 top10
+    //历史访问统计 top10
 
-    private Map<String, Integer> today;
-    private Map<String, Integer> yesterday;
-    private Map<String, Integer> total;
+    private List<AccessCountStatDTO> today;
+    private List<AccessCountStatDTO> yesterday;
+    private List<AccessCountStatDTO> total;
 }
