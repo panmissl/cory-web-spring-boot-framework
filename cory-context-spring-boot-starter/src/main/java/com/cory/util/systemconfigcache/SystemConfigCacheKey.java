@@ -5,12 +5,18 @@ package com.cory.util.systemconfigcache;
  */
 public class SystemConfigCacheKey {
 
-    /** www.top.com */
+    /** 网站域名 */
     public static final String DOMAIN_NAME = "domain_name";
-    /** 靓靓排行 */
+    /** 网站名称：显示在网页的标题栏里 */
     public static final String SITE_NAME = "site_name";
-    /** 靓靓排行，您想要的都在这里 */
+    /** 网站标语：可选。如果有，显示在标题栏里，和网站名称用 - 分隔 */
     public static final String SITE_SLOGAN = "site_slogan";
+    /** 网站关键字：可选。SEO用，用英语半角逗号分隔 */
+    public static final String SITE_KEYWORDS = "site_keywords";
+    /** 网站描述：可选。SEO用，一段文本 */
+    public static final String SITE_DESCRIPTION = "site_description";
+    /** 可选。专门给SEO用的，放在网站的html里，让搜索引擎搜索时展示的。是一段HTML，比如可以放图片，放介绍文字等。正常访问页面加载时马上删除，所以不要在这里处理正常访问的逻辑 */
+    public static final String SITE_DESCRIPTION_BODY = "site_description_body";
 
     /** ends with / : www.xx.com/ */
     public static final String JS_DIR = "js_dir";

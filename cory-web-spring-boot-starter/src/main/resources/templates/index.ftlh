@@ -8,9 +8,8 @@
         <meta name="_csrf" content="">
         <meta name="__form_token__" content="">
 
-        <script type="text/javascript" language="javascript">
+        <script type="text/javascript">
             <#-- 一些从后台初始化的js数据可以放这里 -->
-            window.siteName = '${siteName!""}';
             window.domainName = '${domainName!""}';
             window.ctx = '${ctx!""}';
             window.ctxWithoutSlash = '${ctxWithoutSlash!""}';
@@ -28,7 +27,9 @@
             window.registerEnable = ${registerEnable!"false"};
         </script>
 
-        <title>${siteName!""}</title>
+        <title>${siteName!""}<#if siteSlogan??> &sssss; ${siteSlogan!""}</#if></title>
+        <meta name="keywords" content="${siteKeywords!""}">
+        <meta name="description" content="${siteDescription!""}">
 
         <link rel="shortcut icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />
         <link rel="icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />
@@ -36,9 +37,11 @@
         <link rel="stylesheet" href="${cssDir!""}${cssFile!""}" />
     </head>
     <body>
+        <div id="site-description-body">${siteDescriptionBody!""}</div>
         <#if user??>
         <input type="hidden" id="current-user" value='${user}' />
         <script type="text/javascript" language="javascript" id="current-user-script">
+            document.getElementById('site-description-body').remove();
             const userJson = document.getElementById('current-user').value;
             window.USER = JSON.parse(userJson);
             document.getElementById('current-user').remove();

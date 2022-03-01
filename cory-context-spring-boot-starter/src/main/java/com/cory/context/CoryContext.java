@@ -29,6 +29,12 @@ public class CoryContext implements Serializable {
     private String domainName;
     private String siteName;
     private String siteSlogan;
+    /** @see SystemConfigCacheKey#SITE_KEYWORDS */
+    private String siteKeywords;
+    /** @see SystemConfigCacheKey#SITE_DESCRIPTION */
+    private String siteDescription;
+    /** @see SystemConfigCacheKey#SITE_DESCRIPTION_BODY */
+    private String siteDescriptionBody;
     private String jsDir;
     private String cssDir;
     private String imageDir;
