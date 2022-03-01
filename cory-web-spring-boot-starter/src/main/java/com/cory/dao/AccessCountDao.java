@@ -14,6 +14,6 @@ import java.util.List;
 @Dao(model = AccessCount.class)
 public interface AccessCountDao extends BaseDao<AccessCount> {
 
-    @Select(customSql = "select uri, sum(access_count) as count from base_access_count where is_deleted = 0 #![ and day = #{da} ] group by uri order by count desc limit 10", returnType = AccessCountStatDTO.class)
+    @Select(customSql = "select uri, sum(access_count) as count from base_access_count where is_deleted = 0 #![ and day = #{da} ] group by uri order by count desc limit 20", returnType = AccessCountStatDTO.class)
     List<AccessCountStatDTO> stat(@Param("day") String day);
 }
