@@ -15,10 +15,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.util.AnnotatedTypeScanner;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -174,7 +171,7 @@ public class ResourceScanner {
             return urls;
         }
         for (Method method : methods) {
-            Arrays.asList(RequestMapping.class, GetMapping.class, PostMapping.class).forEach(anno -> {
+            Arrays.asList(RequestMapping.class, GetMapping.class, PostMapping.class, DeleteMapping.class, PatchMapping.class, PutMapping.class).forEach(anno -> {
                 String[] requestMapping = getMethodLevelRequestMapping(isAjax, clsRequestMapping, method, anno);
                 if (null != requestMapping && requestMapping.length > 0) {
                     for (String m : requestMapping) {
