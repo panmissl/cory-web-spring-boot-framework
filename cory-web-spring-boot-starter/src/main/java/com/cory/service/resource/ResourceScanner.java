@@ -5,10 +5,14 @@ import com.cory.context.CorySystemContext.FieldMeta;
 import com.cory.context.CorySystemContext.ModelMeta;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
+import com.cory.model.DataDict;
+import com.cory.service.DatadictService;
+import com.cory.vo.DataDictVO;
 import com.cory.web.controller.BaseAjaxController;
 import com.cory.web.controller.BaseOpenApiController;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -36,6 +40,8 @@ public class ResourceScanner {
 
     @Autowired
     private ResourceToDbLoader resourceToDbLoader;
+    @Autowired
+    private DatadictService datadictService;
 
     public void scanAndLoadToDb() {
         log.info("start to scan Controllers ...");
@@ -98,6 +104,9 @@ public class ResourceScanner {
                             renderName = field.getName() + "Text";
                         }
 
+                        String datadictTypeValue = fieldAnno.datadictTypeValue();
+                        List<DataDictVO> dataDictList = parseDataDictList(datadictTypeValue);
+
                         FieldMeta fieldMeta = FieldMeta.builder()
                                 .name(field.getName())
                                 .type(fieldAnno.type().name())
@@ -113,7 +122,8 @@ public class ResourceScanner {
                                 .editable(fieldAnno.editable())
                                 .desc(fieldAnno.desc())
                                 .richText(fieldAnno.richText())
-                                .datadictTypeValue(fieldAnno.datadictTypeValue())
+                                .datadictTypeValue(datadictTypeValue)
+                                .dataDictList(dataDictList)
                                 .updateable(fieldAnno.updateable())
                                 .build();
                         fieldMetaList.add(fieldMeta);
@@ -149,6 +159,23 @@ public class ResourceScanner {
         CorySystemContext.get().setModelMetaSet(modelMetaSet);
         CorySystemContext.get().setModelMetaMap(modelMetaMap);
         log.info("scan Model finish, model count: {}", modelSet.size());
+    }
+
+    private List<DataDictVO> parseDataDictList(String datadictTypeValue) {
+        if (StringUtils.isBlank(datadictTypeValue)) {
+            return Lists.newArrayList();
+        }
+        DataDict type = datadictService.getByValue(datadictTypeValue);
+        if (null == type) {
+            return Lists.newArrayList();
+        }
+        List<DataDict> ddList = datadictService.getByType(type.getId());
+        if (CollectionUtils.isEmpty(ddList)) {
+            return Lists.newArrayList();
+        }
+        return ddList.stream()
+                .map(dd -> DataDictVO.builder().value(dd.getValue()).description(dd.getDescription()).sn(dd.getSn()).build())
+                .collect(Collectors.toList());
     }
 
     private int doScan(Class<?> cls) {

@@ -2,6 +2,7 @@ package com.cory.context;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import com.cory.enums.CoryEnum;
+import com.cory.vo.DataDictVO;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
@@ -109,6 +110,8 @@ public class CorySystemContext implements Serializable {
         private boolean richText;
         //default null
         private String datadictTypeValue;
+        //default null：如果有datadictTypeValue，则根据类型取出列表，放到此字段里，前端直接渲染
+        private List<DataDictVO> dataDictList;
         //default false
         private boolean updateable;
 
