@@ -1,6 +1,7 @@
 package com.cory.service;
 
 import com.cory.constant.CacheConstants;
+import com.cory.constant.Constants;
 import com.cory.constant.ErrorCode;
 import com.cory.context.CurrentUser;
 import com.cory.dao.DatadictDao;
@@ -57,7 +58,7 @@ public class DatadictService extends BaseService<DataDict> {
     @CacheEvict(value = CacheConstants.Datadict, allEntries = true)
     @Override
     public void add(DataDict model) {
-        if (null != this.getByValue(model.getValue())) {
+        if (null != datadictDao.getByValue(model.getType(), model.getValue())) {
             throw new CoryException(ErrorCode.SAVE_ERROR, "code为" + model.getValue() + "的记录已经存在，请重新输入.");
         }
         super.add(model);
@@ -66,8 +67,11 @@ public class DatadictService extends BaseService<DataDict> {
     @CacheEvict(value = CacheConstants.Datadict, key = "#model.id", allEntries = true)
     @Override
     public void update(DataDict model) {
-        if (!StringUtils.equals(model.getValue(), this.get(model.getId()).getValue())) {
-            throw new CoryException(ErrorCode.SAVE_ERROR, "code不能修改.");
+        DataDict db = datadictDao.get(model.getId());
+        if (!StringUtils.equals(model.getValue(), db.getValue())) {
+            if (null != datadictDao.getByValue(model.getType(), model.getValue())) {
+                throw new CoryException(ErrorCode.SAVE_ERROR, "值" + model.getValue() + "已经存在.");
+            }
         }
         super.update(model);
     }
@@ -77,22 +81,15 @@ public class DatadictService extends BaseService<DataDict> {
         this.getDao().updateShowable(id, showable, CurrentUser.get().getId());
     }
 
-    @Cacheable(value = CacheConstants.Datadict, key = "'value-'.concat(#value)")
-    public DataDict getByValue(String value) {
-        DataDict dd = this.getDao().getByValue(value);
+    @Cacheable(value = CacheConstants.Datadict, key = "'value-'.concat(#type).concat('-').concat(#value)")
+    public DataDict getByValue(String type, String value) {
+        DataDict dd = this.getDao().getByValue(type, value);
         fillOtherFields(dd);
         return dd;
     }
 
-    @Cacheable(value = CacheConstants.Datadict, key = "'all-types'")
-    public List<DataDict> getAllTypes() {
-        List<DataDict> list = this.getDao().getAllTypes("SN");
-        fillOtherFields(list);
-        return list;
-    }
-
     @Cacheable(value = CacheConstants.Datadict, key = "'type-'.concat(#type)")
-    public List<DataDict> getByType(Integer type) {
+    public List<DataDict> getByType(String type) {
         List<DataDict> list = this.getDao().getByType(type, "SN");
         fillOtherFields(list);
         return list;
@@ -103,12 +100,19 @@ public class DatadictService extends BaseService<DataDict> {
         if (null == model) {
             return model;
         }
-        String typeDesc = "ROOT(根类型)";
-        if (null != model.getType() && model.getType() > 0) {
-            DataDict type = this.getDao().get(model.getType());
-            typeDesc = type.getValue() + "(" + type.getDescription() + ")";
-        }
-        model.getRenderFieldMap().put("typeDesc", typeDesc);
+
+        model.getRenderFieldMap().put("typeDesc", parseTypeDesc(model));
         return model;
+    }
+
+    private String parseTypeDesc(DataDict model) {
+        if (Constants.DATA_DICT_ROOT_VALUE.equals(model.getValue()) || Constants.DATA_DICT_ROOT_VALUE.equals(model.getType())) {
+            return "ROOT(根类型)";
+        }
+        DataDict type = this.getDao().getByValue(Constants.DATA_DICT_ROOT_VALUE, model.getType());
+        if (null == type) {
+            return "无";
+        }
+        return type.getValue() + "(" + type.getDescription() + ")";
     }
 }

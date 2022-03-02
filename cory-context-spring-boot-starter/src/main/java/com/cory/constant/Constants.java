@@ -7,6 +7,9 @@ public class Constants {
 
     public static final String PROFILE_PROD = "prod";
 
+    public static final String DATA_DICT_ROOT_VALUE = "cory_web_data_dict_root";
+    public static final String DATA_DICT_ROOT_PARENT_VALUE = "cory_web_data_dict_root_parent_000";
+
     public static final int CONTEXT_INITIALIZER_ORDER_CONTEXT = 1000;
     public static final int CONTEXT_INITIALIZER_ORDER_DB = 990;
     public static final int CONTEXT_INITIALIZER_ORDER_WEB = 980;

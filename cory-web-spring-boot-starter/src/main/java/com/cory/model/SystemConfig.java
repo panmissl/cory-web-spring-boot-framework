@@ -3,7 +3,6 @@ package com.cory.model;
 import com.cory.db.annotations.Field;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
-import com.cory.model.BaseModel;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -20,10 +19,10 @@ public class SystemConfig extends BaseModel {
     private String code;
 
     @NotEmpty
-    @Field(label = "值", type = CoryDbType.VARCHAR, len = 1024)
+    @Field(label = "值", type = CoryDbType.TEXT)
     private String val;
 
     @NotEmpty
-    @Field(label = "描述", type = CoryDbType.VARCHAR, len = 1024)
+    @Field(label = "描述", type = CoryDbType.TEXT)
     private String description;
 }

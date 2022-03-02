@@ -1,5 +1,6 @@
 package com.cory.service.resource;
 
+import com.cory.constant.Constants;
 import com.cory.context.CorySystemContext;
 import com.cory.context.CorySystemContext.FieldMeta;
 import com.cory.context.CorySystemContext.ModelMeta;
@@ -117,7 +118,7 @@ public class ResourceScanner {
                                 .len(fieldAnno.len())
                                 .label(fieldAnno.label())
                                 .filterType(fieldAnno.filterType().name())
-                                .filterSelectUrl(fieldAnno.filterSelectUrl())
+                                //.filterSelectUrl(fieldAnno.filterSelectUrl())
                                 .filtered(fieldAnno.filtered())
                                 .editable(fieldAnno.editable())
                                 .desc(fieldAnno.desc())
@@ -165,13 +166,13 @@ public class ResourceScanner {
         if (StringUtils.isBlank(datadictTypeValue)) {
             return Lists.newArrayList();
         }
-        DataDict type = datadictService.getByValue(datadictTypeValue);
-        if (null == type) {
-            return Lists.newArrayList();
-        }
-        List<DataDict> ddList = datadictService.getByType(type.getId());
+        List<DataDict> ddList = datadictService.getByType(datadictTypeValue);
         if (CollectionUtils.isEmpty(ddList)) {
-            return Lists.newArrayList();
+            ddList = Lists.newArrayList();
+        }
+        //对于根类型，将ROOT也添加一下
+        if (Constants.DATA_DICT_ROOT_VALUE.equals(datadictTypeValue)) {
+            ddList.add(0, datadictService.getByValue(Constants.DATA_DICT_ROOT_PARENT_VALUE, Constants.DATA_DICT_ROOT_VALUE));
         }
         return ddList.stream()
                 .map(dd -> DataDictVO.builder().value(dd.getValue()).description(dd.getDescription()).sn(dd.getSn()).build())

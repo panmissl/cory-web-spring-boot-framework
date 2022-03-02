@@ -34,7 +34,7 @@ public @interface Field {
     CoryDbType type();
 
     /**
-     * 数据字典类型值，可选。
+     * 可选。数据字典类型值
      * 如果设置了，则前端在渲染时自动渲染成下拉框，自动去数据库拉数据字典。
      * @return 数字字典类型的值，不要用ID，因为ID在开发时不确定
      */
@@ -72,9 +72,10 @@ public @interface Field {
 
     /**
      * 当过滤类型是REMOTE_SELECT时，select的url（相对URL，比如：/ajax/base/user/list）
+     * 暂不支持，请使用数据字典，参见{@link Field#datadictTypeCode}
      * @return
      */
-    String filterSelectUrl() default "";
+    //String filterSelectUrl() default "";
 
     /**
      * 渲染字段：有一些字段渲染时不能直接渲染自己，要渲染加工过的数据，比如枚举类型。

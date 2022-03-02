@@ -12,7 +12,8 @@ public enum FilterType {
     SELECT,
 
     /** 远程下拉：通过url加载数据(前端设定显示和值的字段，默认用：label, value，如果有自定义的可以传入) */
-    REMOTE_SELECT,
+    //暂不支持，请使用数据字典，参见Field注解上的datadictTypeCode
+    //REMOTE_SELECT,
 
     /** 日期：格式：yyyy-MM-dd。是此类型时，因为选择的是一个时间段，所以提交时的字段名称时Filed名称加上Start和End，比如：approveDateStart, approveDateEnd，时间相关的都是这样处理 */
     DATE,

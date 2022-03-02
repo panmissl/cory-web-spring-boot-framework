@@ -97,9 +97,9 @@ public class CorySystemContext implements Serializable {
         //default TEXT
         //@see com.cory.db.enums.FilterType
         private String filterType;
-
         //default ""
-        private String filterSelectUrl;
+        //private String filterSelectUrl;
+
         //default ""
         private String renderName;
         //default 254
