@@ -3,7 +3,10 @@ package com.cory.model;
 import com.cory.db.annotations.Field;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -14,6 +17,9 @@ import javax.validation.constraints.NotNull;
  * @date 2022/3/2
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Model(name = "数据字典", module = "base")
 public class DataDict extends BaseModel {
 

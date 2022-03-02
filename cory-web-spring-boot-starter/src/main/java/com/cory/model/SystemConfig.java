@@ -3,7 +3,10 @@ package com.cory.model;
 import com.cory.db.annotations.Field;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -11,6 +14,9 @@ import javax.validation.constraints.NotEmpty;
  * Created by Cory on 2017/5/10.
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Model(name = "系统配置", module = "base")
 public class SystemConfig extends BaseModel {
 
