@@ -3,7 +3,6 @@ package com.cory.model;
 import com.cory.db.annotations.Field;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
-import com.cory.model.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
