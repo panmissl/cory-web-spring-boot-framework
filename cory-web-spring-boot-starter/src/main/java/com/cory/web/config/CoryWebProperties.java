@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class CoryWebProperties {
 
-    private String skipAuthUrlPattern;
+    private String skipShiroAuthUrlPattern;
+    private String skipOpenApiAuthUrlPattern;
     private String csrfAndFormTokenExcludeUrlPattern;
 }

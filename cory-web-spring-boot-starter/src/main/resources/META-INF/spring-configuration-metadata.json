@@ -15,8 +15,14 @@
   "properties": [
     {
       "sourceType": "com.cory.web.config.CoryWebProperties",
-      "name": "cory.web.skipAuthUrlPattern",
-      "description": "跳过校验权限url正则表达式，url要以/开头，比如：/pay/callback.*，多个：/pay/callback.*|/bpms/callback.*",
+      "name": "cory.web.skipShiroAuthUrlPattern",
+      "description": "跳过shiro(用户登录系统)校验权限url正则表达式，url要以/开头，比如：/pay/callback.*，多个：/pay/callback.*|/bpms/callback.*",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.cory.web.config.CoryWebProperties",
+      "name": "cory.web.skipOpenApiAuthUrlPattern",
+      "description": "跳过openapi(以/openapi开头的)校验权限url正则表达式，url要以/开头，比如：/pay/callback.*，多个：/pay/callback.*|/bpms/callback.*",
       "type": "java.lang.String"
     },
     {

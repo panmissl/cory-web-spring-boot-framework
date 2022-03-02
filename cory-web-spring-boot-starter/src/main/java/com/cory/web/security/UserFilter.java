@@ -97,7 +97,7 @@ public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 	}
 
 	private boolean skipAuth(String requestUrl) {
-		String skipAuthUrlPattern = coryWebProperties.getSkipAuthUrlPattern();
+		String skipAuthUrlPattern = coryWebProperties.getSkipShiroAuthUrlPattern();
 		if (StringUtils.isBlank(skipAuthUrlPattern)) {
 			return false;
 		}
@@ -105,7 +105,7 @@ public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 			return false;
 		}
 		if (!requestUrl.startsWith("/")) {
-			requestUrl += "/";
+			requestUrl = "/" + requestUrl;
 		}
 		return requestUrl.matches(skipAuthUrlPattern);
 	}
