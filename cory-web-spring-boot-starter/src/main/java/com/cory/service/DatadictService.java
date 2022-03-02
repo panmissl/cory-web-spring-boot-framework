@@ -84,8 +84,7 @@ public class DatadictService extends BaseService<DataDict> {
     @Cacheable(value = CacheConstants.Datadict, key = "'value-'.concat(#type).concat('-').concat(#value)")
     public DataDict getByValue(String type, String value) {
         DataDict dd = this.getDao().getByValue(type, value);
-        fillOtherFields(dd);
-        return dd;
+        return fillOtherFields(dd);
     }
 
     @Cacheable(value = CacheConstants.Datadict, key = "'type-'.concat(#type)")
@@ -97,10 +96,6 @@ public class DatadictService extends BaseService<DataDict> {
 
     @Override
     protected DataDict fillOtherFields(DataDict model) {
-        if (null == model) {
-            return model;
-        }
-
         model.getRenderFieldMap().put("typeDesc", parseTypeDesc(model));
         return model;
     }

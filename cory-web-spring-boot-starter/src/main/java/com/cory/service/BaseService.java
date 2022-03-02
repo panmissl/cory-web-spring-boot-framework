@@ -86,9 +86,7 @@ public abstract class BaseService<T extends BaseModel> {
     protected void beforeUpdate(T dbModel) {}
 
     public T get(int id) {
-        T t = getDao().get(id);
-        fillOtherFields(t);
-        return t;
+        return fillOtherFields(getDao().get(id));
     }
 
     /**
@@ -97,9 +95,7 @@ public abstract class BaseService<T extends BaseModel> {
      * @return
      */
     public T getByCode(String code) {
-        T t = getDao().getByCode(code);
-        fillOtherFields(t);
-        return t;
+        return fillOtherFields(getDao().getByCode(code));
     }
 
     /**
@@ -108,9 +104,7 @@ public abstract class BaseService<T extends BaseModel> {
      * @return
      */
     public List<T> getByCodeList(List<String> codeList) {
-        List<T> list = getDao().getByCodeList(codeList);
-        fillOtherFields(list);
-        return list;
+        return fillOtherFields(getDao().getByCodeList(codeList));
     }
 
     /**
@@ -137,13 +131,29 @@ public abstract class BaseService<T extends BaseModel> {
 
     public abstract <D extends BaseDao<T>> D getDao();
 
+    /**
+     * 一般情况下不用覆写此方法，除非有特殊需求
+     * @param list
+     * @return
+     */
     protected List<T> fillOtherFields(List<T> list) {
         if (CollectionUtils.isEmpty(list)) {
             return list;
         }
-        return list.stream().map(m -> fillOtherFields(m)).collect(Collectors.toList());
+        return list.stream().map(m -> doFillOtherFields(m)).collect(Collectors.toList());
     }
 
+    private T doFillOtherFields(T model) {
+        if (null == model) {
+            return null;
+        }
+        return fillOtherFields(model);
+    }
+
+    /**
+     * @param model 已经处理过null了，子类在覆写时不用再判断null
+     * @return
+     */
     protected T fillOtherFields(T model) {return model;}
 
     /**
