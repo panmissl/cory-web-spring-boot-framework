@@ -14,27 +14,25 @@
             window.ctx = '${ctx!""}';
             window.ctxWithoutSlash = '${ctxWithoutSlash!""}';
             window.successUrl = '${successUrl!""}';
-            window.jsDir = '${jsDir!""}';
-            window.cssDir = '${cssDir!""}';
-            window.imageDir = '${imageDir!""}';
+            window.staticDir = '${staticDir!""}';
             window.jsFile = '${jsFile!""}';
             window.cssFile = '${cssFile!""}';
             window.errorPage = ${errorPage!"false"};
             window.errorType = '${errorType!""}';
             window.routerBase = '${ctxWithoutSlash!""}' + "/";
-            window.publicPath = window.jsDir;
+            window.publicPath = window.staticDir;
             window.DEBUG_MODE = ${debugMode!"false"};
             window.registerEnable = ${registerEnable!"false"};
         </script>
 
-        <title>${siteName!""}<#if siteSlogan??> &sssss; ${siteSlogan!""}</#if></title>
+        <title>${siteName!""}<#if siteSlogan??> &#8211; ${siteSlogan!""}</#if></title>
         <meta name="keywords" content="${siteKeywords!""}">
         <meta name="description" content="${siteDescription!""}">
 
-        <link rel="shortcut icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />
-        <link rel="icon" href="${imageDir!""}favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="${staticDir!""}favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="${staticDir!""}favicon.ico" type="image/x-icon" />
 
-        <link rel="stylesheet" href="${cssDir!""}${cssFile!""}" />
+        <link rel="stylesheet" href="${staticDir!""}${cssFile!""}" />
     </head>
     <body>
         <div id="site-description-body">${siteDescriptionBody!""}</div>
@@ -52,10 +50,10 @@
         <div id="root">
             <div style="margin-top: 50px; text-align: center; line-height: 20px; height: 20px; font-size: 12px; vertical-align: middle;">
                 加载中...
-                <img src="${imageDir!""}loading.gif" />
+                <img src="${staticDir!""}loading.gif" />
             </div>
         </div>
 
-        <script src="${jsDir!""}${jsFile!""}"></script>
+        <script src="${staticDir!""}${jsFile!""}"></script>
     </body>
 </html>

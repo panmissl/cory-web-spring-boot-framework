@@ -44,9 +44,7 @@ public class ContextInterceptor implements HandlerInterceptor {
 		builder.siteDescription(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE_DESCRIPTION));
 		builder.siteDescriptionBody(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE_DESCRIPTION_BODY));
 
-		builder.jsDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_DIR));
-		builder.cssDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.CSS_DIR));
-		builder.imageDir(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.IMAGE_DIR));
+		builder.staticDir(buildStaticDir());
 		builder.jsFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_FILE));
 		builder.cssFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.CSS_FILE));
 
@@ -67,6 +65,26 @@ public class ContextInterceptor implements HandlerInterceptor {
 		beanMap.entrySet().forEach(entry -> request.setAttribute(entry.getKey().toString(), entry.getValue()));
 
 		return true;
+	}
+
+	private String buildStaticDir() {
+		String staticDir = SystemConfigCacheUtil.getCache(SystemConfigCacheKey.STATIC_DIR);
+		if (null == staticDir) {
+			staticDir = "";
+		} else if (!staticDir.endsWith("/")) {
+			staticDir += "/";
+		}
+		String staticVersion = SystemConfigCacheUtil.getCache(SystemConfigCacheKey.STATIC_VERSION);
+		if (StringUtils.isNotBlank(staticVersion)) {
+			if (staticVersion.startsWith("/")) {
+				staticVersion = staticVersion.substring(1);
+			}
+			if (!staticVersion.endsWith("/")) {
+				staticVersion += "/";
+			}
+			staticDir += staticVersion;
+		}
+		return staticDir;
 	}
 
 	private void parseCurrentUser(HttpServletRequest request) {

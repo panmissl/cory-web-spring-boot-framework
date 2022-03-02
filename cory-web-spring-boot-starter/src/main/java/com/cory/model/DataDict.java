@@ -17,13 +17,13 @@ import javax.validation.constraints.NotNull;
 @Model(name = "数据字典", module = "base")
 public class DataDict extends BaseModel {
 
-    @NotEmpty
-    @Field(label = "值", type = CoryDbType.VARCHAR, len = 1024)
-    private String value;
-
     @NotNull
     @Field(label = "类型", type = CoryDbType.BIGINT, filtered = true, filterType = FilterType.REMOTE_SELECT, filterSelectUrl = "/ajax/base/datadict/allTypes", renderName = "typeDesc")
     private Integer type;
+
+    @NotEmpty
+    @Field(label = "值", type = CoryDbType.VARCHAR, len = 1024, filtered = true)
+    private String value;
 
     @NotNull
     @Field(label = "排序顺序", type = CoryDbType.INT, defaultValue = "0", nullable = true)

@@ -35,10 +35,10 @@ public class CoryContext implements Serializable {
     private String siteDescription;
     /** @see SystemConfigCacheKey#SITE_DESCRIPTION_BODY */
     private String siteDescriptionBody;
-    private String jsDir;
-    private String cssDir;
-    private String imageDir;
 
+    //静态资源路径，以斜杠结尾，比如：http://static.xx.com/static/0.0.1/
+    //版本号用另外一个系统配置存储
+    private String staticDir;
     //只有一个js文件和一个css文件。文件名比如：umixxx.js, umixxx.css
     private String jsFile;
     private String cssFile;

@@ -18,12 +18,10 @@ public class SystemConfigCacheKey {
     /** 可选。专门给SEO用的，放在网站的html里，让搜索引擎搜索时展示的。是一段HTML，比如可以放图片，放介绍文字等。正常访问页面加载时马上删除，所以不要在这里处理正常访问的逻辑 */
     public static final String SITE_DESCRIPTION_BODY = "site_description_body";
 
-    /** ends with / : www.xx.com/ */
-    public static final String JS_DIR = "js_dir";
-    /** ends with / : www.xx.com/ */
-    public static final String CSS_DIR = "css_dir";
-    /** ends with / : www.xx.com/ */
-    public static final String IMAGE_DIR = "image_dir";
+    /** ends with / : www.xx.com/static/ */
+    public static final String STATIC_DIR = "static_dir";
+    /** 0.0.1 */
+    public static final String STATIC_VERSION = "static_version";
     /** umixxx.js */
     public static final String JS_FILE = "js_file";
     /** umixxx.css */

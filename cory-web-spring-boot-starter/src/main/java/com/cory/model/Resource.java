@@ -16,13 +16,13 @@ import javax.validation.constraints.NotNull;
 @Model(name = "资源", module = "base", deleteable = false, createable = false, updateable = false)
 public class Resource extends BaseModel {
 
-    @NotEmpty
-    @Field(label = "值", type = CoryDbType.VARCHAR, len = 200)
-    private String value;
-
     @NotNull
-    @Field(label = "类型", type = CoryDbType.ENUM, len = 50)
+    @Field(label = "类型", type = CoryDbType.ENUM, len = 50, filtered = true)
     private ResourceType type;
+
+    @NotEmpty
+    @Field(label = "值", type = CoryDbType.VARCHAR, len = 200, filtered = true)
+    private String value;
 
     @NotEmpty
     @Field(label = "说明", type = CoryDbType.VARCHAR, len = 200)

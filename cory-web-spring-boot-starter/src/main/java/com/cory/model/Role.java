@@ -16,7 +16,7 @@ import java.util.List;
 public class Role extends BaseModel {
 
     @NotEmpty
-    @Field(label = "名称", type = CoryDbType.VARCHAR, len = 100)
+    @Field(label = "名称", type = CoryDbType.VARCHAR, len = 100, filtered = true)
     private String name;
 
     @NotEmpty
