@@ -42,7 +42,6 @@
         <#if user??>
         <input type="hidden" id="current-user" value='${user}' />
         <script type="text/javascript" id="current-user-script">
-            document.getElementById('site-description-body').remove();
             const userJson = document.getElementById('current-user').value;
             window.USER = JSON.parse(userJson);
             document.getElementById('current-user').remove();
