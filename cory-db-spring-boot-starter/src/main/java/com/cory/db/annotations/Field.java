@@ -119,6 +119,12 @@ public @interface Field {
      */
     boolean richText() default false;
 
+    /**
+     * 是否代码类型，如果是，前端在渲染编辑框时渲染成代码编辑器
+     * @return
+     */
+    boolean code() default false;
+
     /** 是否可更新。如果设置为false，则调用默认的update方法(BaseService的update方法)时，不更新此字段 */
     boolean updateable() default true;
 }

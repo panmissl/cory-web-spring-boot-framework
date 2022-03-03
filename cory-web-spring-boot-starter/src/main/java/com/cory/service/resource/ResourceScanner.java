@@ -123,6 +123,7 @@ public class ResourceScanner {
                                 .editable(fieldAnno.editable())
                                 .desc(fieldAnno.desc())
                                 .richText(fieldAnno.richText())
+                                .code(fieldAnno.code())
                                 .datadictTypeValue(datadictTypeValue)
                                 .dataDictList(dataDictList)
                                 .updateable(fieldAnno.updateable())
