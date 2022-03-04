@@ -72,7 +72,7 @@ public abstract class BaseService<T extends BaseModel> {
         }
 
         ModelUtil.fillCreatorAndModifier(db);
-        beforeUpdate(db);
+        beforeUpdate(model, db);
         getDao().updateModel(db);
         if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
             ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "修改数据");
@@ -81,9 +81,10 @@ public abstract class BaseService<T extends BaseModel> {
 
     /**
      * 在更新前的处理扩展点。已经将要更新的字段和数据库的合并了，如果有特殊处理的，可以在这里处理
+     * @param model 前端提交上来的数据
      * @param dbModel 传入的更新字段和数据库的字段合并过的对象
      */
-    protected void beforeUpdate(T dbModel) {}
+    protected void beforeUpdate(T model, T dbModel) {}
 
     public T get(int id) {
         return fillOtherFields(getDao().get(id));
