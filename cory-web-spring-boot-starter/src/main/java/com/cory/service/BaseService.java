@@ -36,7 +36,7 @@ public abstract class BaseService<T extends BaseModel> {
 
     @Transactional(rollbackFor = Throwable.class)
     public void delete(T model) {
-        getDao().delete(model);
+        getDao().deleteById(model.getId());
         if (actionLogEnable() && !model.getClass().equals(ActionLog.class)) {
             ActionLogUtil.addActionLog(model.getClass().getName(), model.getId() + "", "删除数据");
         }

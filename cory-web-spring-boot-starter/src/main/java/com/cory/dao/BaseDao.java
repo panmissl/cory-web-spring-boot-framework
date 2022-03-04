@@ -14,9 +14,6 @@ public interface BaseDao<T extends BaseModel> {
     @Insert
     void add(@Param("model") T model);
 
-    @Delete(whereSql = "ID = #{model.id}")
-    void delete(@Param("model") T model);
-
     @Delete(whereSql = "ID = #{id}")
     void deleteById(@Param("id") int id);
 
