@@ -15,6 +15,7 @@ import com.cory.model.BaseModel;
 import com.cory.page.Pagination;
 import com.cory.util.AssertUtils;
 import com.cory.util.ClassUtil;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Cory on 2021/2/9.
@@ -334,6 +336,19 @@ public class CoryDbProxy<T> implements InvocationHandler {
         if (o instanceof CoryEnum) {
             return ((CoryEnum)o).name();
         }
+        //list里如果是枚举，也要转换
+        if (o instanceof List) {
+            List list = (List) o;
+            if (list.size() > 0 && list.get(0) instanceof CoryEnum) {
+                return list.stream().map(i -> ((CoryEnum)i).name()).collect(Collectors.toList());
+            }
+        }
         return o;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> l = Lists.newArrayList(1, 2, 3);
+        System.out.println(List.class.isAssignableFrom(l.getClass()));
+        System.out.println((l instanceof List));
     }
 }
