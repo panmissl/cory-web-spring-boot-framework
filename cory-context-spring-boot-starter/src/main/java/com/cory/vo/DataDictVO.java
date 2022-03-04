@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DataDictVO extends BaseVO {
 
+    private static final long serialVersionUID = 673105866768288815L;
+
     /** 值 */
     private String value;
     /** 描述 */

@@ -21,6 +21,8 @@ public class EagleEye implements Serializable {
 
     private static final TransmittableThreadLocal<EagleEye> THREAD_LOCAL = new TransmittableThreadLocal<>();
 
+    private static final long serialVersionUID = -5889510399806181258L;
+
     private String eagleEyeId;
 
     public static EagleEye get() {

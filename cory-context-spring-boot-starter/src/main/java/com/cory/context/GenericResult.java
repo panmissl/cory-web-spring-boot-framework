@@ -13,6 +13,8 @@ import java.io.Serializable;
 @Data
 public class GenericResult implements Serializable {
 
+    private static final long serialVersionUID = -5157544852775669609L;
+
     private boolean success = true;
 
     private String errorCode;

@@ -23,6 +23,8 @@ import javax.validation.constraints.NotNull;
 @Model(name = "数据字典", module = "base")
 public class DataDict extends BaseModel {
 
+    private static final long serialVersionUID = 1602508531529313312L;
+
     /** 存储type的值 */
     @NotEmpty
     @Field(label = "类型", type = CoryDbType.VARCHAR, len = 1024, filtered = true, renderName = "typeDesc", datadictTypeValue = "cory_web_data_dict_root")

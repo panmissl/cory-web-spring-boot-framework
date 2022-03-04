@@ -26,6 +26,8 @@ import java.util.List;
 @Model(name = "用户", module = "base")
 public class User extends BaseModel {
 
+    private static final long serialVersionUID = 499335305969783320L;
+
     @Field(label = "用户名", type = CoryDbType.VARCHAR, len = 100, nullable = true, desc = "可以用来登录系统的，是英文、数字或下划线", filtered = true)
     private String userName;
 

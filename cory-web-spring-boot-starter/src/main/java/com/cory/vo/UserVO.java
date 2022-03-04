@@ -16,6 +16,8 @@ import java.util.Set;
 @Builder
 public class UserVO implements Serializable {
 
+    private static final long serialVersionUID = 1134850500408091656L;
+
     private Integer id;
     private String userName;
     private String nickName;

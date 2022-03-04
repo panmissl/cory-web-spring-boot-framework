@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CoryException extends RuntimeException {
 
+    private static final long serialVersionUID = -4968342479115673110L;
+
     private String errorCode;
     private String errorMsg;
 

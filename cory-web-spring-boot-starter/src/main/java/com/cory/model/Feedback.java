@@ -20,6 +20,8 @@ import javax.validation.constraints.NotEmpty;
 @Model(name = "反馈", module = "base")
 public class Feedback extends BaseModel {
 
+    private static final long serialVersionUID = -6778926191958932533L;
+
     @NotEmpty
     @Field(label = "内容", type = CoryDbType.VARCHAR, len = 1024)
     private String content;

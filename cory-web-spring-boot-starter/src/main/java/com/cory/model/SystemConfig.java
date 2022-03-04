@@ -20,6 +20,8 @@ import javax.validation.constraints.NotEmpty;
 @Model(name = "系统配置", module = "base")
 public class SystemConfig extends BaseModel {
 
+    private static final long serialVersionUID = 4059764063778478941L;
+
     @NotEmpty
     @Field(label = "编码", type = CoryDbType.VARCHAR, len = 50, filtered = true)
     private String code;

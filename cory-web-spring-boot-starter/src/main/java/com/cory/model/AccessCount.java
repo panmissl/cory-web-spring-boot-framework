@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 @Model(name = "访问统计", module = "base", createable = false, updateable = false, deleteable = false)
 public class AccessCount extends BaseModel {
 
+    private static final long serialVersionUID = 224254810399170706L;
+
     @Field(label = "日", type = CoryDbType.VARCHAR, filtered = true, len = 20)
     private String day;
 

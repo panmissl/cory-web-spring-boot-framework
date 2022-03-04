@@ -22,6 +22,8 @@ import javax.validation.constraints.NotNull;
 @Model(name = "资源", module = "base", deleteable = false, createable = false, updateable = false)
 public class Resource extends BaseModel {
 
+    private static final long serialVersionUID = -6936775605985846059L;
+
     @NotNull
     @Field(label = "类型", type = CoryDbType.ENUM, len = 50, filtered = true)
     private ResourceType type;

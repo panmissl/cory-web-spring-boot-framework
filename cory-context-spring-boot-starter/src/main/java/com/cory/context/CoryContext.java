@@ -19,6 +19,8 @@ public class CoryContext implements Serializable {
 
     private static final TransmittableThreadLocal<CoryContext> THREAD_LOCAL = new TransmittableThreadLocal<>();
 
+    private static final long serialVersionUID = -6745208140519370719L;
+
     private String ctx;
     private String ctxWithoutSlash;
     private String referer;

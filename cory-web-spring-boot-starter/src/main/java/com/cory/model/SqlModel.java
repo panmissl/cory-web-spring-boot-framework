@@ -8,4 +8,7 @@ import lombok.Data;
  */
 @Data
 @Model(name = "SQL", module = "sql", noTable = true)
-public class SqlModel extends BaseModel {}
+public class SqlModel extends BaseModel {
+
+    private static final long serialVersionUID = -6351576061742929011L;
+}

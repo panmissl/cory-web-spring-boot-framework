@@ -3,7 +3,9 @@ package com.cory.dto;
 import java.io.Serializable;
 
 /**
- * Created by Cory on 2021/11/28.
+ * @author cory
+ * @date 2022/3/4
  */
 public class BaseDTO implements Serializable {
+    private static final long serialVersionUID = 2592422548662862186L;
 }

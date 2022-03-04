@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 @Model(name = "角色资源关系", module = "base")
 public class RoleResourceRel extends BaseModel {
 
+    private static final long serialVersionUID = -9193201518045089665L;
+
     @Field(label = "角色ID", type = CoryDbType.BIGINT)
     private Integer roleId;
 

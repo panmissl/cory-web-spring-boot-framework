@@ -23,6 +23,8 @@ import java.util.Date;
 @Model(name = "操作日志", module = "base", createable = false, updateable = false, deleteable = false)
 public class ActionLog extends BaseModel {
 
+    private static final long serialVersionUID = 5986818325581884185L;
+
     @NotEmpty
     @Field(label = "关联对象类型", type = CoryDbType.VARCHAR, filtered = true)
     private String objectType;

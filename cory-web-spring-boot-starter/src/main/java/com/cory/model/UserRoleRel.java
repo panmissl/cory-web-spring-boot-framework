@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 @Model(name = "用户角色关系", module = "base")
 public class UserRoleRel extends BaseModel {
 
+    private static final long serialVersionUID = -1691736219577315246L;
+
     @Field(label = "用户ID", type = CoryDbType.BIGINT)
     private Integer userId;
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * 列表分页。包含list属性。
+ * @author corypan
  */
 public class Pagination<T> implements java.io.Serializable {
 

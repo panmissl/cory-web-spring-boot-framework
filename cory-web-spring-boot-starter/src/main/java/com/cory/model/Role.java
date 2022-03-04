@@ -21,6 +21,8 @@ import java.util.List;
 @Model(name = "角色", module = "base")
 public class Role extends BaseModel {
 
+    private static final long serialVersionUID = -4469732554019114003L;
+
     @NotEmpty
     @Field(label = "名称", type = CoryDbType.VARCHAR, len = 100, filtered = true)
     private String name;

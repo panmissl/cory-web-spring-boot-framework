@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class AccessCountStatDTO extends BaseDTO {
 
+    private static final long serialVersionUID = 1527236106080336008L;
+
     private String uri;
     private String count;
 }

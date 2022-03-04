@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class RoleResourceRelCt implements Serializable {
 
+    private static final long serialVersionUID = 4214654065160043112L;
+
     private List<RoleResourceRel> roleResourceRelList;
 
     public List<RoleResourceRel> getRoleResourceRelList() {

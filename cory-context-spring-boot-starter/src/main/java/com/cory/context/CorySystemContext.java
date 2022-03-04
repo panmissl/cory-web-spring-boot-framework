@@ -18,6 +18,8 @@ public class CorySystemContext implements Serializable {
 
     private static final TransmittableThreadLocal<CorySystemContext> THREAD_LOCAL = new TransmittableThreadLocal<>();
 
+    private static final long serialVersionUID = 5331922271790377155L;
+
     private Set<Class<? extends CoryEnum>> coryEnumSet = new HashSet<>();
     private Set<ModelMeta> modelMetaSet = new HashSet<>();
     /**

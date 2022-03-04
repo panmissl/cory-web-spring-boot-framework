@@ -18,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 public class AccessCountStatVO implements Serializable {
 
+    private static final long serialVersionUID = -4619816468274153356L;
+
     //今天访问统计 top10
     //昨天访问统计 top10
     //历史访问统计 top10

@@ -13,6 +13,8 @@ import java.util.Map;
 @Data
 public abstract class BaseModel implements Serializable {
 
+    private static final long serialVersionUID = -3571217121353176763L;
+
     private Integer id;
     private Integer creator;
     private Integer modifier;
