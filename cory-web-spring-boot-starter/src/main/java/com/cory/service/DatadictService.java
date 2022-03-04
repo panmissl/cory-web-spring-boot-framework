@@ -96,6 +96,9 @@ public class DatadictService extends BaseService<DataDict> {
 
     @Override
     protected DataDict fillOtherFields(DataDict model) {
+        if (null == model) {
+            return null;
+        }
         model.getRenderFieldMap().put("typeDesc", parseTypeDesc(model));
         return model;
     }

@@ -141,18 +141,11 @@ public abstract class BaseService<T extends BaseModel> {
         if (CollectionUtils.isEmpty(list)) {
             return list;
         }
-        return list.stream().map(m -> doFillOtherFields(m)).collect(Collectors.toList());
-    }
-
-    private T doFillOtherFields(T model) {
-        if (null == model) {
-            return null;
-        }
-        return fillOtherFields(model);
+        return list.stream().map(m -> fillOtherFields(m)).collect(Collectors.toList());
     }
 
     /**
-     * @param model 已经处理过null了，子类在覆写时不用再判断null
+     * @param model 注意判断null
      * @return
      */
     protected T fillOtherFields(T model) {return model;}
