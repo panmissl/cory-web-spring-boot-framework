@@ -24,8 +24,9 @@ DB:
     # 对IN的支持：直接写：IN #{list}，会自动展开成：IN (?, ?, ?)的形式
     # 对空条件的支持：会自动判断如果为空则不加此条件。用#![ xxx ]包裹，则会判断里面的参数，如果参数没有值，则不输出。注意：1、AND等连接符也需要加在里面；2、不能嵌套，一个#![]里只能包含一个参数。如果参数是数组，会展开成(x, y, z)的形式（IN的语法）比如：#![ AND create_time >= #{createTimeStart}] #![and create_time <= #{createTimeEnd}]
     # 不支持mybatis的${}，后续有需要再支持
+    # Select不支持返回Map，请创建一个bean来返回
+    # 一般情况应该够用了，如果还有特殊需求，可放弃使用DAO，直接在Service引入JdbcTemplate自己写sql实现
 
-    Select不支持返回Map，请创建一个bean来返回
 
 对日期类型的字段，已经做特殊处理：页面过滤时会自动增加xxStart和xxEnd字段。sql里也将条件加上了。规则为：start是inclusion，end是exclusion。最终会加成这样的效果：createTime >= #{createTimeStart} and createTime < #{createTimeEnd}
 
