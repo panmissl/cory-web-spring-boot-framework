@@ -22,7 +22,7 @@ public @interface Delete {
     String whereSql();
 
     /**
-     * 是否逻辑删除，默认物理删除，否则索引不好建
+     * 是否逻辑删除，默认物理删除，否则索引不好建。而且有很多脏数据
      * @return
      */
     boolean logicDelete() default false;
