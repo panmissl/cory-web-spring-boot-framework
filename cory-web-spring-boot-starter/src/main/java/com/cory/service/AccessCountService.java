@@ -26,6 +26,7 @@ public class AccessCountService extends BaseService<AccessCount> {
     @Autowired
     private AccessCountDao accessCountDao;
 
+    @Override
     public AccessCountDao getDao() {
         return accessCountDao;
     }

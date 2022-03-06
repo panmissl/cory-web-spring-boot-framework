@@ -110,18 +110,23 @@ public abstract class BaseService<T extends BaseModel> {
 
     /**
      *
-     * @param pagination
+     * @param pageNo starts from 1
+     * @param pageSize
      * @param model
      * @param sort default is ID DESC for empty sort
      * @return
      */
-    public Pagination<T> list(Pagination<T> pagination, T model, String sort) {
+    public Pagination<T> list(int pageNo, int pageSize, T model, String sort) {
         if (StringUtils.isBlank(sort)) {
             sort = "ID DESC";
         }
-        int pageNo = pagination.getPageNo();
-        int pageSize = pagination.getPageSize();
-        pagination = getDao().pagination(model, (pagination.getPageNo() - 1) * pagination.getPageSize(), pagination.getPageSize(), sort);
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
+        if (pageSize > 10000) {
+            pageSize = 10000;
+        }
+        Pagination<T> pagination = getDao().pagination(model, (pageNo - 1) * pageSize, pageSize, sort);
         if (null != pagination) {
             pagination.setPageNo(pageNo);
             pagination.setPageSize(pageSize);

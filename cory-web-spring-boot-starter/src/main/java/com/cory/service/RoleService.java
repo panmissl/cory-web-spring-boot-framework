@@ -28,6 +28,7 @@ public class RoleService extends BaseService<Role> {
     @Autowired
     private ResourceService resourceService;
 
+    @Override
     public RoleDao getDao() {
         return roleDao;
     }

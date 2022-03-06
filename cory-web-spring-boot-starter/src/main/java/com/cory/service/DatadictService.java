@@ -30,13 +30,14 @@ public class DatadictService extends BaseService<DataDict> {
     @Autowired
     private DatadictDao datadictDao;
 
+    @Override
     public DatadictDao getDao() {
         return datadictDao;
     }
 
     @Override
-    public Pagination<DataDict> list(Pagination<DataDict> pagination, DataDict model, String sort) {
-        return super.list(pagination, model, "SN");
+    public Pagination<DataDict> list(int pageNo, int pageSize, DataDict model, String sort) {
+        return super.list(pageNo, pageSize, model, "SN");
     }
 
     @Override

@@ -47,6 +47,7 @@ public class UserService extends BaseService<User> {
     @Autowired
     private UserRoleRelService userRoleRelService;
 
+    @Override
     public UserDao getDao() {
         return userDao;
     }

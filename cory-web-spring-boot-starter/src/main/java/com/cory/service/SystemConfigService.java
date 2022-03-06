@@ -55,10 +55,7 @@ public class SystemConfigService extends BaseService<SystemConfig> {
 
     public void refreshCache() {
         log.info("加载系统参数配置...");
-        Pagination<SystemConfig> p = new Pagination<>();
-        p.setPageNo(1);
-        p.setPageSize(Integer.MAX_VALUE);
-        p = this.list(p, null, null);
+        Pagination<SystemConfig> p = this.list(1, Integer.MAX_VALUE, null, null);
         List<SystemConfig> list = p.getList();
         if (!CollectionUtils.isEmpty(list)) {
             for (SystemConfig sc : list) {
@@ -68,6 +65,7 @@ public class SystemConfigService extends BaseService<SystemConfig> {
         log.info("加载系统参数配置完成(共{}条).", p.getTotalCount());
     }
 
+    @Override
     public SystemConfigDao getDao() {
         return systemConfigDao;
     }

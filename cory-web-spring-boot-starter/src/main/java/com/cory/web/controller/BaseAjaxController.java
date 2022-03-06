@@ -6,10 +6,7 @@ import com.cory.service.BaseService;
 import com.cory.util.ModelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Cory on 2017/5/14.
@@ -20,8 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public abstract class BaseAjaxController<T extends BaseModel> extends BaseController {
 
     @GetMapping("listData")
-    public Pagination<T> list(Pagination<T> pagination, T t, String sort) {
-        return getService().list(pagination, t, sort);
+    public Pagination<T> list(@RequestParam(required = false, defaultValue = "1") int pageNo,
+                              @RequestParam(required = false, defaultValue = "20") int pageSize,
+                              T t,
+                              String sort) {
+        return getService().list(pageNo, pageSize, t, sort);
     }
 
     @GetMapping("detailData/{id}")

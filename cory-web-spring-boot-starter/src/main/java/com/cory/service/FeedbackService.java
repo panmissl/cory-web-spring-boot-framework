@@ -17,6 +17,7 @@ public class FeedbackService extends BaseService<Feedback> {
     @Autowired
     private FeedbackDao feedbackDao;
 
+    @Override
     public FeedbackDao getDao() {
         return feedbackDao;
     }

@@ -19,6 +19,7 @@ public class ActionLogService extends BaseService<ActionLog> {
     @Autowired
     private ActionLogDao actionLogDao;
 
+    @Override
     public ActionLogDao getDao() {
         return actionLogDao;
     }

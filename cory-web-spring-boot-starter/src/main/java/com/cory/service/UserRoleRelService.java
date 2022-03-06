@@ -22,6 +22,7 @@ public class UserRoleRelService extends BaseService<UserRoleRel> {
     @Autowired
     private UserRoleRelDao userRoleRelDao;
 
+    @Override
     public UserRoleRelDao getDao() {
         return userRoleRelDao;
     }
