@@ -1,11 +1,20 @@
 package com.cory.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  */
 public class HtmlUtil {
 
 	public static String removeAllHtmlTags(String html) {
+		if (null == html) {
+			return null;
+		}
+		if (StringUtils.isBlank(html)) {
+			return html.trim();
+		}
+
 		//定义script的正则表达式，去除js可以防止注入
 		String scriptRegex="<script[^>]*?>[\\s\\S]*?<\\/script>";
 		//定义style的正则表达式，去除style样式，防止css代码过多时只截取到css样式代码
