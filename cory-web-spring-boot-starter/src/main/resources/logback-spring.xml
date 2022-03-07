@@ -211,6 +211,10 @@
         <appender-ref ref="${SQL_APPENDER}" />
     </logger>
 
+    <logger name="com.cory.db" additivity="false">
+        <level value="${SQL_LOG_LEVEL}" />
+        <appender-ref ref="${SQL_APPENDER}" />
+    </logger>
     <logger name="com.cory">
         <level value="${LOG_LEVEL}" />
     </logger>

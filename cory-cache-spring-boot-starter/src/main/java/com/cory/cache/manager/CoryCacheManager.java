@@ -64,5 +64,6 @@ public class CoryCacheManager implements CacheManager {
 
     public void setCacheType(String cacheType) {
         this.cacheType = cacheType;
+        log.info("init cache manager, cacheType={}", cacheType);
     }
 }
