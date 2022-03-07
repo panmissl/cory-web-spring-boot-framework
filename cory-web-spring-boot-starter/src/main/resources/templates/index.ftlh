@@ -10,17 +10,11 @@
 
         <script type="text/javascript">
             <#-- 一些从后台初始化的js数据可以放这里 -->
-            window.domainName = '${domainName!""}';
             window.ctx = '${ctx!""}';
-            window.ctxWithoutSlash = '${ctxWithoutSlash!""}';
             window.successUrl = '${successUrl!""}';
             window.staticDir = '${staticDir!""}';
-            window.jsFile = '${jsFile!""}';
-            window.cssFile = '${cssFile!""}';
-            window.errorPage = ${errorPage!"false"};
-            window.errorType = '${errorType!""}';
-            window.routerBase = '${ctxWithoutSlash!""}' + "/";
             window.publicPath = window.staticDir;
+            window.routerBase = '${ctxWithoutSlash!""}' + "/";
             window.DEBUG_MODE = ${debugMode!"false"};
             window.registerEnable = ${registerEnable!"false"};
         </script>
