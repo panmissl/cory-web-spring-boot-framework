@@ -20,6 +20,7 @@
     <property name="LOG_CHARSET" value="UTF-8" />
 
     <springProfile name="!prod">
+        <property name="CORY_SQL_LOG_LEVEL" value="DEBUG" />
         <property name="LOG_LEVEL" value="DEBUG" />
         <property name="HIKARI_LOG_LEVEL" value="WARN" />
         <property name="APACHE_LOG_LEVEL" value="WARN" />
@@ -29,6 +30,7 @@
         <property name="APACHE_APPENDER" value="CONSOLE" />
         <property name="SPRING_APPENDER" value="CONSOLE" />
         <property name="SQL_APPENDER" value="CONSOLE" />
+        <property name="CORY_SQL_APPENDER" value="CONSOLE" />
 
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
@@ -38,6 +40,7 @@
         </appender>
     </springProfile>
     <springProfile name="prod">
+        <property name="CORY_SQL_LOG_LEVEL" value="INFO" />
         <property name="LOG_LEVEL" value="INFO" />
         <property name="HIKARI_LOG_LEVEL" value="WARN" />
         <property name="APACHE_LOG_LEVEL" value="WARN" />
@@ -47,6 +50,7 @@
         <property name="APACHE_APPENDER" value="APACHE" />
         <property name="SPRING_APPENDER" value="SPRING" />
         <property name="SQL_APPENDER" value="SQL" />
+        <property name="CORY_SQL_APPENDER" value="CORY_SQL" />
 
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}.log</file>
@@ -153,6 +157,27 @@
             </rollingPolicy>
         </appender>
 
+        <appender name="CORY_SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOGGING_FILE_PATH}/cory_sql.log</file>
+            <encoder>
+                <charset>${LOG_CHARSET}</charset>
+                <pattern>${COMMON_PATTERN}</pattern>
+            </encoder>
+            <!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
+            <!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
+                <!-- 文件名：log/demo.2017-12-05.0.log -->
+                <fileNamePattern>${LOGGING_FILE_PATH}/cory_sql.%d.%i.log</fileNamePattern>
+                <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
+                <maxHistory>30</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- maxFileSize:这是活动文件的大小，默认值是10MB，测试时可改成1KB看效果 -->
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+        </appender>
+
         <if condition='property("logging.sls.enable").equalsIgnoreCase("true")'>
             <then>
                 <appender name="SLS" class="com.aliyun.openservices.log.logback.LoghubAppender">
@@ -212,8 +237,8 @@
     </logger>
 
     <logger name="com.cory.db" additivity="false">
-        <level value="${SQL_LOG_LEVEL}" />
-        <appender-ref ref="${SQL_APPENDER}" />
+        <level value="${CORY_SQL_LOG_LEVEL}" />
+        <appender-ref ref="${CORY_SQL_APPENDER}" />
     </logger>
     <logger name="com.cory">
         <level value="${LOG_LEVEL}" />
