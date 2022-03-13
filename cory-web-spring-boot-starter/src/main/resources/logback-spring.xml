@@ -24,8 +24,8 @@
         <property name="LOG_LEVEL" value="DEBUG" />
         <property name="HIKARI_LOG_LEVEL" value="WARN" />
         <property name="APACHE_LOG_LEVEL" value="WARN" />
-        <property name="SPRING_LOG_LEVEL" value="WARN" />
-        <property name="SQL_LOG_LEVEL" value="WARN" />
+        <property name="SPRING_LOG_LEVEL" value="DEBUG" />
+        <property name="SQL_LOG_LEVEL" value="DEBUG" />
         <property name="HIKARI_APPENDER" value="CONSOLE" />
         <property name="APACHE_APPENDER" value="CONSOLE" />
         <property name="SPRING_APPENDER" value="CONSOLE" />
