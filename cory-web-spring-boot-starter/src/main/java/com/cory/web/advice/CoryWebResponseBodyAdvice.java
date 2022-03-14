@@ -6,6 +6,9 @@ import com.cory.constant.Constants;
 import com.cory.context.GenericResult;
 import com.cory.util.ClassUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.MediaType;
@@ -28,11 +31,13 @@ import java.lang.annotation.Annotation;
  * Created by Cory on 2021/2/13.
  */
 @ControllerAdvice
-public class CoryWebResponseBodyAdvice implements ResponseBodyAdvice {
+public class CoryWebResponseBodyAdvice implements ResponseBodyAdvice, ApplicationContextAware {
 
     public static final String CONTENT_TYPE_DEFAULT_TYPE = "text";
     public static final String CONTENT_TYPE_DEFAULT_SUB_TYPE = "html";
     public static final String CONTENT_TYPE_PARAMETER = ";charset:utf-8";
+
+    private ApplicationContext ctx;
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class aClass) {
@@ -77,10 +82,23 @@ public class CoryWebResponseBodyAdvice implements ResponseBodyAdvice {
         if (null == o) {
             return GenericResult.success();
         }
+        GenericResult result;
         if (o instanceof GenericResult) {
-            return o;
+            result = (GenericResult) o;
+        } else {
+            result = GenericResult.success(o);
         }
-        return GenericResult.success(o);
+
+        //加密
+        if (null != result.getObject()) {
+            GenericResultEncrypt encrypt = findAnnotation(methodParameter, GenericResultEncrypt.class);
+            if (null != encrypt) {
+                GenericResultEncryptor encryptor = ctx.getBean(GenericResultEncryptor.class);
+                result.setObject(encryptor.encrypt(result.getObject()));
+            }
+        }
+
+        return result;
     }
 
     private <T extends Annotation> T findAnnotation(MethodParameter methodParameter, Class<T> tClass) {
@@ -121,4 +139,8 @@ public class CoryWebResponseBodyAdvice implements ResponseBodyAdvice {
         }
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.ctx = applicationContext;
+    }
 }
