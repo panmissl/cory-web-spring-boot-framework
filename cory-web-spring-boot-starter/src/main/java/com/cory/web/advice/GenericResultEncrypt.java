@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Controller类或方法加此注解(加在类上对所有方法生效，加在方法上只对该方法生效)，则返回值里的object被加密，其它几个字段不加密。
+ * Controller类或方法加此注解(加在类上对所有方法生效，加在方法上只对该方法生效)，则返回值(GenericResult)里的object被加密，isEncrypt字段设置为true，其它几个字段不加密。
  * <br />
  * 1、object字段为null，不加密
  * <br />

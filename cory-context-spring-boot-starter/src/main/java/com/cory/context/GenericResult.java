@@ -21,6 +21,9 @@ public class GenericResult implements Serializable {
     private String errorMsg;
     private Object object;
 
+    /** 是否加密 */
+    private Boolean isEncrypt;
+
     /**
      * success = true
      */

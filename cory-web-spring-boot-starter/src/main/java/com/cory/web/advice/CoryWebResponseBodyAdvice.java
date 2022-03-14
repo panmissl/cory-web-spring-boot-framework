@@ -95,6 +95,7 @@ public class CoryWebResponseBodyAdvice implements ResponseBodyAdvice, Applicatio
             if (null != encrypt) {
                 GenericResultEncryptor encryptor = ctx.getBean(GenericResultEncryptor.class);
                 result.setObject(encryptor.encrypt(result.getObject()));
+                result.setIsEncrypt(true);
             }
         }
 
