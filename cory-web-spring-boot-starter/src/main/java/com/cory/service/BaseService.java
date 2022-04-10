@@ -11,6 +11,7 @@ import com.cory.util.ModelUtil;
 import com.cory.web.util.ActionLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +97,9 @@ public abstract class BaseService<T extends BaseModel> {
      * @return
      */
     public T getByCode(String code) {
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
         return fillOtherFields(getDao().getByCode(code));
     }
 
@@ -105,6 +109,9 @@ public abstract class BaseService<T extends BaseModel> {
      * @return
      */
     public List<T> getByCodeList(List<String> codeList) {
+        if (CollectionUtils.isEmpty(codeList)) {
+            return Lists.newArrayList();
+        }
         return fillOtherFields(getDao().getByCodeList(codeList));
     }
 

@@ -5,6 +5,8 @@ Changelog
     修复pom不对的问题
 0.0.3
     修复AccessTokenUtils里的过期时间，单位应该是秒
+0.0.4
+    修复getByCode及getByCodeList方法当参数为空时报错
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

@@ -24,10 +24,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -148,6 +145,14 @@ public class CoryDbProxy<T> implements InvocationHandler {
     private Object select(Method method, Object[] args, Select select) {
         //check for byCode
         checkForSelectByCodeMethod(method);
+
+        if (method.getName().equals(GET_BY_CODE) && (null == args || args.length == 0 || null == args[0])) {
+            return null;
+        }
+        if (method.getName().equals(GET_BY_CODE_LIST) && (null == args || args.length == 0)) {
+            return new ArrayList<>();
+        }
+
         checkForSelectCount(method, select.count());
 
         Map<String, Object> paramMap = buildNotNullParamMap(method, args);
