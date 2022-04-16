@@ -15,6 +15,8 @@ Changelog
     修复集群未注册：启动时注册和下线时更新
 0.0.7
     修复sum时返回值写Integer报BigDecimal不能转成Integer的错误
+0.0.8
+    修复sum时返回值写int报NPE：对number类型的返回值，如果为空默认返回0处理，保证不会NPE
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存
