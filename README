@@ -11,6 +11,8 @@ Changelog
     提供DataDictCacheUtil，提升性能
     增加集群和集群Job
     逻辑删除的实现从Delete注解迁移到Model上，更合理
+0.0.6
+    修复集群未注册：启动时注册和下线时更新
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

@@ -5,18 +5,24 @@ import com.cory.context.CorySystemContext;
 import com.cory.db.annotations.Dao;
 import com.cory.db.annotations.Model;
 import com.cory.db.processor.CoryDbChecker;
+import com.cory.enums.ClusterStatus;
 import com.cory.enums.CoryEnum;
+import com.cory.model.Cluster;
+import com.cory.service.ClusterService;
 import com.cory.service.DatadictService;
 import com.cory.service.ResourceService;
 import com.cory.service.SystemConfigService;
+import com.cory.util.IpUtil;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import com.cory.web.util.CodeGeneratorHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.util.AnnotatedTypeScanner;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
@@ -34,9 +40,14 @@ public class StartupListener implements ServletContextListener {
 
 	private WebApplicationContext ctx;
 
+	@Value("${server.port}")
+	private Integer port;
+
 	@Override
     public void contextInitialized(ServletContextEvent event) {
-    	ServletContext context = event.getServletContext();
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+
+		ServletContext context = event.getServletContext();
     	this.ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
     	String contextPath = event.getServletContext().getContextPath() + "/";
@@ -55,6 +66,7 @@ public class StartupListener implements ServletContextListener {
     	initSystemConfigCache(ctx);
     	initDataDictCache(ctx);
 		scanResourceAndLoadToDb(ctx);
+		initCluster(ctx);
     }
 
 	private void generateCode(WebApplicationContext ctx) {
@@ -146,5 +158,23 @@ public class StartupListener implements ServletContextListener {
 	private void initDataDictCache(WebApplicationContext ctx) {
 		DatadictService dataDictService = ctx.getBean(DatadictService.class);
 		dataDictService.refreshCache();
+	}
+
+	private void initCluster(WebApplicationContext ctx) {
+		ClusterService clusterService = ctx.getBean(ClusterService.class);
+
+		String ip = IpUtil.getHostIp() + ":" + port;
+		Cluster cluster = clusterService.getByIp(ip);
+		if (null == cluster) {
+			cluster = Cluster.builder().ip(ip).status(ClusterStatus.online).build();
+			clusterService.add(cluster);
+		} else {
+			clusterService.updateStatus(ip, ClusterStatus.online);
+		}
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			String ipInner = IpUtil.getHostIp() + ":" + port;
+			clusterService.updateStatus(ipInner, ClusterStatus.offline);
+		}));
 	}
 }
