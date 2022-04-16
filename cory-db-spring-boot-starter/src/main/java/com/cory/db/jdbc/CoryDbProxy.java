@@ -45,6 +45,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
     private String table;
     private boolean noTable;
     private boolean logEnable;
+    private boolean logicDelete;
 
     public CoryDbProxy(Class<T> daoClass, CoryDb coryDb, boolean logEnable) {
         this.daoClass = daoClass;
@@ -58,6 +59,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
         noTable = null == model ? false : model.noTable();
 
         this.table = CoryModelUtil.buildTableName(modelClass);
+        this.logicDelete = model.logicDelete();
     }
 
     @Override
@@ -243,7 +245,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
     private int delete(Method method, Object[] args, Delete delete) {
         Map<String, Object> paramMap = buildNotNullParamMap(method, args);
-        CorySqlInfo sqlInfo = CorySqlBuilder.createDeleteBuilder(table, delete.whereSql(), delete.logicDelete(), paramMap).build();
+        CorySqlInfo sqlInfo = CorySqlBuilder.createDeleteBuilder(table, delete.whereSql(), logicDelete, paramMap).build();
 
         if (logEnable) {
             log.info(sqlInfo.toString());

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -26,10 +27,18 @@ import java.util.List;
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class DatadictService extends BaseService<DataDict> {
 
-    public static final String TYPE_DESC_NAME = "typeDesc";
+    private static final String CLUSTER_JOB_CODE = "refresh_data_dict_cache";
+    private static final String TYPE_DESC_NAME = "typeDesc";
 
     @Autowired
     private DatadictDao datadictDao;
+    @Autowired
+    private ClusterJobService clusterJobService;
+
+    @PostConstruct
+    public void init() {
+        clusterJobService.registerJobHandler(CLUSTER_JOB_CODE, param -> refreshCache());
+    }
 
     //此类不用缓存，因为会加载到Util里去
 
@@ -119,6 +128,10 @@ public class DatadictService extends BaseService<DataDict> {
             }
         }
         log.info("load data dict to cache finish, count: {}", p.getTotalCount());
+    }
+
+    public void addRefreshJob() {
+        clusterJobService.addJob(CLUSTER_JOB_CODE, "刷新数据字典缓存", null);
     }
 
     private DataDictCacheUtil.DataDict convert2CacheDTO(DataDict dd) {

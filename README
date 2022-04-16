@@ -7,9 +7,11 @@ Changelog
     修复AccessTokenUtils里的过期时间，单位应该是秒
 0.0.4
     修复getByCode及getByCodeList方法当参数为空时报错
-0.0.4
-    提供本地缓存，同时更新缓存时更新整个集群缓存
+0.0.5
     提供DataDictCacheUtil，提升性能
+    增加集群和集群Job
+    逻辑删除的实现从Delete注解迁移到Model上，更合理
+    基于集群Job自研集群版本地缓存
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

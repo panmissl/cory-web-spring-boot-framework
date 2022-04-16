@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.cache.CacheManager;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by Cory on 2017/5/14.
@@ -42,31 +44,25 @@ public class DataDictCacheUtil {
 
     }
 
-    private static final String CACHE_NAME_BY_ID = "DataDictCacheUtil_BY_ID";
-    private static final String CACHE_NAME_BY_VALUE = "DataDictCacheUtil_BY_VALUE";
-
-    private static CacheManager cacheManager;
+    private static final ConcurrentMap<Integer, DataDict> CACHE_BY_ID = new ConcurrentHashMap<>(2048);
+    private static final ConcurrentMap<String, DataDict> CACHE_BY_VALUE = new ConcurrentHashMap<>(2048);
 
     private DataDictCacheUtil() {}
 
     public static DataDict get(int id) {
-        return cacheManager.getCache(CACHE_NAME_BY_ID).get(id, DataDict.class);
+        return CACHE_BY_ID.get(id);
     }
 
     public static DataDict getByValue(String type, String value) {
-        return cacheManager.getCache(CACHE_NAME_BY_VALUE).get(buildByValueKey(type, value), DataDict.class);
+        return CACHE_BY_VALUE.get(buildByValueKey(type, value));
     }
 
     public static void refresh(DataDict dd) {
         if (null == dd) {
             return;
         }
-        cacheManager.getCache(CACHE_NAME_BY_ID).put(dd.getId(), dd);
-        cacheManager.getCache(CACHE_NAME_BY_VALUE).put(buildByValueKey(dd.getType(), dd.getValue()), dd);
-    }
-
-    public static void setCacheManager(CacheManager cacheManager) {
-        DataDictCacheUtil.cacheManager = cacheManager;
+        CACHE_BY_ID.put(dd.getId(), dd);
+        CACHE_BY_VALUE.put(buildByValueKey(dd.getType(), dd.getValue()), dd);
     }
 
     private static String buildByValueKey(String type, String value) {

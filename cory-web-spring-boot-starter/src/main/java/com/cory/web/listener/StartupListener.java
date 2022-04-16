@@ -9,13 +9,11 @@ import com.cory.enums.CoryEnum;
 import com.cory.service.DatadictService;
 import com.cory.service.ResourceService;
 import com.cory.service.SystemConfigService;
-import com.cory.util.datadictcache.DataDictCacheUtil;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import com.cory.web.util.CodeGeneratorHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.util.AnnotatedTypeScanner;
 import org.springframework.web.context.WebApplicationContext;
@@ -40,10 +38,6 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
     	ServletContext context = event.getServletContext();
     	this.ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
-
-		CacheManager cacheManager = ctx.getBean("cacheManager", CacheManager.class);
-		SystemConfigCacheUtil.setCacheManager(cacheManager);
-		DataDictCacheUtil.setCacheManager(cacheManager);
 
     	String contextPath = event.getServletContext().getContextPath() + "/";
 		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.CONTEXT_PATH, contextPath);

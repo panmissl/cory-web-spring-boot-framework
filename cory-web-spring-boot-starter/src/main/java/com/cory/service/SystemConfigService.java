@@ -12,6 +12,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -23,8 +24,17 @@ import java.util.List;
 @Transactional
 public class SystemConfigService extends BaseService<SystemConfig> {
 
+    private static final String CLUSTER_JOB_CODE = "refresh_system_config_cache";
+
     @Autowired
     private SystemConfigDao systemConfigDao;
+    @Autowired
+    private ClusterJobService clusterJobService;
+
+    @PostConstruct
+    public void init() {
+        clusterJobService.registerJobHandler(CLUSTER_JOB_CODE, param -> refreshCache());
+    }
 
     //此类不用缓存，因为会加载到Util里去
 
@@ -68,5 +78,9 @@ public class SystemConfigService extends BaseService<SystemConfig> {
     @Override
     public SystemConfigDao getDao() {
         return systemConfigDao;
+    }
+
+    public void addRefreshJob() {
+        clusterJobService.addJob(CLUSTER_JOB_CODE, "刷新系统配置缓存", null);
     }
 }

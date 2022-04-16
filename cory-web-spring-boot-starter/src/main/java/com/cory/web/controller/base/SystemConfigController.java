@@ -24,7 +24,7 @@ public class SystemConfigController extends BaseAjaxController<SystemConfig> {
 
     @RequestMapping("refreshCache")
     public boolean refreshCache() {
-        systemConfigService.refreshCache();
+        systemConfigService.addRefreshJob();
         return true;
     }
 

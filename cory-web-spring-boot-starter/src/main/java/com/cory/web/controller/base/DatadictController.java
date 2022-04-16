@@ -21,6 +21,12 @@ public class DatadictController extends BaseAjaxController<DataDict> {
         return datadictService;
     }
 
+    @RequestMapping("refreshCache")
+    public boolean refreshCache() {
+        datadictService.addRefreshJob();
+        return true;
+    }
+
     @RequestMapping("updateShowable")
     public boolean updateShowable(Integer id, boolean showable) {
         this.getService().updateShowable(id, showable);
