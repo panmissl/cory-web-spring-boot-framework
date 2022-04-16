@@ -31,7 +31,7 @@ public class DatadictService extends BaseService<DataDict> {
     @Autowired
     private DatadictDao datadictDao;
 
-    //此类不用缓存，因为会加载到Util里去，目前Util是单机版，后期考虑Util的分布式版本，否则更新缓存只能靠一直刷新轮询到或重启
+    //此类不用缓存，因为会加载到Util里去
 
     @Override
     public DatadictDao getDao() {
