@@ -6,8 +6,10 @@ import com.cory.db.annotations.Dao;
 import com.cory.db.annotations.Model;
 import com.cory.db.processor.CoryDbChecker;
 import com.cory.enums.CoryEnum;
+import com.cory.service.DatadictService;
 import com.cory.service.ResourceService;
 import com.cory.service.SystemConfigService;
+import com.cory.util.datadictcache.DataDictCacheUtil;
 import com.cory.util.systemconfigcache.SystemConfigCacheKey;
 import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import com.cory.web.util.CodeGeneratorHelper;
@@ -39,7 +41,9 @@ public class StartupListener implements ServletContextListener {
     	ServletContext context = event.getServletContext();
     	this.ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
-		SystemConfigCacheUtil.setCacheManager(ctx.getBean("cacheManager", CacheManager.class));
+		CacheManager cacheManager = ctx.getBean("cacheManager", CacheManager.class);
+		SystemConfigCacheUtil.setCacheManager(cacheManager);
+		DataDictCacheUtil.setCacheManager(cacheManager);
 
     	String contextPath = event.getServletContext().getContextPath() + "/";
 		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.CONTEXT_PATH, contextPath);
@@ -55,6 +59,7 @@ public class StartupListener implements ServletContextListener {
 		ctx.getBean(CoryDbChecker.class);
 
     	initSystemConfigCache(ctx);
+    	initDataDictCache(ctx);
 		scanResourceAndLoadToDb(ctx);
     }
 
@@ -142,5 +147,10 @@ public class StartupListener implements ServletContextListener {
 	private void initSystemConfigCache(WebApplicationContext ctx) {
 		SystemConfigService systemConfigService = ctx.getBean(SystemConfigService.class);
 		systemConfigService.refreshCache();
+	}
+
+	private void initDataDictCache(WebApplicationContext ctx) {
+		DatadictService dataDictService = ctx.getBean(DatadictService.class);
+		dataDictService.refreshCache();
 	}
 }

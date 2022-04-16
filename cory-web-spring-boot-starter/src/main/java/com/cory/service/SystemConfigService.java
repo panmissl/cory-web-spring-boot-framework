@@ -54,7 +54,7 @@ public class SystemConfigService extends BaseService<SystemConfig> {
     }
 
     public void refreshCache() {
-        log.info("加载系统参数配置...");
+        log.info("load system config to cache...");
         Pagination<SystemConfig> p = this.list(1, Integer.MAX_VALUE, null, null);
         List<SystemConfig> list = p.getList();
         if (!CollectionUtils.isEmpty(list)) {
@@ -62,7 +62,7 @@ public class SystemConfigService extends BaseService<SystemConfig> {
                 SystemConfigCacheUtil.refresh(sc.getCode(), sc.getVal());
             }
         }
-        log.info("加载系统参数配置完成(共{}条).", p.getTotalCount());
+        log.info("load system config to cache finish, count: {}", p.getTotalCount());
     }
 
     @Override
