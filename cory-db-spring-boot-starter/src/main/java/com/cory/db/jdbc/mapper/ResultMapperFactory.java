@@ -41,7 +41,7 @@ public class ResultMapperFactory {
         if (isTimestampType(returnType)) {
             return Pair.of(new TimestampMapper(), returnType);
         }
-        //如果时BaseModel，直接用ModelClass
+        //如果是BaseModel，直接用ModelClass
         if (BaseModel.class.equals(returnType)) {
             returnType = modelClass;
         }
