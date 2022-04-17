@@ -130,8 +130,8 @@ public abstract class BaseService<T extends BaseModel> {
         if (pageNo < 1) {
             pageNo = 1;
         }
-        if (pageSize > 10000) {
-            pageSize = 10000;
+        if (pageSize <= 0) {
+            pageSize = 20;
         }
         Pagination<T> pagination = getDao().pagination(model, (pageNo - 1) * pageSize, pageSize, sort);
         if (null != pagination) {

@@ -27,7 +27,7 @@ public class AccessTokenUtils {
 	/** ID::SECRET::TIMESTAMP */
 	public static final String TOKEN_FORMAT = "%s::%s::%s";
 
-	private static final int DEFAULT_EXPIRE_TIME = 10;
+	private static final int DEFAULT_EXPIRE_TIME_IN_SECOND = 10;
 
 	@Data
 	@Builder
@@ -74,7 +74,8 @@ public class AccessTokenUtils {
 			return true;
 		}
 
-		int expireTime = SystemConfigCacheUtil.getIntCache(SystemConfigCacheKey.TOKEN_EXPIRE_TIME_IN_SECOND, DEFAULT_EXPIRE_TIME) * 1000;
+		long expireTime = parseExpireTime();
+
 		if (System.currentTimeMillis() - time > expireTime) {
 			log.error("timeout, ak: {}, time: {}, token: {}", ak, ts, token);
 			return false;
@@ -93,6 +94,17 @@ public class AccessTokenUtils {
 		}
 
 		return true;
+	}
+
+	private static long parseExpireTime() {
+		long expireTime = DEFAULT_EXPIRE_TIME_IN_SECOND;
+		String expireTimeStr = SystemConfigCacheUtil.getCache(SystemConfigCacheKey.TOKEN_EXPIRE_TIME_IN_SECOND);
+		if (StringUtils.isNotBlank(expireTimeStr)) {
+			try {
+				expireTime = Long.valueOf(expireTimeStr);
+			} catch (Throwable t) {}
+		}
+		return expireTime * 1000;
 	}
 
 	private static String parseDbSecret(String ak) {
