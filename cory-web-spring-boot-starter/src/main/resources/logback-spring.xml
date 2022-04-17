@@ -8,6 +8,7 @@
 
     <springProperty scope="context" name="LOGGING_FILE_PATH" source="logging.file.path" defaultValue="./logs" />
     <springProperty scope="context" name="LOG_FILE_NAME" source="logging.file.name" defaultValue="cory" />
+    <springProperty scope="context" name="LOG_FILE_PORT" source="logging.file.port" defaultValue="" />
     <springProperty scope="context" name="logging.sls.enable" source="logging.sls.enable" defaultValue="false" />
     <springProperty scope="context" name="logging.sls.endpoint" source="logging.sls.endpoint" defaultValue="not set" />
     <springProperty scope="context" name="logging.sls.ak" source="logging.sls.ak" defaultValue="not set" />
@@ -53,7 +54,7 @@
         <property name="CORY_SQL_APPENDER" value="CORY_SQL" />
 
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}.log</file>
+            <file>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}${LOG_FILE_PORT}.log</file>
             <encoder>
                 <charset>${LOG_CHARSET}</charset>
                 <pattern>${COMMON_PATTERN}</pattern>
@@ -63,7 +64,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
                 <!-- 文件名：log/demo.2017-12-05.0.log -->
-                <fileNamePattern>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}.%d.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGGING_FILE_PATH}/${LOG_FILE_NAME}${LOG_FILE_PORT}.%d.%i.log</fileNamePattern>
                 <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
                 <maxHistory>30</maxHistory>
                 <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -74,7 +75,7 @@
         </appender>
 
         <appender name="HIKARI" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGGING_FILE_PATH}/hikari.log</file>
+            <file>${LOGGING_FILE_PATH}/hikari${LOG_FILE_PORT}.log</file>
             <encoder>
                 <charset>${LOG_CHARSET}</charset>
                 <pattern>${COMMON_PATTERN}</pattern>
@@ -84,7 +85,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
                 <!-- 文件名：log/demo.2017-12-05.0.log -->
-                <fileNamePattern>${LOGGING_FILE_PATH}/hikari.%d.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGGING_FILE_PATH}/hikari${LOG_FILE_PORT}.%d.%i.log</fileNamePattern>
                 <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
                 <maxHistory>30</maxHistory>
                 <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -95,7 +96,7 @@
         </appender>
 
         <appender name="APACHE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGGING_FILE_PATH}/apache.log</file>
+            <file>${LOGGING_FILE_PATH}/apache${LOG_FILE_PORT}.log</file>
             <encoder>
                 <charset>${LOG_CHARSET}</charset>
                 <pattern>${COMMON_PATTERN}</pattern>
@@ -105,7 +106,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
                 <!-- 文件名：log/demo.2017-12-05.0.log -->
-                <fileNamePattern>${LOGGING_FILE_PATH}/apache.%d.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGGING_FILE_PATH}/apache${LOG_FILE_PORT}.%d.%i.log</fileNamePattern>
                 <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
                 <maxHistory>30</maxHistory>
                 <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -116,7 +117,7 @@
         </appender>
 
         <appender name="SPRING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGGING_FILE_PATH}/spring.log</file>
+            <file>${LOGGING_FILE_PATH}/spring${LOG_FILE_PORT}.log</file>
             <encoder>
                 <charset>${LOG_CHARSET}</charset>
                 <pattern>${COMMON_PATTERN}</pattern>
@@ -126,7 +127,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
                 <!-- 文件名：log/demo.2017-12-05.0.log -->
-                <fileNamePattern>${LOGGING_FILE_PATH}/spring.%d.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGGING_FILE_PATH}/spring${LOG_FILE_PORT}.%d.%i.log</fileNamePattern>
                 <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
                 <maxHistory>30</maxHistory>
                 <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -137,7 +138,7 @@
         </appender>
 
         <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGGING_FILE_PATH}/sql.log</file>
+            <file>${LOGGING_FILE_PATH}/sql${LOG_FILE_PORT}.log</file>
             <encoder>
                 <charset>${LOG_CHARSET}</charset>
                 <pattern>${COMMON_PATTERN}</pattern>
@@ -147,7 +148,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
                 <!-- 文件名：log/demo.2017-12-05.0.log -->
-                <fileNamePattern>${LOGGING_FILE_PATH}/sql.%d.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGGING_FILE_PATH}/sql${LOG_FILE_PORT}.%d.%i.log</fileNamePattern>
                 <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
                 <maxHistory>30</maxHistory>
                 <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -158,7 +159,7 @@
         </appender>
 
         <appender name="CORY_SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOGGING_FILE_PATH}/cory_sql.log</file>
+            <file>${LOGGING_FILE_PATH}/cory_sql${LOG_FILE_PORT}.log</file>
             <encoder>
                 <charset>${LOG_CHARSET}</charset>
                 <pattern>${COMMON_PATTERN}</pattern>
@@ -168,7 +169,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次 -->
                 <!-- 文件名：log/demo.2017-12-05.0.log -->
-                <fileNamePattern>${LOGGING_FILE_PATH}/cory_sql.%d.%i.log</fileNamePattern>
+                <fileNamePattern>${LOGGING_FILE_PATH}/cory_sql${LOG_FILE_PORT}.%d.%i.log</fileNamePattern>
                 <!-- 每产生一个日志文件，该日志文件的保存期限为30天 -->
                 <maxHistory>30</maxHistory>
                 <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -193,7 +194,7 @@
                     <!-- 必选项 end -->
 
                     <!-- 可选项 -->
-                    <topic>${logging.sls.topic}</topic>
+                    <topic>${logging.sls.topic}${LOG_FILE_PORT}</topic>
                     <!-- source不要写，默认的是IP
                     <source></source>
                     -->
