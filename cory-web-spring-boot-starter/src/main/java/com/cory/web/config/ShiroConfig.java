@@ -107,6 +107,7 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/generateFormToken", "anon");
         chainDefinition.addPathDefinition("/openapi/**", "anon");
         chainDefinition.addPathDefinition("/captcha.svl*", "anon");
+        chainDefinition.addPathDefinition("/status", "anon");
 
         chainDefinition.addPathDefinition("/**", "user");
         return chainDefinition;
