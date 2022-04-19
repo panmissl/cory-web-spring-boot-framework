@@ -1,5 +1,6 @@
 package com.cory.web.config;
 
+import com.cory.web.captcha.CoryCacheCaptchaStore;
 import com.cory.web.captcha.JcaptchaServlet;
 import com.cory.web.filter.CaptchaFilter;
 import com.octo.captcha.component.image.backgroundgenerator.UniColorBackgroundGenerator;
@@ -11,14 +12,15 @@ import com.octo.captcha.component.image.wordtoimage.ComposedWordToImage;
 import com.octo.captcha.component.word.wordgenerator.RandomWordGenerator;
 import com.octo.captcha.engine.GenericCaptchaEngine;
 import com.octo.captcha.image.gimpy.GimpyFactory;
+import com.octo.captcha.service.captchastore.CaptchaStore;
 import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.Filter;
 import java.awt.*;
 
 import static com.cory.web.config.Constant.CAPTCHA_URL;
@@ -87,8 +89,9 @@ public class CaptchaConfig {
     }
 
     @Bean
-    public GenericManageableCaptchaService captchaService(GenericCaptchaEngine imageEngine) {
-        return new GenericManageableCaptchaService(imageEngine, 180, 100000, 75000);
+    public GenericManageableCaptchaService captchaService(GenericCaptchaEngine imageEngine, CacheManager cacheManager) {
+        CaptchaStore store = new CoryCacheCaptchaStore(cacheManager);
+        return new GenericManageableCaptchaService(store, imageEngine, 180, 100000, 75000);
     }
 
     //注册Servlet

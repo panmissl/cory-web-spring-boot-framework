@@ -2,6 +2,7 @@ package com.cory.web.captcha;
 
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.image.ImageCaptchaService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
+@Slf4j
 @Component
 public class CaptchaValidation {
 
@@ -110,12 +112,14 @@ public class CaptchaValidation {
 			try {
 				result = imageCaptchaService.validateResponseForID(sessionId, captcha);
 			} catch (CaptchaServiceException e) {
+				//log.error("validate captcha fail, sessionId: {}, captcha: {}", sessionId, captcha, e);
 				result = false;
 			}
 			//如果验证码校验失败,那么设置失败信息
 			request.setAttribute(CAPTCHA_ERR, !result);
 		} else {
 			//如果没有验证码,那么验证码校验错误信息不用设置,只需要设置"需要验证码"标志
+			//log.error("captcha is empty, sessionId: {}", sessionId);
 			result = false;
 		}
 

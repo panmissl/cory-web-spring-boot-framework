@@ -24,6 +24,9 @@ Changelog
     日志文件支持加端口，以应对多个tomcat放置在一台机器上的情况
 0.0.11
     增加健康检查接口：/status，返回字符串OK
+0.0.12
+    验证码支持集群
+    cluster更新时一起更新modifyTime
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

@@ -16,6 +16,6 @@ public interface ClusterDao extends BaseDao<Cluster> {
     @Select(whereSql = "ip = #{ip}")
     Cluster getByIp(@Param("ip") String ip);
 
-    @Update(columnSql = "status = #{status}", whereSql = "ip = #{ip}")
+    @Update(columnSql = "modify_time = now(), status = #{status}", whereSql = "ip = #{ip}")
     void updateStatus(@Param("ip") String ip, @Param("status") ClusterStatus status);
 }
