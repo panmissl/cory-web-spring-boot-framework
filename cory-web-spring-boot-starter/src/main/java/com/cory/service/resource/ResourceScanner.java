@@ -120,7 +120,6 @@ public class ResourceScanner {
                                 .filterType(fieldAnno.filterType().name())
                                 //.filterSelectUrl(fieldAnno.filterSelectUrl())
                                 .filtered(fieldAnno.filtered())
-                                .editable(fieldAnno.editable())
                                 .desc(fieldAnno.desc())
                                 .richText(fieldAnno.richText())
                                 .code(fieldAnno.code())

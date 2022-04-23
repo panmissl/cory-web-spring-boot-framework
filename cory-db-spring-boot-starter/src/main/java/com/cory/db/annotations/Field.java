@@ -53,12 +53,6 @@ public @interface Field {
     boolean showable() default true;
 
     /**
-     * 是否可编辑。默认为true。比如一般status状态都不能编辑
-     * @return
-     */
-    boolean editable() default true;
-
-    /**
      * 是否作为列表查询过滤字段，默认不是
      * @return
      */

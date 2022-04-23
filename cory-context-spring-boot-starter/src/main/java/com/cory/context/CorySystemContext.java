@@ -91,8 +91,6 @@ public class CorySystemContext implements Serializable {
         private String desc;
         //default true
         private boolean showable;
-        //default true
-        private boolean editable;
         //default false
         private boolean filtered;
 

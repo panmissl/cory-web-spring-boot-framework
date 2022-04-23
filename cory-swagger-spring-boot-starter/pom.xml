@@ -5,14 +5,14 @@
     <parent>
         <artifactId>cory-web-spring-boot-framework</artifactId>
         <groupId>ink.cory</groupId>
-        <version>0.0.12</version>
+        <version>0.0.13</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cory-swagger-spring-boot-starter</artifactId>
 
     <properties>
-        <cory.web.framework.version>0.0.12</cory.web.framework.version>
+        <cory.web.framework.version>0.0.13</cory.web.framework.version>
     </properties>
 
     <dependencies>
