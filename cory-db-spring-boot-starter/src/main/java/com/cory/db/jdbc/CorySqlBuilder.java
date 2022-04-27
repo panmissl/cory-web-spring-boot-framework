@@ -17,9 +17,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.cory.constant.Constants.*;
 
 /**
  * where 条件，直接写条件，不用加where。
@@ -490,17 +493,83 @@ public class CorySqlBuilder {
                         if (null == filter.getValue()) {
                             return;
                         }
+                        //Start(包含)、End(不包含)、In、Like、LikeLeft、LikeRight、NotIn，NotLike、NotLikeLeft、NotLikeRight、NotEq(不等)
                         //createTimeStart >= ? AND createTimeEnd < ?
                         String key = filter.getKey();
-                        if (key.endsWith("Start")) {
-                            String columnField = key.substring(0, key.length() - "Start".length());
+                        if (key.endsWith(FILTER_FIELD_POSTFIX_START)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_START.length());
                             String columnName = CoryModelUtil.buildColumnName(columnField);
                             whereSql.append(" AND " + columnName + " >= " + QUESTION_MARK);
                             params.add(filter.getValue());
-                        } else if (key.endsWith("End")) {
-                            String columnField = key.substring(0, key.length() - "End".length());
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_END)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_END.length());
                             String columnName = CoryModelUtil.buildColumnName(columnField);
                             whereSql.append(" AND " + columnName + " < " + QUESTION_MARK);
+                            params.add(filter.getValue());
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_IN) || key.endsWith(FILTER_FIELD_POSTFIX_NOT_IN)) {
+                            boolean isNotIn = key.endsWith(FILTER_FIELD_POSTFIX_NOT_IN);
+                            String columnField = key.substring(0, key.length() - (isNotIn ? FILTER_FIELD_POSTFIX_NOT_IN.length() : FILTER_FIELD_POSTFIX_IN.length()));
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+
+                            List list = (List) filter.getValue();
+                            StringBuilder inSql = new StringBuilder("(");
+                            for (int i = 0; i < list.size(); i++) {
+                                inSql.append(QUESTION_MARK);
+                                inSql.append(COMMA);
+                                params.add(list.get(i));
+                            }
+                            inSql.deleteCharAt(inSql.length() - 1);
+                            inSql.append(")");
+                            whereSql.append(" AND " + columnName + (isNotIn ? " not in " : " in ") + inSql);
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_LIKE_LEFT) ||
+                                key.endsWith(FILTER_FIELD_POSTFIX_LIKE_RIGHT) ||
+                                key.endsWith(FILTER_FIELD_POSTFIX_LIKE) ||
+                                key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT) ||
+                                key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT) ||
+                                key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE)) {
+                            boolean onlyLikeLeft = key.endsWith(FILTER_FIELD_POSTFIX_LIKE_LEFT);
+                            boolean onlyLikeRight = key.endsWith(FILTER_FIELD_POSTFIX_LIKE_RIGHT);
+                            boolean bothLike = key.endsWith(FILTER_FIELD_POSTFIX_LIKE);
+                            boolean onlyNotLikeLeft = key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT);
+                            boolean onlyNotLikeRight = key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT);
+                            boolean bothNotLike = key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE);
+
+                            String columnField;
+                            //带NOT的放在前面，要先匹配到，还有还LEFT和RIGHT的也是
+                            if (onlyNotLikeLeft) {
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT.length());
+                            } else if (onlyNotLikeRight) {
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT.length());
+                            } else if (bothNotLike) {
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_LIKE.length());
+                            } else if (onlyLikeLeft) {
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_LIKE_LEFT.length());
+                            } else if (onlyLikeRight) {
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_LIKE_RIGHT.length());
+                            } else {
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_LIKE.length());
+                            }
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+
+                            //whereSql.append(" AND name not like concat('%', ?, '%')");
+                            whereSql.append(" AND " + columnName);
+                            if (onlyNotLikeLeft || onlyNotLikeRight || bothNotLike) {
+                                whereSql.append(" not");
+                            }
+                            whereSql.append(" like concat(");
+                            if (onlyLikeLeft || onlyNotLikeLeft || bothLike || bothNotLike) {
+                                whereSql.append("'%', ");
+                            }
+                            whereSql.append(QUESTION_MARK);
+                            if (onlyLikeRight || onlyNotLikeRight || bothLike || bothNotLike) {
+                                whereSql.append(", '%'");
+                            }
+                            whereSql.append(" ) ");
+                            params.add(filter.getValue());
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_NOT_EQ)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_EQ.length());
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+                            whereSql.append(" AND " + columnName + " <> " + QUESTION_MARK);
                             params.add(filter.getValue());
                         }
                     });
@@ -591,7 +660,7 @@ public class CorySqlBuilder {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         String sql = "email = #{userName} or phone = #{userName}";
         Matcher matcher = PARAM_PATTERN_REG.matcher(sql);
         while (matcher.find()) {

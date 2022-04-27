@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.Date;
 
+import static com.cory.constant.Constants.FILTER_FIELD_POSTFIX_END;
+import static com.cory.constant.Constants.FILTER_FIELD_POSTFIX_START;
+
 /**
  * Created by Cory on 2021/3/6.
  */
@@ -55,37 +58,31 @@ public class ControllerAdvice {
                 }
                 //对date型参数，增加Start和End的解析，并放到Filter参数里
                 if (CoryDbType.DATE.equals(field.type()) || CoryDbType.DATETIME.equals(field.type())) {
-                    String startParam = javaField.getName() + "Start";
-                    String endParam = javaField.getName() + "End";
-                    parseDateParams(model, startParam, CoryDbType.DATE.equals(field.type()), false);
-                    parseDateParams(model, endParam, CoryDbType.DATE.equals(field.type()), true);
+                    addTimeFilterParam(model, javaField.getName(), CoryDbType.DATE.equals(field.type()));
                 }
             }
         }
     }
 
-    private void parseDateParams(BaseModel model, String paramName, boolean isDate, boolean isEnd) {
+    private void addTimeFilterParam(BaseModel model, String fieldName, boolean isDate) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        String date = request.getParameter(paramName);
-        if (StringUtils.isBlank(date)) {
-            return;
-        }
+        String startStr = request.getParameter(fieldName + FILTER_FIELD_POSTFIX_START);
+        String endStr = request.getParameter(fieldName + FILTER_FIELD_POSTFIX_END);
         try {
             //DATE型要处理成yyyy-MM-dd，不要解析成Date型即可
             //END因为是exclusion，所以要加1：对于时间加1秒，对于日期加1天
-            if (isEnd) {
-                Date d = DateUtils.parseDate(date);
+            Date start = StringUtils.isBlank(startStr) ? null : DateUtils.parseDate(startStr);
+            Date end = StringUtils.isBlank(endStr) ? null : DateUtils.parseDate(endStr);
+            if (null != end) {
                 if (isDate) {
-                    d = DateUtils.addDays(d, 1);
+                    end = DateUtils.addDays(end, 1);
                 } else {
-                    d = DateUtils.addSeconds(d, 1);
+                    end = DateUtils.addSeconds(end, 1);
                 }
-                model.getFilterFieldMap().put(paramName, isDate ? DateUtils.formatShort(d) : d);
-            } else {
-                model.getFilterFieldMap().put(paramName, isDate ? date : DateUtils.parseDate(date));
             }
+            model.addStartEndFilterField(fieldName, start, end);
         } catch (ParseException e) {
         }
     }

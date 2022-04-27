@@ -170,6 +170,13 @@ public class CoryDbProxy<T> implements InvocationHandler {
                 if (MapUtils.isNotEmpty(columns)) {
                     columns.entrySet().stream().filter(entry -> null != entry.getValue()).forEach(entry -> builder.column(entry.getKey(), toValue(entry.getValue())));
                 }
+                //filter里的那些值，也要处理一下：toValue
+                if (model instanceof BaseModel) {
+                    BaseModel baseModel = (BaseModel) model;
+                    if (MapUtils.isNotEmpty(baseModel.getFilterFieldMap())) {
+                        baseModel.getFilterFieldMap().keySet().forEach(key -> baseModel.getFilterFieldMap().put(key, toValue(baseModel.getFilterFieldMap().get(key))));
+                    }
+                }
             }
         }
 

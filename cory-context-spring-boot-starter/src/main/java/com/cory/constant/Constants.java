@@ -98,4 +98,16 @@ public class Constants {
     };
 
     public static final String[] BASE_MODEL_COLUMNS = new String[] {"id", "creator", "modifier", "createTime", "modifyTime", "isDeleted"};
+
+    public static final String FILTER_FIELD_POSTFIX_START = "Start";
+    public static final String FILTER_FIELD_POSTFIX_END = "End";
+    public static final String FILTER_FIELD_POSTFIX_IN = "In";
+    public static final String FILTER_FIELD_POSTFIX_LIKE = "Like";
+    public static final String FILTER_FIELD_POSTFIX_LIKE_LEFT = "LikeLeft";
+    public static final String FILTER_FIELD_POSTFIX_LIKE_RIGHT = "LikeRight";
+    public static final String FILTER_FIELD_POSTFIX_NOT_IN = "NotIn";
+    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE = "NotLike";
+    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT = "NotLikeLeft";
+    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT = "NotLikeRight";
+    public static final String FILTER_FIELD_POSTFIX_NOT_EQ = "NotEq";
 }
