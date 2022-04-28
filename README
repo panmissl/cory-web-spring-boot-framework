@@ -31,6 +31,8 @@ Changelog
     Field注解去掉重复的editable，统一使用updateable
 0.0.14
     BaseModel增加数据库处理时的特殊条件：Start(包含)、End(不包含)、In、Like、LikeLeft、LikeRight、NotIn，NotLike、NotLikeLeft、NotLikeRight、NotEq(不等)。这样让查询更加方便。参见BaseModel的filterFieldMap注释
+0.0.15
+    修复BaseModel增加数据库处理时的特殊条件：Start和End增加inclusive和exclusive的支持，且修复in和not in的bug
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

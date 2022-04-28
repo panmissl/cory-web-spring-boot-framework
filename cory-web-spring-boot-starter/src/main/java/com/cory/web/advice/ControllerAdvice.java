@@ -17,8 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.Date;
 
-import static com.cory.constant.Constants.FILTER_FIELD_POSTFIX_END;
-import static com.cory.constant.Constants.FILTER_FIELD_POSTFIX_START;
+import static com.cory.constant.Constants.*;
 
 /**
  * Created by Cory on 2021/3/6.
@@ -68,8 +67,8 @@ public class ControllerAdvice {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        String startStr = request.getParameter(fieldName + FILTER_FIELD_POSTFIX_START);
-        String endStr = request.getParameter(fieldName + FILTER_FIELD_POSTFIX_END);
+        String startStr = request.getParameter(fieldName + "Start");
+        String endStr = request.getParameter(fieldName + "End");
         try {
             //DATE型要处理成yyyy-MM-dd，不要解析成Date型即可
             //END因为是exclusion，所以要加1：对于时间加1秒，对于日期加1天
@@ -82,7 +81,7 @@ public class ControllerAdvice {
                     end = DateUtils.addSeconds(end, 1);
                 }
             }
-            model.addStartEndFilterField(fieldName, start, end);
+            model.addStartEndFilterField(fieldName, start, end, true, false);
         } catch (ParseException e) {
         }
     }

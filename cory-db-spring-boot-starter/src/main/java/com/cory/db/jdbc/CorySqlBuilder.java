@@ -496,13 +496,23 @@ public class CorySqlBuilder {
                         //Start(包含)、End(不包含)、In、Like、LikeLeft、LikeRight、NotIn，NotLike、NotLikeLeft、NotLikeRight、NotEq(不等)
                         //createTimeStart >= ? AND createTimeEnd < ?
                         String key = filter.getKey();
-                        if (key.endsWith(FILTER_FIELD_POSTFIX_START)) {
-                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_START.length());
+                        if (key.endsWith(FILTER_FIELD_POSTFIX_START_INCLUSIVE)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_START_INCLUSIVE.length());
                             String columnName = CoryModelUtil.buildColumnName(columnField);
                             whereSql.append(" AND " + columnName + " >= " + QUESTION_MARK);
                             params.add(filter.getValue());
-                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_END)) {
-                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_END.length());
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_START_EXCLUSIVE)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_START_EXCLUSIVE.length());
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+                            whereSql.append(" AND " + columnName + " > " + QUESTION_MARK);
+                            params.add(filter.getValue());
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_END_INCLUSIVE)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_END_INCLUSIVE.length());
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+                            whereSql.append(" AND " + columnName + " <= " + QUESTION_MARK);
+                            params.add(filter.getValue());
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_END_EXCLUSIVE)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_END_EXCLUSIVE.length());
                             String columnName = CoryModelUtil.buildColumnName(columnField);
                             whereSql.append(" AND " + columnName + " < " + QUESTION_MARK);
                             params.add(filter.getValue());
@@ -523,31 +533,30 @@ public class CorySqlBuilder {
                             whereSql.append(" AND " + columnName + (isNotIn ? " not in " : " in ") + inSql);
                         } else if (key.endsWith(FILTER_FIELD_POSTFIX_LIKE_LEFT) ||
                                 key.endsWith(FILTER_FIELD_POSTFIX_LIKE_RIGHT) ||
-                                key.endsWith(FILTER_FIELD_POSTFIX_LIKE) ||
+                                key.endsWith(FILTER_FIELD_POSTFIX_LIKE_BOTH) ||
                                 key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT) ||
                                 key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT) ||
-                                key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE)) {
+                                key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_BOTH)) {
                             boolean onlyLikeLeft = key.endsWith(FILTER_FIELD_POSTFIX_LIKE_LEFT);
                             boolean onlyLikeRight = key.endsWith(FILTER_FIELD_POSTFIX_LIKE_RIGHT);
-                            boolean bothLike = key.endsWith(FILTER_FIELD_POSTFIX_LIKE);
+                            boolean bothLike = key.endsWith(FILTER_FIELD_POSTFIX_LIKE_BOTH);
                             boolean onlyNotLikeLeft = key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT);
                             boolean onlyNotLikeRight = key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT);
-                            boolean bothNotLike = key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE);
+                            boolean bothNotLike = key.endsWith(FILTER_FIELD_POSTFIX_NOT_LIKE_BOTH);
 
                             String columnField;
-                            //带NOT的放在前面，要先匹配到，还有还LEFT和RIGHT的也是
                             if (onlyNotLikeLeft) {
                                 columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT.length());
                             } else if (onlyNotLikeRight) {
                                 columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT.length());
                             } else if (bothNotLike) {
-                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_LIKE.length());
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_LIKE_BOTH.length());
                             } else if (onlyLikeLeft) {
                                 columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_LIKE_LEFT.length());
                             } else if (onlyLikeRight) {
                                 columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_LIKE_RIGHT.length());
                             } else {
-                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_LIKE.length());
+                                columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_LIKE_BOTH.length());
                             }
                             String columnName = CoryModelUtil.buildColumnName(columnField);
 

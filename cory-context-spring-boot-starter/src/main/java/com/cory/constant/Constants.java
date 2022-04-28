@@ -99,15 +99,19 @@ public class Constants {
 
     public static final String[] BASE_MODEL_COLUMNS = new String[] {"id", "creator", "modifier", "createTime", "modifyTime", "isDeleted"};
 
-    public static final String FILTER_FIELD_POSTFIX_START = "Start";
-    public static final String FILTER_FIELD_POSTFIX_END = "End";
-    public static final String FILTER_FIELD_POSTFIX_IN = "In";
-    public static final String FILTER_FIELD_POSTFIX_LIKE = "Like";
-    public static final String FILTER_FIELD_POSTFIX_LIKE_LEFT = "LikeLeft";
-    public static final String FILTER_FIELD_POSTFIX_LIKE_RIGHT = "LikeRight";
-    public static final String FILTER_FIELD_POSTFIX_NOT_IN = "NotIn";
-    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE = "NotLike";
-    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT = "NotLikeLeft";
-    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT = "NotLikeRight";
+    // 下面的同个字段，为了和其它区别，加1或2的后缀
+
+    public static final String FILTER_FIELD_POSTFIX_START_INCLUSIVE = "StartInclusive";
+    public static final String FILTER_FIELD_POSTFIX_START_EXCLUSIVE = "StartExclusive";
+    public static final String FILTER_FIELD_POSTFIX_END_INCLUSIVE = "EndInclusive";
+    public static final String FILTER_FIELD_POSTFIX_END_EXCLUSIVE = "EndExclusive";
+    public static final String FILTER_FIELD_POSTFIX_IN = "In1";
+    public static final String FILTER_FIELD_POSTFIX_NOT_IN = "NotIn2";
+    public static final String FILTER_FIELD_POSTFIX_LIKE_BOTH = "LikeBoth1";
+    public static final String FILTER_FIELD_POSTFIX_LIKE_LEFT = "LikeLeft1";
+    public static final String FILTER_FIELD_POSTFIX_LIKE_RIGHT = "LikeRight1";
+    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE_BOTH = "NotLikeBoth2";
+    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE_LEFT = "NotLikeLeft2";
+    public static final String FILTER_FIELD_POSTFIX_NOT_LIKE_RIGHT = "NotLikeRight2";
     public static final String FILTER_FIELD_POSTFIX_NOT_EQ = "NotEq";
 }
