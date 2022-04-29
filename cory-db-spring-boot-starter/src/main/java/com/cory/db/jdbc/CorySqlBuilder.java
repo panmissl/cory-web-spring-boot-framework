@@ -493,7 +493,7 @@ public class CorySqlBuilder {
                         if (null == filter.getValue()) {
                             return;
                         }
-                        //Start(包含)、End(不包含)、In、Like、LikeLeft、LikeRight、NotIn，NotLike、NotLikeLeft、NotLikeRight、NotEq(不等)
+                        //Start(包含)、End(不包含)、In、Like、LikeLeft、LikeRight、NotIn，NotLike、NotLikeLeft、NotLikeRight、NotEq(不等)、IsNull、NotNull
                         //createTimeStart >= ? AND createTimeEnd < ?
                         String key = filter.getKey();
                         if (key.endsWith(FILTER_FIELD_POSTFIX_START_INCLUSIVE)) {
@@ -580,6 +580,14 @@ public class CorySqlBuilder {
                             String columnName = CoryModelUtil.buildColumnName(columnField);
                             whereSql.append(" AND " + columnName + " <> " + QUESTION_MARK);
                             params.add(filter.getValue());
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_IS_NULL)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_IS_NULL.length());
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+                            whereSql.append(" AND " + columnName + " is null");
+                        } else if (key.endsWith(FILTER_FIELD_POSTFIX_NOT_NULL)) {
+                            String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_NULL.length());
+                            String columnName = CoryModelUtil.buildColumnName(columnField);
+                            whereSql.append(" AND " + columnName + " is not null");
                         }
                     });
                 });

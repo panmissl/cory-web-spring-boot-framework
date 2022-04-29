@@ -38,7 +38,7 @@ public abstract class BaseModel implements Serializable {
      * 过滤字段，比如对于operateDate，是一个时间段，会存两个字段：operateDateStart, operateDateEnd。会在请求时自动解析并设置到此字段里，sql里直接写变量名即可
      * <br />
      * <br />
-     * 支持的有：Start(包含)、End(不包含)、In、Like、LikeLeft、LikeRight、NotIn，NotLike、NotLikeLeft、NotLikeRight、NotEq(不等)
+     * 支持的有：Start(包含)、End(不包含)、In、Like、LikeLeft、LikeRight、NotIn，NotLike、NotLikeLeft、NotLikeRight、NotEq(不等)、IsNull、NotNull
      * <br />
      * <br />
      * 使用：通过本类中对应的addXxxFilterField方法添加
@@ -61,6 +61,8 @@ public abstract class BaseModel implements Serializable {
      demoModel.addNotLikeFilterField("name", "bbbb", true, false);
      demoModel.addNotLikeFilterField("name", "qqqq", false, true);
      demoModel.addNotEqFilterField("age", 3333);
+     demoModel.addIsNullFilterField("status);
+     demoModel.addNotNullFilterField("status);
      * </pre>
      */
     protected Map<String, Object> filterFieldMap = new HashMap<>();
@@ -132,6 +134,22 @@ public abstract class BaseModel implements Serializable {
             return;
         }
         filterFieldMap.put(fieldName + FILTER_FIELD_POSTFIX_NOT_IN, list);
+    }
+
+    /**
+     * 参考filterFieldMap的注释，给一个字段添加is null的过滤条件
+     * @param fieldName 字段名。比如：status，驼峰形式
+     */
+    public void addIsNullFilterField(String fieldName) {
+        filterFieldMap.put(fieldName + FILTER_FIELD_POSTFIX_IS_NULL, 1);
+    }
+
+    /**
+     * 参考filterFieldMap的注释，给一个字段添加is not null的过滤条件
+     * @param fieldName 字段名。比如：status，驼峰形式
+     */
+    public void addNotNullFilterField(String fieldName) {
+        filterFieldMap.put(fieldName + FILTER_FIELD_POSTFIX_NOT_NULL, 1);
     }
 
     /**
