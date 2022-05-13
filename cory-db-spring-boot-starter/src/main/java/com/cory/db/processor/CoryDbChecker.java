@@ -44,7 +44,7 @@ public class CoryDbChecker implements InitializingBean {
 
     private static final String CREATE_TABLE_FOOTER =
             "PRIMARY KEY (`id`)" +
-            ") ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8 COMMENT='%s';";
+            ") ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4 COMMENT='%s';";
 
     private static final String DROP_COLUMN_SQL = "alter table %s drop column %s";
     private static final String ADD_COLUMN_SQL = "alter table %s add column %s";
@@ -121,7 +121,7 @@ public class CoryDbChecker implements InitializingBean {
             `type` varchar(50) NOT NULL COMMENT '资源类型',
             `description` varchar(200) NOT NULL COMMENT '描述',
             PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8 COMMENT='资源表';
+        ) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4 COMMENT='资源表';
         */
 
         StringBuilder builder = new StringBuilder();
