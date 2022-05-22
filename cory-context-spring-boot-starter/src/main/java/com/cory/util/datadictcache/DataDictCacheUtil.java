@@ -5,7 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -46,6 +51,7 @@ public class DataDictCacheUtil {
 
     private static final ConcurrentMap<Integer, DataDict> CACHE_BY_ID = new ConcurrentHashMap<>(2048);
     private static final ConcurrentMap<String, DataDict> CACHE_BY_VALUE = new ConcurrentHashMap<>(2048);
+    private static final ConcurrentMap<String, List<DataDict>> CACHE_BY_TYPE = new ConcurrentHashMap<>(2048);
 
     private DataDictCacheUtil() {}
 
@@ -57,12 +63,30 @@ public class DataDictCacheUtil {
         return CACHE_BY_VALUE.get(buildByValueKey(type, value));
     }
 
-    public static void refresh(DataDict dd) {
-        if (null == dd) {
+    public static List<DataDict> getByType(String type) {
+        return CACHE_BY_TYPE.get(type);
+    }
+
+    public static void refresh(List<DataDict> list) {
+        if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        CACHE_BY_ID.put(dd.getId(), dd);
-        CACHE_BY_VALUE.put(buildByValueKey(dd.getType(), dd.getValue()), dd);
+
+        Map<String, List<DataDict>> typeMap = new HashMap<>(2048);
+
+        list.forEach(dd -> {
+            CACHE_BY_ID.put(dd.getId(), dd);
+            CACHE_BY_VALUE.put(buildByValueKey(dd.getType(), dd.getValue()), dd);
+
+            List<DataDict> l = typeMap.get(dd.getType());
+            if (null == l) {
+                l = new ArrayList<>(1024);
+                typeMap.put(dd.getType(), l);
+            }
+            l.add(dd);
+        });
+
+        CACHE_BY_TYPE.putAll(typeMap);
     }
 
     private static String buildByValueKey(String type, String value) {

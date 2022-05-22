@@ -50,21 +50,17 @@ public class StartupListener implements ServletContextListener {
 		ServletContext context = event.getServletContext();
     	this.ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
-    	String contextPath = event.getServletContext().getContextPath() + "/";
-		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.CONTEXT_PATH, contextPath);
-
-		String staticResourcePath = event.getServletContext().getRealPath("static");
-		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.STATIC_RESOURCE_PATH, staticResourcePath);
-
-		//先生成代码，否则加载系统参数出错
+		//先生成代码并初始化枚举，否则加载系统参数出错：在使用db时需要转换枚举类，此时要用到
 		generateCode(ctx);
 		initForEnum();
+
+		//先初始化两个系统级缓存，其它地方才能用
+    	initSystemConfigCache(ctx, event);
+    	initDataDictCache(ctx);
 
 		//在使用db前先同步一下表，否则开发环境一开始启动时会有问题：直接取CoryDbChecker即可，初始化Bean会自动检查
 		ctx.getBean(CoryDbChecker.class);
 
-    	initSystemConfigCache(ctx);
-    	initDataDictCache(ctx);
 		scanResourceAndLoadToDb(ctx);
 		initCluster(ctx);
     }
@@ -150,9 +146,15 @@ public class StartupListener implements ServletContextListener {
     	ctx.getBean(ResourceService.class).scanResourceAndLoadToDb();
 	}
 
-	private void initSystemConfigCache(WebApplicationContext ctx) {
+	private void initSystemConfigCache(WebApplicationContext ctx, ServletContextEvent event) {
 		SystemConfigService systemConfigService = ctx.getBean(SystemConfigService.class);
 		systemConfigService.refreshCache();
+
+		String contextPath = event.getServletContext().getContextPath() + "/";
+		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.CONTEXT_PATH, contextPath);
+
+		String staticResourcePath = event.getServletContext().getRealPath("static");
+		SystemConfigCacheUtil.refresh(SystemConfigCacheKey.STATIC_RESOURCE_PATH, staticResourcePath);
 	}
 
 	private void initDataDictCache(WebApplicationContext ctx) {

@@ -6,8 +6,7 @@ import com.cory.context.CorySystemContext.FieldMeta;
 import com.cory.context.CorySystemContext.ModelMeta;
 import com.cory.db.annotations.Model;
 import com.cory.db.enums.CoryDbType;
-import com.cory.model.DataDict;
-import com.cory.service.DatadictService;
+import com.cory.util.datadictcache.DataDictCacheUtil;
 import com.cory.vo.DataDictVO;
 import com.cory.web.controller.BaseAjaxController;
 import com.cory.web.controller.BaseOpenApiController;
@@ -41,8 +40,6 @@ public class ResourceScanner {
 
     @Autowired
     private ResourceToDbLoader resourceToDbLoader;
-    @Autowired
-    private DatadictService datadictService;
 
     public void scanAndLoadToDb() {
         log.info("start to scan Controllers ...");
@@ -67,10 +64,17 @@ public class ResourceScanner {
 
         log.info("scan Controllers finish, url count: {}", count);
 
-        scanModel();
+        doScanModel(true);
     }
 
-    private void scanModel() {
+    /**
+     * 刷新模型元数据。比如：当数据字典有变化的时候，要刷新一下，否则取到的数据还是老的
+     */
+    public void refreshModelMeta() {
+        doScanModel(false);
+    }
+
+    private void doScanModel(boolean loadUrl2Db) {
         log.info("start to scan Model ...");
 
         AnnotatedTypeScanner modelScanner = new AnnotatedTypeScanner(true, Model.class);
@@ -147,15 +151,17 @@ public class ResourceScanner {
             return url;
         }).collect(Collectors.toSet());
 
-        Set<String> additional = new HashSet<>();
-        urls.forEach(u -> {
-            if (!u.contains("*")) {
-                additional.add(u + "**");
-            }
-        });
-        urls.addAll(additional);
+        if (loadUrl2Db) {
+            Set<String> additional = new HashSet<>();
+            urls.forEach(u -> {
+                if (!u.contains("*")) {
+                    additional.add(u + "**");
+                }
+            });
+            urls.addAll(additional);
 
-        resourceToDbLoader.loadToDb(urls);
+            resourceToDbLoader.loadToDb(urls);
+        }
 
         CorySystemContext.get().setModelMetaSet(modelMetaSet);
         CorySystemContext.get().setModelMetaMap(modelMetaMap);
@@ -166,13 +172,13 @@ public class ResourceScanner {
         if (StringUtils.isBlank(datadictTypeValue)) {
             return Lists.newArrayList();
         }
-        List<DataDict> ddList = datadictService.getByType(datadictTypeValue);
+        List<DataDictCacheUtil.DataDict> ddList = DataDictCacheUtil.getByType(datadictTypeValue);
         if (CollectionUtils.isEmpty(ddList)) {
             ddList = Lists.newArrayList();
         }
         //对于根类型，将ROOT也添加一下
         if (Constants.DATA_DICT_ROOT_VALUE.equals(datadictTypeValue)) {
-            ddList.add(0, datadictService.getByValue(Constants.DATA_DICT_ROOT_PARENT_VALUE, Constants.DATA_DICT_ROOT_VALUE));
+            ddList.add(0, DataDictCacheUtil.getByValue(Constants.DATA_DICT_ROOT_PARENT_VALUE, Constants.DATA_DICT_ROOT_VALUE));
         }
         return ddList.stream()
                 .map(dd -> DataDictVO.builder().value(dd.getValue()).description(dd.getDescription()).sn(dd.getSn()).build())
