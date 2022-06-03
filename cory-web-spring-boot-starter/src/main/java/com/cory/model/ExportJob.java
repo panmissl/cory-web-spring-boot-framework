@@ -42,10 +42,10 @@ public class ExportJob extends BaseModel {
     @Field(label = "执行任务IP&端口", type = CoryDbType.VARCHAR, desc = "IP&端口：192.168.0.1:8080")
     private String ip;
 
-    @Field(label = "下载地址", type = CoryDbType.VARCHAR, nullable = true, defaultValue = "运行成功后才有")
+    @Field(label = "下载地址", type = CoryDbType.VARCHAR, nullable = true, desc = "运行成功后才有")
     private String downloadUrl;
 
-    @Field(label = "错误信息", type = CoryDbType.VARCHAR, nullable = true, defaultValue = "运行失败时有")
+    @Field(label = "错误信息", type = CoryDbType.VARCHAR, nullable = true, desc = "运行失败时有")
     private String errorMsg;
 
 }

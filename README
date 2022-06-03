@@ -46,6 +46,8 @@ Changelog
     fix优化BaseModel的renderFieldMap，不直接暴露map，用getRenderField方法和putRenderField方法
 0.0.21
     增加异步导出机制：将导出的结果存储到文件或网络上，然后提供导出页面或模块，供下载
+0.0.22
+    fix异步导出机制model
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存
