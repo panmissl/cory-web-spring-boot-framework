@@ -40,6 +40,8 @@ Changelog
 0.0.18
     优化数据字典缓存：所有数据字典信息都从缓存里取（之前getByType还是从db取）
     数据字典缓存刷新时刷新SystemContext的modelMetaSet和modelMetaMap，之前没刷新存在的问题是数据字典改了不会生效，要重启系统才行
+0.0.19
+    优化BaseModel的renderFieldMap，不直接暴露map，用getRenderField方法
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存
@@ -79,3 +81,4 @@ DB:
 mvn -DskipTests=true -Dmaven.skip.test=true source:jar install
 mvn -DskipTests=true -Dmaven.skip.test=true install
 mvn -DskipTests=true -Dmaven.skip.test=true clean deploy
+mvn -DskipTests=true -Dmaven.skip.test=true clean source:jar deploy

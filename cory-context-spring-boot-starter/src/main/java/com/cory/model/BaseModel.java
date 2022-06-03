@@ -30,9 +30,20 @@ public abstract class BaseModel implements Serializable {
      * 显示字段，比如对于status，一般都存的Name，所以页面显示时需要显示text字段。这样就不用在Model类里加一些不必要的显示字段。
      * <br />
      * <br />
-     * 使用：直接用model.getRenderFieldMap().put(name, value)即可。然后在页面上，JS里直接使用。
+     * 使用：直接用model.getRenderFieldMap().put(name, value)即可。然后需要使用时在Java类里用：model.getRenderField(name)获取，页面上，JS里直接使用：model.renderField[name]获取。
      */
     protected Map<String, String> renderFieldMap = new HashMap<>();
+
+    /**
+     * 获取放在renderFieldMap里的显示字段。
+     * <br />
+     * 参考renderFieldMap的注释
+     * @param fieldName 字段名
+     * @return 字段值
+     */
+    public String getRenderField(String fieldName) {
+        return renderFieldMap.get(fieldName);
+    }
 
     /**
      * 过滤字段，比如对于operateDate，是一个时间段，会存两个字段：operateDateStart, operateDateEnd。会在请求时自动解析并设置到此字段里，sql里直接写变量名即可
