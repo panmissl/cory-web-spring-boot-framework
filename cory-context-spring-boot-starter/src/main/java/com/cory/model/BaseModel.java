@@ -1,7 +1,9 @@
 package com.cory.model;
 
+import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -30,7 +32,7 @@ public abstract class BaseModel implements Serializable {
      * 显示字段，比如对于status，一般都存的Name，所以页面显示时需要显示text字段。这样就不用在Model类里加一些不必要的显示字段。
      * <br />
      * <br />
-     * 使用：直接用model.getRenderFieldMap().put(name, value)即可。然后需要使用时在Java类里用：model.getRenderField(name)获取，页面上，JS里直接使用：model.renderField[name]获取。
+     * 使用：直接用model.addRenderField(name, value)即可。然后需要使用时在Java类里用：model.getRenderField(name)获取，页面上，JS里直接使用：model.renderField[name]获取。
      */
     protected Map<String, String> renderFieldMap = new HashMap<>();
 
@@ -43,6 +45,19 @@ public abstract class BaseModel implements Serializable {
      */
     public String getRenderField(String fieldName) {
         return renderFieldMap.get(fieldName);
+    }
+
+    /**
+     * 将显示字段放入renderFieldMap里，然后可以使用getRenderField获取
+     * <br />
+     * 参考renderFieldMap的注释
+     * @param fieldName 字段名
+     * @param value 字段值
+     */
+    public void addRenderField(String fieldName, String value) {
+        if (StringUtils.isNotBlank(value)) {
+            renderFieldMap.put(fieldName, value);
+        }
     }
 
     /**
@@ -226,7 +241,9 @@ public abstract class BaseModel implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }

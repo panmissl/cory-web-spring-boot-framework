@@ -42,6 +42,8 @@ Changelog
     数据字典缓存刷新时刷新SystemContext的modelMetaSet和modelMetaMap，之前没刷新存在的问题是数据字典改了不会生效，要重启系统才行
 0.0.19
     优化BaseModel的renderFieldMap，不直接暴露map，用getRenderField方法
+0.0.20
+    fix优化BaseModel的renderFieldMap，不直接暴露map，用getRenderField方法和putRenderField方法
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存
