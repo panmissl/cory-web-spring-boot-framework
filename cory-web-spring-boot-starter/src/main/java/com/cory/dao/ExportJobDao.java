@@ -12,16 +12,16 @@ import com.cory.model.ExportJob;
 @Dao(model = ExportJob.class)
 public interface ExportJobDao extends BaseDao<ExportJob> {
 
-    @Update(columnSql = "status = #{status}", whereSql = "code = #{code}")
+    @Update(columnSql = "modify_time = now(), status = #{status}", whereSql = "code = #{code}")
     void updateStatus(@Param("code") String code,
                       @Param("status") ExportJobStatus status);
 
-    @Update(columnSql = "status = #{status}, download_url = #{downloadUrl}", whereSql = "code = #{code}")
+    @Update(columnSql = "modify_time = now(), status = #{status}, download_url = #{downloadUrl}", whereSql = "code = #{code}")
     void updateStatusAndDownloadUrl(@Param("code") String code,
                                     @Param("status") ExportJobStatus status,
                                     @Param("downloadUrl") String downloadUrl);
 
-    @Update(columnSql = "status = #{status}, error_msg = #{errorMsg}", whereSql = "code = #{code}")
+    @Update(columnSql = "modify_time = now(), status = #{status}, error_msg = #{errorMsg}", whereSql = "code = #{code}")
     void updateStatusAndErrorMsg(@Param("code") String code,
                                  @Param("status") ExportJobStatus status,
                                  @Param("errorMsg") String errorMsg);
