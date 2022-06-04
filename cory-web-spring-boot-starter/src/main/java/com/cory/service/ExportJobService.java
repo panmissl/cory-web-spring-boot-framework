@@ -48,16 +48,16 @@ public class ExportJobService extends BaseService<ExportJob> {
                 .build();
         exportJobDao.add(job);
         try {
-            exportJobDao.updateStatusAndDownloadUrl(code, ExportJobStatus.running, null, null);
+            exportJobDao.updateStatus(code, ExportJobStatus.running);
             String downloadUrl = exportExecutor.get();
-            exportJobDao.updateStatusAndDownloadUrl(code, ExportJobStatus.success, downloadUrl, null);
+            exportJobDao.updateStatusAndDownloadUrl(code, ExportJobStatus.success, downloadUrl);
         } catch (Throwable t) {
             log.error("export job fail, job code: {}", job.getCode(), t);
             String msg = t.getMessage();
             if (null != msg && msg.length() > 200) {
                 msg = msg.substring(0, 200);
             }
-            exportJobDao.updateStatusAndDownloadUrl(code, ExportJobStatus.fail, null, msg);
+            exportJobDao.updateStatusAndErrorMsg(code, ExportJobStatus.fail, msg);
         }
     }
 
