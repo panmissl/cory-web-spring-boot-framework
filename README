@@ -52,6 +52,8 @@ Changelog
     fix异步导出机制model
 0.0.24
     fix异步导出机制model
+0.0.25
+    后台页面支持按ID进行过滤
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

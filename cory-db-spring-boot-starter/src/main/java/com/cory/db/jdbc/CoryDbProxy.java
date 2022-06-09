@@ -176,6 +176,10 @@ public class CoryDbProxy<T> implements InvocationHandler {
                     if (MapUtils.isNotEmpty(baseModel.getFilterFieldMap())) {
                         baseModel.getFilterFieldMap().keySet().forEach(key -> baseModel.getFilterFieldMap().put(key, toValue(baseModel.getFilterFieldMap().get(key))));
                     }
+                    //支持按ID搜索，但ID要大于0才算，小于或等于0的不算
+                    if (null != baseModel.getId() && baseModel.getId() > 0) {
+                        builder.column("id", baseModel.getId());
+                    }
                 }
             }
         }

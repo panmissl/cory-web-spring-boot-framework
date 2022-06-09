@@ -465,8 +465,9 @@ public class CorySqlBuilder {
             if (this.whereModel) {
                 columnValueList.forEach(cv -> {
                     //skip base columns
-                    if (cv.getColumn().equalsIgnoreCase(ID) ||
-                            cv.getColumn().equalsIgnoreCase(CREATOR) ||
+                    //20220610：可以按ID过滤的
+                    //if (cv.getColumn().equalsIgnoreCase(ID) ||
+                    if (cv.getColumn().equalsIgnoreCase(CREATOR) ||
                             cv.getColumn().equalsIgnoreCase(MODIFIER) ||
                             cv.getColumn().equalsIgnoreCase(CREATE_TIME) ||
                             cv.getColumn().equalsIgnoreCase(MODIFY_TIME) ||
