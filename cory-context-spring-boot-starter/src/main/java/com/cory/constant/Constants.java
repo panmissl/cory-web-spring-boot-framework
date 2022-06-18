@@ -116,4 +116,5 @@ public class Constants {
     public static final String FILTER_FIELD_POSTFIX_NOT_EQ = "NotEq";
     public static final String FILTER_FIELD_POSTFIX_IS_NULL = "IsNull";
     public static final String FILTER_FIELD_POSTFIX_NOT_NULL = "NotNull";
+    public static final String FILTER_FIELD_CUSTOM = "Custom";
 }

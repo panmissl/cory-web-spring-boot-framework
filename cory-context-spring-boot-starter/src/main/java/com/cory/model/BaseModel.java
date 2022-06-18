@@ -1,6 +1,5 @@
 package com.cory.model;
 
-import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -228,6 +227,24 @@ public abstract class BaseModel implements Serializable {
             return;
         }
         filterFieldMap.put(fieldName + FILTER_FIELD_POSTFIX_NOT_EQ, value);
+    }
+
+    /**
+     * 添加自定义过滤sql部分，如：name like '%abc%' or address like 'abc%'。
+     * <br />
+     * <br />
+     * 注意：
+     * <li>自定义sql只能添加一条(如果有多个自定义，全部写一起即可)，重复添加时后面添加的会覆盖前面的。</li>
+     * <li>和其它的部分是and关系，如果想要全部自定义，则不要添加其它条件，只添加自定义条件即可。</li>
+     * <br />
+     * <br />
+     * @param customFilterSql
+     */
+    public void addCustomFilter(String customFilterSql) {
+        if (StringUtils.isBlank(customFilterSql)) {
+            return;
+        }
+        filterFieldMap.put(FILTER_FIELD_CUSTOM, customFilterSql);
     }
 
     public void resetDateAndOperator(Date date, Integer operator) {

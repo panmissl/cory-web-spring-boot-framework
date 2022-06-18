@@ -589,6 +589,8 @@ public class CorySqlBuilder {
                             String columnField = key.substring(0, key.length() - FILTER_FIELD_POSTFIX_NOT_NULL.length());
                             String columnName = CoryModelUtil.buildColumnName(columnField);
                             whereSql.append(" AND " + columnName + " is not null");
+                        } else if (key.equals(FILTER_FIELD_CUSTOM)) {
+                            whereSql.append(" AND (" + filter.getValue() + ")");
                         }
                     });
                 });
