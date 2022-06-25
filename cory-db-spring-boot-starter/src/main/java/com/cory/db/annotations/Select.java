@@ -1,5 +1,8 @@
 package com.cory.db.annotations;
 
+import com.cory.db.datapermission.CoryDataPermissionCode;
+import com.cory.db.datapermission.DataPermission;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -71,4 +74,17 @@ public @interface Select {
      * @return
      */
     Class returnType() default Void.class;
+
+    /**
+     * 数据权限配置，这里配置的是{@link DataPermission}里的code(系统默认提供的数据权限已经定义在了{@link CoryDataPermissionCode}里，直接能用)，进行数据权限的过滤
+     * <br />
+     * <br />
+     * 指定customSql时，数据权限不生效
+     * <br />
+     * <br />
+     * @return
+     * @see DataPermission
+     * @see CoryDataPermissionCode
+     */
+    String[] dataPermission() default {};
 }

@@ -3,6 +3,9 @@ package com.cory.db.jdbc;
 import com.cory.constant.ErrorCode;
 import com.cory.context.CurrentUser;
 import com.cory.db.annotations.*;
+import com.cory.db.datapermission.DataPermission;
+import com.cory.db.datapermission.DataPermissionResult;
+import com.cory.db.datapermission.DataPermissionStrategy;
 import com.cory.db.enums.CustomSqlType;
 import com.cory.db.jdbc.CorySqlBuilder.CoryInsertSqlBuilder;
 import com.cory.db.jdbc.CorySqlBuilder.CorySelectSqlBuilder;
@@ -17,6 +20,7 @@ import com.cory.util.AssertUtils;
 import com.cory.util.ClassUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -46,11 +50,16 @@ public class CoryDbProxy<T> implements InvocationHandler {
     private boolean noTable;
     private boolean logEnable;
     private boolean logicDelete;
+    private Map<String, DataPermission> dataPermissionCodeMap = new HashMap<>();
 
-    public CoryDbProxy(Class<T> daoClass, CoryDb coryDb, boolean logEnable) {
+    public CoryDbProxy(Class<T> daoClass, CoryDb coryDb, boolean logEnable, List<DataPermission> dataPermissionList) {
         this.daoClass = daoClass;
         this.coryDb = coryDb;
         this.logEnable = logEnable;
+
+        if (CollectionUtils.isNotEmpty(dataPermissionList)) {
+            dataPermissionList.forEach(dp -> dataPermissionCodeMap.put(dp.code(), dp));
+        }
 
         Dao dao = daoClass.getAnnotation(Dao.class);
         this.modelClass = dao.model();
@@ -158,8 +167,8 @@ public class CoryDbProxy<T> implements InvocationHandler {
         checkForSelectCount(method, select.count());
 
         Map<String, Object> paramMap = buildNotNullParamMap(method, args);
-
-        CorySelectSqlBuilder builder = CorySqlBuilder.createSelectBuilder(table, select.whereSql(), select.whereByModel(), select.orderBy(), select.limit(), select.customSql(), paramMap);
+        DataPermissionResult dataPermissionResult = calculateDataPermissionResult(select, paramMap);
+        CorySelectSqlBuilder builder = CorySqlBuilder.createSelectBuilder(table, select.whereSql(), select.whereByModel(), select.orderBy(), select.limit(), select.customSql(), paramMap, dataPermissionResult);
 
         if (select.whereByModel()) {
             Object model = paramMap.get("model");
@@ -197,7 +206,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
                 log.info(countSqlInfo.toString());
             }
 
-            return coryDb.selectCount(countSqlInfo);
+            return countSqlInfo.getSelectDenied() ? 0 : coryDb.selectCount(countSqlInfo);
         }
 
         Class selectReturnType = select.returnType();
@@ -209,7 +218,7 @@ public class CoryDbProxy<T> implements InvocationHandler {
                 log.info(countSqlInfo.toString());
             }
 
-            int count = coryDb.selectCount(countSqlInfo);
+            int count = countSqlInfo.getSelectDenied() ? 0 : coryDb.selectCount(countSqlInfo);
             Pagination p = new Pagination<>();
             //pagination直接用modelClass，因为解析不到泛型
             Class<?> cls = ClassUtil.parseGenericType(returnType);
@@ -226,10 +235,54 @@ public class CoryDbProxy<T> implements InvocationHandler {
 
             return p;
         } else {
-            List<Map<String, Object>> listData = coryDb.select(dataSqlInfo);
+            List<Map<String, Object>> listData = dataSqlInfo.getSelectDenied() ? Lists.newArrayList() : coryDb.select(dataSqlInfo);
             Pair<ResultMapper, Class<?>> pair = ResultMapperFactory.parseMapper(returnType, modelClass, selectReturnType);
             return pair.getLeft().map(listData, pair.getRight());
         }
+    }
+
+    private DataPermissionResult calculateDataPermissionResult(Select select, Map<String, Object> paramMap) {
+        //将多个合并成一个，如果遇到deny的，直接返回deny
+        if (MapUtils.isEmpty(dataPermissionCodeMap)) {
+            return null;
+        }
+        String[] codeArr = select.dataPermission();
+        if (null == codeArr || codeArr.length == 0) {
+            return null;
+        }
+
+        //optimization for 1
+        if (codeArr.length == 1) {
+            DataPermission permission = dataPermissionCodeMap.get(codeArr[0]);
+            AssertUtils.notNull(permission, "db.data.permission.error", "invalid data permission: no data permission implement");
+            return permission.permission(paramMap);
+        }
+
+        boolean pass = true;
+        boolean deny = false;
+        StringBuilder sql = new StringBuilder();
+        for (String code : codeArr) {
+            DataPermission permission = dataPermissionCodeMap.get(code);
+            AssertUtils.notNull(permission, "db.data.permission.error", "invalid data permission: no data permission implement");
+            DataPermissionResult result = permission.permission(paramMap);
+
+            if (DataPermissionStrategy.DENY.equals(result.getStrategy())) {
+                pass = false;
+                deny = true;
+                break;
+            } else if (DataPermissionStrategy.FILTER.equals(result.getStrategy())) {
+                pass = false;
+                sql.append("(").append(result.getFilterSql()).append(") AND");
+            }
+        }
+        if (sql.length() > 0) {
+            //delete last AND
+            sql.delete(sql.length() - 3, sql.length());
+        }
+        return DataPermissionResult.builder()
+                .filterSql(pass || deny ? null : sql.toString())
+                .strategy(deny ? DataPermissionStrategy.DENY : pass ? DataPermissionStrategy.PASS : DataPermissionStrategy.FILTER)
+                .build();
     }
 
     private void checkForSelectCount(Method method, boolean count) {
@@ -323,10 +376,10 @@ public class CoryDbProxy<T> implements InvocationHandler {
         }
     }
 
-    public static <T> T newMapperProxy(Class<T> daoClass, CoryDb coryDb, boolean logEnable) {
+    public static <T> T newMapperProxy(Class<T> daoClass, CoryDb coryDb, boolean logEnable, List<DataPermission> dataPermissionList) {
         ClassLoader classLoader = daoClass.getClassLoader();
         Class<?>[] interfaces = new Class[]{daoClass};
-        CoryDbProxy proxy = new CoryDbProxy(daoClass, coryDb, logEnable);
+        CoryDbProxy proxy = new CoryDbProxy(daoClass, coryDb, logEnable, dataPermissionList);
         return (T) Proxy.newProxyInstance(classLoader, interfaces, proxy);
     }
 

@@ -2,6 +2,8 @@ package com.cory.db.jdbc;
 
 import com.alibaba.fastjson.JSON;
 import com.cory.constant.ErrorCode;
+import com.cory.db.datapermission.DataPermissionResult;
+import com.cory.db.datapermission.DataPermissionStrategy;
 import com.cory.exception.CoryException;
 import com.cory.model.BaseModel;
 import com.cory.util.AssertUtils;
@@ -105,8 +107,8 @@ public class CorySqlBuilder {
         return new CoryUpdateSqlBuilder(table, columnSql, whereSql, ognlParamMap);
     }
 
-    public static CorySelectSqlBuilder createSelectBuilder(String table, String whereSql, boolean whereModel, boolean orderBy, boolean limit, String customSql, Map<String, Object> ognlParamMap) {
-        return new CorySelectSqlBuilder(table, whereSql, whereModel, orderBy, limit, customSql, ognlParamMap);
+    public static CorySelectSqlBuilder createSelectBuilder(String table, String whereSql, boolean whereModel, boolean orderBy, boolean limit, String customSql, Map<String, Object> ognlParamMap, DataPermissionResult dataPermissionResult) {
+        return new CorySelectSqlBuilder(table, whereSql, whereModel, orderBy, limit, customSql, ognlParamMap, dataPermissionResult);
     }
 
     private static String formatColumn(String column) {
@@ -259,6 +261,10 @@ public class CorySqlBuilder {
         private String sql;
         @Builder.Default
         private List<Object> params = new ArrayList<>();
+
+        /** 数据权限使用，如果数据权限判断出来不让查询，直接返回空 */
+        @Builder.Default
+        private Boolean selectDenied = false;
 
         @Override
         public String toString() {
@@ -438,10 +444,12 @@ public class CorySqlBuilder {
 
         protected Map<String, Object> ognlParamMap = new HashMap<>();
 
+        protected DataPermissionResult dataPermissionResult;
+
         /** whereModel = true时有用，其他时间没用 */
         protected List<CorySqlColumnValue> columnValueList = new ArrayList<>();
 
-        CorySelectSqlBuilder(String table, String whereSql, boolean whereModel, boolean orderBy, boolean limit, String customSql, Map<String, Object> ognlParamMap) {
+        CorySelectSqlBuilder(String table, String whereSql, boolean whereModel, boolean orderBy, boolean limit, String customSql, Map<String, Object> ognlParamMap, DataPermissionResult dataPermissionResult) {
             this.table = table;
             this.whereSql = whereSql;
             this.whereModel = whereModel;
@@ -449,6 +457,7 @@ public class CorySqlBuilder {
             this.limit = limit;
             this.customSql = customSql;
             this.ognlParamMap = ognlParamMap;
+            this.dataPermissionResult = dataPermissionResult;
         }
 
         public CorySelectSqlBuilder column(String column, Object value) {
@@ -459,8 +468,17 @@ public class CorySqlBuilder {
 
         private CorySqlInfo buildSelectWherePart() {
             CorySqlInfo wherePart = parseWherePart(whereSql, ognlParamMap, true);
+
+            if (null != dataPermissionResult && DataPermissionStrategy.DENY.equals(dataPermissionResult.getStrategy())) {
+                return CorySqlInfo.builder().selectDenied(true).build();
+            }
+
             List<Object> params = wherePart.getParams();
             StringBuilder whereSql = new StringBuilder(wherePart.getSql());
+
+            if (null != dataPermissionResult && DataPermissionStrategy.FILTER.equals(dataPermissionResult.getStrategy())) {
+                whereSql.append("AND (" + dataPermissionResult.getFilterSql() + ")");
+            }
 
             if (this.whereModel) {
                 columnValueList.forEach(cv -> {
@@ -608,6 +626,9 @@ public class CorySqlBuilder {
             }
 
             CorySqlInfo wherePart = buildSelectWherePart();
+            if (wherePart.selectDenied) {
+                return wherePart;
+            }
 
             checkForLimit(limit, ognlParamMap);
 
@@ -674,6 +695,9 @@ public class CorySqlBuilder {
             //select count(*) from xxx where is_deleted = 0 and col_a = #{colA}
 
             CorySqlInfo wherePart = buildSelectWherePart();
+            if (wherePart.selectDenied) {
+                return wherePart;
+            }
 
             String sql = String.format("SELECT COUNT(*) FROM %s WHERE IS_DELETED = 0 %s", table, wherePart.getSql());
             return CorySqlInfo.builder().sql(formatSql(sql)).params(wherePart.getParams()).build();
@@ -742,12 +766,12 @@ public class CorySqlBuilder {
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));
 
         params.remove("name");
-        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} #![and name like #{name}] and type_code = #{typeCode}", true, true, true, null, params).column("code", "123").column("type", "DEVICE").column("age", 19).buildDataSql();
+        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} #![and name like #{name}] and type_code = #{typeCode}", true, true, true, null, params, null).column("code", "123").column("type", "DEVICE").column("age", 19).buildDataSql();
         System.out.println("sql: " + sqlInfo.getSql());
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));
 
         params.remove("name");
-        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} #![and name like #{name}] and type_code = #{typeCode}", true, true, true, null, params).column("code", "123").column("type", "DEVICE").column("age", 19).buildCountSql();
+        sqlInfo = CorySqlBuilder.createSelectBuilder("lm_device", "code in #{codeList} #![and name like #{name}] and type_code = #{typeCode}", true, true, true, null, params, null).column("code", "123").column("type", "DEVICE").column("age", 19).buildCountSql();
         System.out.println("sql: " + sqlInfo.getSql());
         System.out.println("params: " + JSON.toJSONString(sqlInfo.getParams()));
     }
