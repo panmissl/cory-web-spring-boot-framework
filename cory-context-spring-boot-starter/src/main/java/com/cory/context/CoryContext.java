@@ -25,10 +25,12 @@ public class CoryContext implements Serializable {
     private String ctxWithoutSlash;
     private String referer;
     private String requestURI;
-    //登录成功后的跳转URL
+    /** 登录成功后的跳转URL */
     private String successUrl;
 
     private String domainName;
+    /** 站点标识，比如一套代码多用时，可以用它来区分不同站点 */
+    private String site;
     private String siteName;
     private String siteSlogan;
     /** @see SystemConfigCacheKey#SITE_KEYWORDS */
@@ -38,16 +40,18 @@ public class CoryContext implements Serializable {
     /** @see SystemConfigCacheKey#SITE_DESCRIPTION_BODY */
     private String siteDescriptionBody;
 
-    //静态资源路径，以斜杠结尾，比如：http://static.xx.com/static/0.0.1/
-    //版本号用另外一个系统配置存储
+    /**
+     * 静态资源路径，以斜杠结尾，比如：http://static.xx.com/static/0.0.1/
+     * 版本号用另外一个系统配置存储
+     */
     private String staticDir;
-    //只有一个js文件和一个css文件。文件名比如：umixxx.js, umixxx.css
+    /** 只有一个js文件和一个css文件。文件名比如：umixxx.js, umixxx.css */
     private String jsFile;
     private String cssFile;
 
-    //true/false
+    /** true/false */
     private String debugMode;
-    //true/false
+    /** true/false */
     private String registerEnable;
 
     private String adminSkin;
