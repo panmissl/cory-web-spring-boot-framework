@@ -11,6 +11,7 @@
         <script type="text/javascript">
             <#-- 一些从后台初始化的js数据可以放这里 -->
             window.ctx = '${ctx!""}';
+            window.site = '${site!""}';
             window.successUrl = '${successUrl!""}';
             window.staticDir = '${staticDir!""}';
             window.publicPath = window.staticDir;
