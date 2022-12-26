@@ -38,6 +38,7 @@ public class ContextInterceptor implements HandlerInterceptor {
 		builder.successUrl(successUrl);
 
 		builder.domainName(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.DOMAIN_NAME));
+		builder.site(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE));
 		builder.siteName(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE_NAME));
 		builder.siteSlogan(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE_SLOGAN));
 		builder.siteKeywords(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.SITE_KEYWORDS));

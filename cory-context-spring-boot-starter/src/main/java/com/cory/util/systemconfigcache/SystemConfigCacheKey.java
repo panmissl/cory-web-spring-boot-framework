@@ -7,6 +7,8 @@ public class SystemConfigCacheKey {
 
     /** 网站域名 */
     public static final String DOMAIN_NAME = "domain_name";
+    /** 站点标识：会渲染到html里的window对象里，用于区分站点，比如一套代码用多个站点时 */
+    public static final String SITE = "site";
     /** 网站名称：显示在网页的标题栏里 */
     public static final String SITE_NAME = "site_name";
     /** 网站标语：可选。如果有，显示在标题栏里，和网站名称用 - 分隔 */
