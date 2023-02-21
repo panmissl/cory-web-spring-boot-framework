@@ -24,6 +24,9 @@ public class GenericResult implements Serializable {
     /** 是否加密 */
     private Boolean isEncrypt;
 
+    /** traceId，系统自动设置 */
+    private String traceId;
+
     /**
      * success = true
      */

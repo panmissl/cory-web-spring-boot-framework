@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by Cory on 2017/5/14.
@@ -64,7 +65,13 @@ public class DataDictCacheUtil {
     }
 
     public static List<DataDict> getByType(String type) {
-        return CACHE_BY_TYPE.get(type);
+        List<DataDict> list = CACHE_BY_TYPE.get(type);
+        if (CollectionUtils.isEmpty(list)) {
+            return list;
+        }
+        return list.stream()
+                .filter(dd -> null != dd.getShowable() && dd.getShowable())
+                .collect(Collectors.toList());
     }
 
     public static void refresh(List<DataDict> list) {

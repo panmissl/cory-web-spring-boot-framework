@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.cory.constant.Constants;
 import com.cory.context.GenericResult;
+import com.cory.eagleeye.EagleEye;
 import com.cory.util.ClassUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -26,6 +28,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+
+import static com.cory.eagleeye.EagleEye.EAGLE_EYE_ID;
 
 /**
  * Created by Cory on 2021/2/13.
@@ -80,7 +84,7 @@ public class CoryWebResponseBodyAdvice implements ResponseBodyAdvice, Applicatio
             return null;
         }
         if (null == o) {
-            return GenericResult.success();
+            return wrapTraceId(GenericResult.success());
         }
         GenericResult result;
         if (o instanceof GenericResult) {
@@ -99,6 +103,17 @@ public class CoryWebResponseBodyAdvice implements ResponseBodyAdvice, Applicatio
             }
         }
 
+        return wrapTraceId(result);
+    }
+
+    private GenericResult wrapTraceId(GenericResult result) {
+        if (null != result) {
+            try {
+                result.setTraceId(MDC.get(EAGLE_EYE_ID));
+            } catch (Exception e) {
+                result.setTraceId("parse-trace-id-fail");
+            }
+        }
         return result;
     }
 
