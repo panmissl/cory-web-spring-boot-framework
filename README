@@ -65,6 +65,8 @@ Changelog
 0.0.30
     GenericResult里增加traceId
     DataDictCacheUtil根据类型获取列表时过滤掉不显示的那些值
+    自定义favicon
+    session过期时间设置
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

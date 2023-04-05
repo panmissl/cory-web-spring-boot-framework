@@ -24,8 +24,8 @@
         <meta name="keywords" content="${siteKeywords!""}">
         <meta name="description" content="${siteDescription!""}">
 
-        <link rel="shortcut icon" href="${staticDir!""}favicon.ico" type="image/x-icon" />
-        <link rel="icon" href="${staticDir!""}favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="${staticDir!""}${faviconFile!""}" type="image/x-icon" />
+        <link rel="icon" href="${staticDir!""}${faviconFile!""}" type="image/x-icon" />
 
         <link rel="stylesheet" href="${staticDir!""}${cssFile!""}" />
     </head>

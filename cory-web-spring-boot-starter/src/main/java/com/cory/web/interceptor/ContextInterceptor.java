@@ -48,6 +48,7 @@ public class ContextInterceptor implements HandlerInterceptor {
 		builder.staticDir(buildStaticDir());
 		builder.jsFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.JS_FILE));
 		builder.cssFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.CSS_FILE));
+		builder.faviconFile(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.FAVICON_FILE));
 
 		builder.debugMode(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.DEBUG_MODE));
 

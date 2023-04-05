@@ -48,6 +48,7 @@ public class CoryContext implements Serializable {
     /** 只有一个js文件和一个css文件。文件名比如：umixxx.js, umixxx.css */
     private String jsFile;
     private String cssFile;
+    private String faviconFile;
 
     /** true/false */
     private String debugMode;

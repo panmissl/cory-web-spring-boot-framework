@@ -7,10 +7,13 @@ import com.cory.context.CurrentUser;
 import com.cory.context.GenericResult;
 import com.cory.model.User;
 import com.cory.service.UserService;
+import com.cory.util.systemconfigcache.SystemConfigCacheKey;
+import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import com.cory.web.util.CookieUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.DisabledAccountException;
@@ -48,6 +51,7 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 	/** 错误存在最长时间：5分钟 */
 	public static final int ERROR_INTERVAL = 5 * 60;
 
+	private static final long MILLIS_PER_MINUTE = 60 * 1000;
 	private static final String SUCCESS_URL_SIMPLE_PREFIX = "SIMPLE:";
 	private static final String SUCCESS_URL_ROLE_PREFIX = "ROLE:";
 	private static final SuccessUrl SUCCESS_URL = new SuccessUrl();
@@ -169,6 +173,9 @@ public class AuthenticationFilter extends FormAuthenticationFilter {
 		CurrentUser.set(currentUser);
 		((HttpServletRequest) request).getSession(true).setAttribute(Constants.CURRENT_USER, currentUser);
 		updateLastLogonInfo(principal, req, true);
+
+		int sessionTimeoutInMinute = SystemConfigCacheUtil.getIntCache(SystemConfigCacheKey.SESSION_TIMEOUT_IN_MINUTE, 30);
+		SecurityUtils.getSubject().getSession().setTimeout(sessionTimeoutInMinute * MILLIS_PER_MINUTE);
 
 		return super.onLoginSuccess(token, subject, request, response);
 	}
