@@ -50,6 +50,9 @@ public class ExportJobService extends BaseService<ExportJob> {
         try {
             exportJobDao.updateStatus(code, ExportJobStatus.running);
             String downloadUrl = exportExecutor.get();
+            if (null == downloadUrl) {
+                downloadUrl = "";
+            }
             exportJobDao.updateStatusAndDownloadUrl(code, ExportJobStatus.success, downloadUrl);
         } catch (Throwable t) {
             log.error("export job fail, job code: {}", job.getCode(), t);
