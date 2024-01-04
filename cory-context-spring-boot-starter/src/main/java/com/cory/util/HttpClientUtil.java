@@ -1,8 +1,13 @@
 package com.cory.util;
 
+import com.alibaba.fastjson.JSON;
 import com.cory.constant.Constants;
 import com.cory.constant.ErrorCode;
 import com.cory.exception.CoryException;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -11,7 +16,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.config.SocketConfig;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -32,14 +39,13 @@ public class HttpClientUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(HttpClientUtil.class);
 
-	// 连接超时时间：1S
-	private static final int SOCKET_TIME_OUT = 10;
-	// 超时时间：5M
-	private static final int TIME_OUT = 5 * 60;
+	private static final int SOCKET_TIME_OUT_IN_SECOND = 10;
+	private static final int CONNECT_TIME_OUT_IN_SECOND = 5;
 
 	/**
-	 *
-	 * @param url
+	 * 将URL下载并保存到文件
+	 * @param url 要下载的url
+	 * @param storeFile 保存到的文件
 	 * @return
 	 * @throws CoryException
 	 */
@@ -61,6 +67,7 @@ public class HttpClientUtil {
 			}
 			o.flush();
 		} catch (Exception e) {
+			log.error("download file fail, url: {}, store file: {}", url, storeFile.getAbsolutePath(), e);
 			throw new CoryException(ErrorCode.GENERIC_ERROR, e.getLocalizedMessage());
 		} finally {
 			if (null != i) {
@@ -82,7 +89,6 @@ public class HttpClientUtil {
 	}
 
 	/**
-	 *
 	 * @param url 绝对路径，包括前面的域名等，因为会有多个域名
 	 * @return
 	 * @throws CoryException
@@ -95,8 +101,9 @@ public class HttpClientUtil {
 		try {
 			get = newHttpGet(url);
 			HttpResponse response = httpClient.execute(get);
-			value = EntityUtils.toString(response.getEntity());
+			value = EntityUtils.toString(response.getEntity(), Constants.UTF8);
 		} catch (Exception e) {
+			log.error("get fail, url: {}", url, e);
 			throw new CoryException(ErrorCode.GENERIC_ERROR, e.getLocalizedMessage());
 		}
 		if (null != get) {
@@ -106,21 +113,44 @@ public class HttpClientUtil {
 	}
 
 	/**
+	 * post方法，使用表单方式传数据
 	 *
 	 * @param url -- 绝对路径，包括前面的域名等，因为会有多个域名
 	 * @param params
-	 * @return a JSON string
+	 * @return
 	 */
 	public static String post(String url, Map<String, String> params) throws CoryException {
 		try {
-			return EntityUtils.toString(doPost(url, params));
+			return EntityUtils.toString(doPost(url, params), Constants.UTF8);
 		} catch (Exception e) {
+			log.error("post fail, url: {}, params: {}", url, JSON.toJSONString(params), e);
 			throw new CoryException(ErrorCode.GENERIC_ERROR, e.getLocalizedMessage());
 		}
 	}
 
 	/**
+	 * post方法，但使用json的方式传数据
 	 *
+	 * @param url -- 绝对路径，包括前面的域名等，因为会有多个域名
+	 * @param params
+	 * @return
+	 */
+	public static String postJson(String url, Map<String, String> params) throws CoryException {
+		HttpClient httpClient = newDefaultHttpClient();
+		HttpPost httpPost = newHttpPost(url);
+
+		try {
+			StringEntity entity = new StringEntity(JSON.toJSONString(params), ContentType.APPLICATION_JSON);
+			httpPost.setEntity(entity);
+			HttpResponse response = httpClient.execute(httpPost);
+			return EntityUtils.toString(response.getEntity(), Constants.UTF8);
+		} catch (Exception e) {
+			log.error("post json fail, url: {}, params: {}", url, JSON.toJSONString(params), e);
+			throw new CoryException(ErrorCode.GENERIC_ERROR, e.getLocalizedMessage());
+		}
+	}
+
+	/**
 	 * @param url -- 绝对路径，包括前面的域名等，因为会有多个域名
 	 * @param params
 	 * @return a JSON string
@@ -129,6 +159,7 @@ public class HttpClientUtil {
 		try {
 			return EntityUtils.toByteArray(doPost(url, params));
 		} catch (Exception e) {
+			log.error("post with byte array response fail, url: {}, params: {}", url, JSON.toJSONString(params), e);
 			throw new CoryException(ErrorCode.GENERIC_ERROR, e.getLocalizedMessage());
 		}
 	}
@@ -144,6 +175,7 @@ public class HttpClientUtil {
 			HttpResponse response = httpClient.execute(httpPost);
 			return response.getEntity();
 		} catch (Exception e) {
+			log.error("do post fail, url: {}, params: {}", url, JSON.toJSONString(params), e);
 			throw new CoryException(ErrorCode.GENERIC_ERROR, e.getLocalizedMessage());
 		}
 	}
@@ -159,7 +191,7 @@ public class HttpClientUtil {
 	}
 
 	public static HttpClient newDefaultHttpClient() {
-		return newDefaultHttpClient(TIME_OUT, SOCKET_TIME_OUT);
+		return newDefaultHttpClient(CONNECT_TIME_OUT_IN_SECOND, SOCKET_TIME_OUT_IN_SECOND);
 	}
 
 	public static CloseableHttpClient newDefaultHttpClient(int connectTimeoutInSecond, int socketTimeoutInSecond) {
@@ -205,37 +237,167 @@ public class HttpClientUtil {
 		return pairs;
 	}
 
+	/**
+	 * @param url
+	 * @param method
+	 * @param callback
+	 * @param <T>
+	 * @return
+	 * @throws IOException
+	 * @deprecated 推荐使用{@link HttpClientUtil#call(String, HttpMethod, Param)}
+	 */
+	@Deprecated
 	public static <T> T call(String url, String method, Callback<T> callback) throws IOException {
-		return call(url, method, null, null, TIME_OUT, SOCKET_TIME_OUT, callback);
+		return call(url, method, null, null, CONNECT_TIME_OUT_IN_SECOND, SOCKET_TIME_OUT_IN_SECOND, callback);
 	}
 
+	/**
+	 * @param url
+	 * @param method
+	 * @param params
+	 * @param callback
+	 * @param <T>
+	 * @return
+	 * @throws IOException
+	 * @deprecated 推荐使用{@link HttpClientUtil#call(String, HttpMethod, Param)}
+	 */
+	@Deprecated
 	public static <T> T call(String url, String method, Map<String, String> params, Callback<T> callback) throws IOException {
-		return call(url, method, params, null, TIME_OUT, SOCKET_TIME_OUT, callback);
+		return call(url, method, params, null, CONNECT_TIME_OUT_IN_SECOND, SOCKET_TIME_OUT_IN_SECOND, callback);
 	}
 
+	/**
+	 * @param url
+	 * @param method
+	 * @param params
+	 * @param connectTimeoutInSecond
+	 * @param socketTimeoutInSecond
+	 * @param callback
+	 * @param <T>
+	 * @return
+	 * @throws IOException
+	 * @deprecated 推荐使用{@link HttpClientUtil#call(String, HttpMethod, Param)}
+	 */
+	@Deprecated
 	public static <T> T call(String url, String method, Map<String, String> params, int connectTimeoutInSecond, int socketTimeoutInSecond, Callback<T> callback) throws IOException {
 		return call(url, method, params, null, connectTimeoutInSecond, socketTimeoutInSecond, callback);
 	}
 
+	/**
+	 * @param url
+	 * @param method
+	 * @param params
+	 * @param headers
+	 * @param connectTimeoutInSecond
+	 * @param socketTimeoutInSecond
+	 * @param callback
+	 * @param <T>
+	 * @return
+	 * @throws IOException
+	 * @deprecated 推荐使用{@link HttpClientUtil#call(String, HttpMethod, Param)}
+	 */
+	@Deprecated
 	public static <T> T call(String url, String method, Map<String, String> params, Map<String, String> headers, int connectTimeoutInSecond, int socketTimeoutInSecond, Callback<T> callback) throws IOException {
 		return call(url, method, params, headers, null, 0, connectTimeoutInSecond, socketTimeoutInSecond, callback);
 	}
 
+	/**
+	 * 发起http请求
+	 * @param url
+	 * @param method
+	 * @param optionalParams 可选参数
+	 * @return
+	 */
+	public static String call(String url, HttpMethod method, Param optionalParams) throws IOException {
+		Integer contentLength = optionalParams.getContentLength();
+		Integer connectTimeoutInSecond = optionalParams.getConnectTimeoutInSecond();
+		Integer socketTimeoutInSecond = optionalParams.getSocketTimeoutInSecond();
+		return call(url,
+				method.name(),
+				optionalParams.getParams(),
+				optionalParams.getHeaders(), null,
+				null == contentLength ? 0 : contentLength,
+				null == connectTimeoutInSecond ? CONNECT_TIME_OUT_IN_SECOND : connectTimeoutInSecond,
+				null == socketTimeoutInSecond ? SOCKET_TIME_OUT_IN_SECOND : socketTimeoutInSecond,
+				r -> {
+					try {
+						return EntityUtils.toString(r.getEntity(), Constants.UTF8);
+					} catch (IOException e) {
+						log.error("entity to string fail, url: {}, method: {}, params: {}", url, method, JSON.toJSONString(optionalParams), e);
+						throw new RuntimeException(e);
+					}
+				}, optionalParams.isPostJson());
+	}
+
+	/**
+	 * http call可选参数
+	 */
+	@Builder
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class Param {
+		/**
+		 * 参数。如果是get请求会添加到url后面
+		 */
+		private Map<String, String> params;
+
+		private Map<String, String> headers;
+
+		private Integer contentLength;
+
+		/**
+		 * 是否是post json方式，只有method为POST时才生效
+		 */
+		private boolean isPostJson;
+
+		/**
+		 * 连接超时时间
+		 */
+		private Integer connectTimeoutInSecond;
+
+		/**
+		 * 处理超时时间
+		 */
+		private Integer socketTimeoutInSecond;
+	}
+
+	/**
+	 * @param url
+	 * @param method
+	 * @param params
+	 * @param headers
+	 * @param inputStream
+	 * @param contentLength
+	 * @param connectTimeoutInSecond
+	 * @param socketTimeoutInSecond
+	 * @param callback
+	 * @param <T>
+	 * @return
+	 * @throws IOException
+	 * @deprecated 推荐使用{@link HttpClientUtil#call(String, HttpMethod, Param)}
+	 */
+	@Deprecated
 	public static <T> T call(String url, String method, Map<String, String> params, Map<String, String> headers, InputStream inputStream, int contentLength, int connectTimeoutInSecond, int socketTimeoutInSecond, Callback<T> callback) throws IOException {
+		return call(url, method, params, headers, inputStream, contentLength, connectTimeoutInSecond, socketTimeoutInSecond, callback, false);
+	}
+
+	private static <T> T call(String url, String method, Map<String, String> params, Map<String, String> headers, InputStream inputStream, int contentLength, int connectTimeoutInSecond, int socketTimeoutInSecond, Callback<T> callback, boolean postJson) throws IOException {
 		CloseableHttpClient httpClient = null;
 		HttpUriRequest httpRequest = null;
 		CloseableHttpResponse httpResponse = null;
 		try {
 			httpClient = newDefaultHttpClient(connectTimeoutInSecond, socketTimeoutInSecond);
-			httpRequest = buildHttpRequest(url, method, params, inputStream, contentLength);
+			httpRequest = buildHttpRequest(url, method, params, inputStream, contentLength, postJson);
 			addHeaders(httpRequest, headers);
 			httpResponse = httpClient.execute(httpRequest);
 			if (null != callback) {
 				return callback.callback(httpResponse);
 			}
-			return null;
+			return (T) EntityUtils.toString(httpResponse.getEntity(), Constants.UTF8);
 		} catch (IOException e) {
-			log.debug("http call fail. url={}", url, e);
+			log.debug("http call fail. url: {}, method: {}, params: {}, headers: {}, connectTimeOut: {}, socketTimeOut: {}",
+					url, JSON.toJSONString(params), JSON.toJSONString(headers), connectTimeoutInSecond, socketTimeoutInSecond, e);
 			throw e;
 		} finally {
 			if (null != httpResponse) {
@@ -267,6 +429,10 @@ public class HttpClientUtil {
 	}
 
 	private static HttpUriRequest buildHttpRequest(String url, String method, Map<String, String> params, InputStream inputStream, int contentLength) throws IOException {
+		return buildHttpRequest(url, method, params, inputStream, contentLength, false);
+	}
+
+	private static HttpUriRequest buildHttpRequest(String url, String method, Map<String, String> params, InputStream inputStream, int contentLength, boolean postJson) throws IOException {
 		/*
 		String fullUrlWithParams = appendParamsToUrl(url, params);
 		if (
@@ -288,16 +454,27 @@ public class HttpClientUtil {
 		*/
 		String fullUrlWithParams = appendParamsToUrl(url, params);
 		if (StringUtils.equals(HttpMethod.POST.name(), method)) {
-			HttpPost post = new HttpPost(fullUrlWithParams);
+			HttpPost post = new HttpPost(url);
+			if (postJson) {
+				StringEntity entity = new StringEntity(JSON.toJSONString(params), ContentType.APPLICATION_JSON);
+				post.setEntity(entity);
+			} else {
+				List<BasicNameValuePair> pairs = buildParamList(params);
+				HttpEntity entity = new UrlEncodedFormEntity(pairs, Constants.UTF8);
+				post.setEntity(entity);
+			}
 			if (null != inputStream) {
-				InputStreamEntity entity = new InputStreamEntity(inputStream, contentLength);
+				HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
 				post.setEntity(entity);
 			}
 			return post;
 		} else if (StringUtils.equals(HttpMethod.PUT.name(), method)) {
-			HttpPut put = new HttpPut(fullUrlWithParams);
+			HttpPut put = new HttpPut(url);
+			List<BasicNameValuePair> pairs = buildParamList(params);
+			HttpEntity entity = new UrlEncodedFormEntity(pairs, Constants.UTF8);
+			put.setEntity(entity);
 			if (null != inputStream) {
-				InputStreamEntity entity = new InputStreamEntity(inputStream, contentLength);
+				entity = new InputStreamEntity(inputStream, contentLength);
 				put.setEntity(entity);
 			}
 			return put;
@@ -343,23 +520,35 @@ public class HttpClientUtil {
 	}
 
 	public static void main(String[] args) {
+		//使用样例
+
+		String url = "https://www.baidu.com";
+		String out = HttpClientUtil.get(url);
+		System.out.println("step 1 -------------------------------");
+		System.out.println(out);
+
 		Map<String, String> params = new HashMap<>();
-		/*
-		params.put("username", "1");
-		params.put("password", "1");
-		params.put("type", "0");
-		params.put("loginType", "5");
-		*/
+		params.put("a", "b");
+		out = HttpClientUtil.post(url, params);
+		System.out.println("step 2 -------------------------------");
+		System.out.println(out);
+
+		out = HttpClientUtil.postJson(url, params);
+		System.out.println("step 3 -------------------------------");
+		System.out.println(out);
+
 		try {
-			String response = HttpClientUtil.call("http://api.zhifangw.cn/login.api", "GET", params, (httpResponse) -> {
-				try {
-					return EntityUtils.toString(httpResponse.getEntity(), Constants.UTF8);
-				} catch (IOException e) {
-					e.printStackTrace();
-					return null;
-				}
-			});
-			System.out.println("response = " + response);
+			out = HttpClientUtil.call(url, HttpClientUtil.HttpMethod.GET, HttpClientUtil.Param
+					.builder()
+					.params(params)
+					.headers(params)
+					.contentLength(10000)
+					.isPostJson(true)
+					.connectTimeoutInSecond(3)
+					.socketTimeoutInSecond(5)
+					.build());
+			System.out.println("step 4 -------------------------------");
+			System.out.println(out);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,10 +1,8 @@
 package com.cory.exception;
 
 import com.cory.constant.ErrorCode;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 可以用{@link ErrorCode}构建，也可以直接用builder进行构建。
@@ -15,8 +13,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class CoryException extends RuntimeException {
 
     private static final long serialVersionUID = -4968342479115673110L;
@@ -24,10 +20,34 @@ public class CoryException extends RuntimeException {
     private String errorCode;
     private String errorMsg;
 
+    public CoryException(String errorCode, String errorMsg) {
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
+    }
+
+    /**
+     * @deprecated 推荐直接使用 {@link CoryException#CoryException(String, String)}
+     */
+    @Deprecated
+    public CoryException() {
+        this("ERROR", "ERROR");
+    }
+
+    /**
+     * @deprecated 推荐直接使用 {@link CoryException#CoryException(String, String)}
+     * @param errorCode
+     */
+    @Deprecated
     public CoryException(ErrorCode errorCode) {
         this(errorCode, null);
     }
 
+    /**
+     * @deprecated 推荐直接使用 {@link CoryException#CoryException(String, String)}
+     * @param errorCode
+     * @param params
+     */
+    @Deprecated
     public CoryException(ErrorCode errorCode, Object... params) {
         this.errorCode = errorCode.getCode() + "";
         this.errorMsg = this.buildErrorMsg(errorCode.getMessage(), params);

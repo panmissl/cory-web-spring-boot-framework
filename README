@@ -67,6 +67,12 @@ Changelog
     DataDictCacheUtil根据类型获取列表时过滤掉不显示的那些值
     自定义favicon
     session过期时间设置
+0.0.31
+    增加ZipUtil、XmlUtil、VelocityUtil
+    增加静态资源的处理
+    更新HttpClientUtil
+    支持不启动数据库
+    修复一些bug
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存
@@ -100,10 +106,12 @@ DB:
     # Select不支持返回Map，请创建一个bean来返回
     # 一般情况应该够用了，如果还有特殊需求，可放弃使用DAO，直接在Service引入JdbcTemplate自己写sql实现
 
-
 对日期类型的字段，已经做特殊处理：页面过滤时会自动增加xxStart和xxEnd字段。sql里也将条件加上了。规则为：start是inclusion，end是exclusion。最终会加成这样的效果：createTime >= #{createTimeStart} and createTime < #{createTimeEnd}
 
+安装到本地：
 mvn -DskipTests=true -Dmaven.skip.test=true source:jar install
 mvn -DskipTests=true -Dmaven.skip.test=true install
+
+安装到maven仓库
 mvn -DskipTests=true -Dmaven.skip.test=true clean deploy
 mvn -DskipTests=true -Dmaven.skip.test=true clean source:jar deploy

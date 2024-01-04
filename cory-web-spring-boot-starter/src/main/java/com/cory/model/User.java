@@ -60,7 +60,7 @@ public class User extends BaseModel {
     @Field(label = "级别", type = CoryDbType.ENUM, len = 50)
     private UserLevel level;
 
-    @Field(label = "额外信息", type = CoryDbType.VARCHAR, showable = false, len = 20480, nullable = true)
+    @Field(label = "额外信息", type = CoryDbType.TEXT, showable = false, nullable = true)
     private String extraInfo;
 
     @Field(label = "最近登录时间", type = CoryDbType.DATETIME, nullable = true)

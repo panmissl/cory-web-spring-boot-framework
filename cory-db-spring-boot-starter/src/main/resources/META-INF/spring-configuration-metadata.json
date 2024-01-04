@@ -10,6 +10,12 @@
   "properties": [
     {
       "sourceType": "com.cory.db.config.CoryDbProperties",
+      "name": "cory.db.enable",
+      "description": "是否启动数据库，如果不想连接数据库可以设置为false",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "sourceType": "com.cory.db.config.CoryDbProperties",
       "name": "cory.db.daoPackages",
       "description": "DAO包，可以指定多个",
       "type": "java.lang.String"

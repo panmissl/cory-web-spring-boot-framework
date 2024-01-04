@@ -4,6 +4,7 @@ import com.cory.context.CoryEnv;
 import com.cory.context.CorySystemContext;
 import com.cory.db.annotations.Dao;
 import com.cory.db.annotations.Model;
+import com.cory.db.config.CoryDbProperties;
 import com.cory.db.processor.CoryDbChecker;
 import com.cory.enums.ClusterStatus;
 import com.cory.enums.CoryEnum;
@@ -18,6 +19,7 @@ import com.cory.util.systemconfigcache.SystemConfigCacheUtil;
 import com.cory.web.util.CodeGeneratorHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.util.AnnotatedTypeScanner;
@@ -40,6 +42,9 @@ public class StartupListener implements ServletContextListener {
 
 	private WebApplicationContext ctx;
 
+	@Autowired
+	private CoryDbProperties coryDbProperties;
+
 	@Value("${server.port}")
 	private Integer port;
 
@@ -54,15 +59,18 @@ public class StartupListener implements ServletContextListener {
 		generateCode(ctx);
 		initForEnum();
 
-		//先初始化两个系统级缓存，其它地方才能用
-    	initSystemConfigCache(ctx, event);
-    	initDataDictCache(ctx);
+		if (coryDbProperties.isEnable()) {
+			//先初始化两个系统级缓存，其它地方才能用
+			initSystemConfigCache(ctx, event);
+			initDataDictCache(ctx);
 
-		//在使用db前先同步一下表，否则开发环境一开始启动时会有问题：直接取CoryDbChecker即可，初始化Bean会自动检查
-		ctx.getBean(CoryDbChecker.class);
+			//在使用db前先同步一下表，否则开发环境一开始启动时会有问题：直接取CoryDbChecker即可，初始化Bean会自动检查
+			ctx.getBean(CoryDbChecker.class);
 
-		scanResourceAndLoadToDb(ctx);
-		initCluster(ctx);
+			scanResourceAndLoadToDb(ctx);
+
+			initCluster(ctx);
+		}
     }
 
 	private void generateCode(WebApplicationContext ctx) {
@@ -72,7 +80,7 @@ public class StartupListener implements ServletContextListener {
     	2、生成规则：有Model，但是没有Dao
     	3、生成文件：Controller、Service、
     	*/
-    	if (!CoryEnv.IS_DEV) {
+    	if (!CoryEnv.IS_DEV || !coryDbProperties.isEnable()) {
     		return;
 		}
 

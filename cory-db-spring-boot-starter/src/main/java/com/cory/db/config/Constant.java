@@ -6,6 +6,7 @@ package com.cory.db.config;
 public class Constant {
 
     public static final String PREFIX = "cory.db";
+    public static final String ENABLE = "enable";
 
     public static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
 

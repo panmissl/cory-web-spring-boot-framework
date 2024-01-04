@@ -10,6 +10,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class CoryDbProperties {
 
+    /** 是否启动数据库 */
+    private boolean enable = true;
+
     /** DAO包，可以指定多个 */
     private String[] daoPackages = new String[] {"com.cory.dao"};
 
