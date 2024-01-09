@@ -2,12 +2,16 @@ package com.cory.web.filter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,9 +25,8 @@ import java.util.Map;
  * @author cory
  * @date 2024/1/3
  */
-@WebFilter
 @Component
-public class StaticResourceFilter implements Filter {
+public class StaticResourceFilter implements OrderedFilter {
 
     private static final String STATIC_PREFIX = "/static/";
 
@@ -122,5 +125,10 @@ public class StaticResourceFilter implements Filter {
     private static void put(String ext, String contentType) {
         CONTENT_TYPE_MAP.put(ext, contentType);
         CONTENT_TYPE_MAP.put(ext.toUpperCase(), contentType);
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE + 100;
     }
 }

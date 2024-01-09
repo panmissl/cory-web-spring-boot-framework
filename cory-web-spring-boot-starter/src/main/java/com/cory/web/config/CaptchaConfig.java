@@ -20,6 +20,7 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 import java.awt.*;
 
@@ -108,7 +109,7 @@ public class CaptchaConfig {
         // 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理
         //registration.setEnabled(false);
         registration.setName("captchaFilter");
-        registration.setOrder(1);
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 100);
         return registration;
     }
 }

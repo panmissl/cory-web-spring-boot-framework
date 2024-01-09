@@ -10,17 +10,22 @@ import com.octo.captcha.service.multitype.GenericManageableCaptchaService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
 @Slf4j
-public class CaptchaFilter implements Filter {
+public class CaptchaFilter implements OrderedFilter {
 
 	@Autowired
 	private GenericManageableCaptchaService captchaService;
@@ -74,5 +79,10 @@ public class CaptchaFilter implements Filter {
 		} catch (Throwable t) {
 			log.error("write response error.", t);
 		}
+	}
+
+	@Override
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE + 100;
 	}
 }

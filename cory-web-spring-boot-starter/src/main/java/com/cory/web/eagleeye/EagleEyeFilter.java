@@ -3,14 +3,21 @@ package com.cory.web.eagleeye;
 import com.cory.eagleeye.EagleEye;
 import com.cory.eagleeye.EagleEyeIdGenerator;
 import org.slf4j.MDC;
+import org.springframework.boot.web.servlet.filter.OrderedFilter;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import static com.cory.eagleeye.EagleEye.EAGLE_EYE_ID;
 
-public class EagleEyeFilter implements Filter {
+@Component
+public class EagleEyeFilter implements OrderedFilter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -26,5 +33,10 @@ public class EagleEyeFilter implements Filter {
 			EagleEye.remove();
 			MDC.remove(EAGLE_EYE_ID);
 		}
+	}
+
+	@Override
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE + 200;
 	}
 }

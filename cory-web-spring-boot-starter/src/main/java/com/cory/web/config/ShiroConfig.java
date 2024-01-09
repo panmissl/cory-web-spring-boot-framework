@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 import javax.servlet.Filter;
 import java.io.UnsupportedEncodingException;
@@ -30,6 +31,8 @@ import java.io.UnsupportedEncodingException;
 @Configuration
 public class ShiroConfig {
 
+    private static final int FILTER_ORDER = Ordered.HIGHEST_PRECEDENCE + 1000;
+
     private static final String LOGIN_HANDLE_URL = "/doLogin";
     private static final String USERNAME_PARAM = "userName";
     private static final String REMEMBERME_PARAM = "rememberMe";
@@ -37,7 +40,7 @@ public class ShiroConfig {
     private static final String UNAUTHORIZED_URL = "/errorPage?type=403";
 
     @Bean
-    public ShiroFilterFactoryBean shiroFilter(DefaultWebSecurityManager securityManager,
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManager,
                                               AuthenticationFilter authcFilter,
                                               UserFilter userFilter,
                                               LogoutFilter logoutFilter,
@@ -51,6 +54,16 @@ public class ShiroConfig {
         bean.setFilters(MapBuilder.create(String.class, Filter.class).put("authc", authcFilter).put("user", userFilter).put("logout", logoutFilter).build());
         bean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
         return bean;
+    }
+
+    @Bean
+    public FilterRegistrationBean shiroRegistration(ShiroFilterFactoryBean shiroFilter) throws Exception {
+        FilterRegistrationBean registration = new FilterRegistrationBean((Filter) shiroFilter.getObject());
+        // 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理
+        registration.setEnabled(true);
+        registration.setOrder(FILTER_ORDER);
+        registration.setName("shiroFilter");
+        return registration;
     }
 
     @Bean
@@ -139,6 +152,7 @@ public class ShiroConfig {
         FilterRegistrationBean registration = new FilterRegistrationBean(authcFilter);
         // 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理
         registration.setEnabled(false);
+        registration.setOrder(FILTER_ORDER);
         return registration;
     }
 
@@ -147,6 +161,7 @@ public class ShiroConfig {
         FilterRegistrationBean registration = new FilterRegistrationBean(userFilter);
         // 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理
         registration.setEnabled(false);
+        registration.setOrder(FILTER_ORDER);
         return registration;
     }
 
@@ -155,6 +170,7 @@ public class ShiroConfig {
         FilterRegistrationBean registration = new FilterRegistrationBean(logoutFilter);
         // 该值缺省为false,表示生命周期由SpringApplicationContext管理,设置为true则表示由ServletContainer管理
         registration.setEnabled(false);
+        registration.setOrder(FILTER_ORDER);
         return registration;
     }
 
