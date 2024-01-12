@@ -75,6 +75,8 @@ Changelog
     修复一些bug
 0.0.32
     设置Filter顺序，让系统Filter有固定顺序，这样用户自定义Filter可以设置放置的顺序
+0.0.33
+    注册时支持选择角色
 
 对spring boot的集成。集成了这些能力：
 #、对缓存的封装，支持内存缓存，redis缓存，edcd缓存

@@ -41,6 +41,24 @@ public class UserService extends BaseService<User> {
 
     private static final String DEFAULT_PASSWORD = "123456";
 
+    public enum REGISTER_ROLE_TYPE {
+        root(SystemConfigCacheKey.ROOT_ROLE_NAME),
+        admin(SystemConfigCacheKey.ADMIN_ROLE_NAMES),
+        normal(SystemConfigCacheKey.NORMAL_ROLE_NAME),
+        anon(SystemConfigCacheKey.ANON_ROLE_NAME),
+        ;
+
+        private final String roleName;
+
+        REGISTER_ROLE_TYPE(String roleName) {
+            this.roleName = roleName;
+        }
+
+        public String getRoleName() {
+            return roleName;
+        }
+    }
+
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -118,28 +136,37 @@ public class UserService extends BaseService<User> {
      * @return 注册成功返回空，注册失败返回失败信息
      */
     public String register(String phone, String password) {
+        return register(phone, password, REGISTER_ROLE_TYPE.normal);
+    }
+
+    /**
+     * 注册一个用户，并分配普通用户角色
+     * @param phone
+     * @param password
+     * @return 注册成功返回空，注册失败返回失败信息
+     */
+    public String register(String phone, String password, REGISTER_ROLE_TYPE roleType) {
         if (null != userDao.findByUserName(phone)) {
             return phone + "已经注册，请直接登录或者重新输入.";
         }
-        int admin = 1;
-        User user = newUser(phone, password, admin);
-        assignRole(user, admin);
+        User user = newUser(phone, password);
+        assignRole(user, roleType);
 
         log.info("用户注册成功，手机号：{}", phone);
 
         return null;
     }
 
-    private void assignRole(User user, int admin) {
+    private void assignRole(User user, REGISTER_ROLE_TYPE roleType) {
         UserRoleRel userRoleRel = new UserRoleRel();
         userRoleRel.setCreator(BaseConstants.ADMIN_ID);
         userRoleRel.setModifier(BaseConstants.ADMIN_ID);
         userRoleRel.setUserId(user.getId());
-        userRoleRel.setRoleId(roleService.getByName(SystemConfigCacheUtil.getCache(SystemConfigCacheKey.NORMAL_ROLE_NAME)).getId());
+        userRoleRel.setRoleId(roleService.getByName(SystemConfigCacheUtil.getCache(roleType.getRoleName())).getId());
         userRoleRelService.assign(userRoleRel);
     }
 
-    private User newUser(String phone, String password, int admin) {
+    private User newUser(String phone, String password) {
         User user = new User();
         user.setUserName(phone);
         user.setPhone(phone);
